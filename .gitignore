@@ -1,0 +1,64 @@
+# PlatformIO specific
+.pio/
+.pioenvs/
+.piolibdeps/
+.clang_complete
+.gcc-flags.json
+.ccls
+.ccls-cache/
+
+# VSCode specific
+.vscode/
+
+# Build artifacts
+build/
+
+# Compiled Object files
+*.o
+*.obj
+*.elf
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.bin
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux specific
+*~
+.directory
+.Trash-*
+
+# Temporary files
+*.log
+*.tmp
