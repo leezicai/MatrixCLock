@@ -274,42 +274,45 @@ bool getTimeFromRTC() {
     return false;
 }
 bool getCurrentTimeString(char* timeBuffer, size_t bufferSize) {
-    if (bufferSize < 9) {
+    if (bufferSize < 20) { // 需要更大的缓冲区来存储"YYYY-MM-DD HH:MM:SS"
         return false;
     }
-
+    
     // 从RTC读取最新时间
     if (isDS3231Available()) {
         struct tm timeinfo;
         if (readTimeFromRTC(&timeinfo)) {
-            // 直接使用RTC时间，不进行转换
-            sprintf(_currentTimeString, "%02d:%02d:%02d",
-                    timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
-            _isTimeValid = true;
-            
-            strncpy(timeBuffer, _currentTimeString, bufferSize - 1);
-            timeBuffer[bufferSize - 1] = '\0';
+            // 格式化为"年-月-日 时:分:秒"
+            sprintf(timeBuffer, "%04d-%02d-%02d %02d:%02d:%02d",
+                    timeinfo.tm_year + 1900, // 年份需要加1900
+                    timeinfo.tm_mon + 1,     // 月份从0开始，需要加1
+                    timeinfo.tm_mday,        // 日期
+                    timeinfo.tm_hour,        // 小时
+                    timeinfo.tm_min,         // 分钟
+                    timeinfo.tm_sec);        // 秒钟
             return true;
         }
     }
     
     // 如果没有RTC或RTC读取失败，尝试使用系统时间
-    if (!_isTimeValid) {
-        strncpy(timeBuffer, "00:00:00", bufferSize - 1);
+    struct tm timeinfo;
+    if (getLocalTime(&timeinfo)) {
+        // 格式化为"年-月-日 时:分:秒"
+        sprintf(timeBuffer, "%04d-%02d-%02d %02d:%02d:%02d",
+                timeinfo.tm_year + 1900, // 年份需要加1900
+                timeinfo.tm_mon + 1,     // 月份从0开始，需要加1
+                timeinfo.tm_mday,        // 日期
+                timeinfo.tm_hour,        // 小时
+                timeinfo.tm_min,         // 分钟
+                timeinfo.tm_sec);        // 秒钟
+        return true;
+    } else {
+        // 如果时间无效，显示默认值
+        strncpy(timeBuffer, "0000-00-00 00:00:00", bufferSize - 1);
         timeBuffer[bufferSize - 1] = '\0';
         return false;
-    } else {
-        struct tm timeinfo;
-        if (getLocalTime(&timeinfo)) {
-            sprintf(_currentTimeString, "%02d:%02d:%02d",
-                    timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
-        }
-        strncpy(timeBuffer, _currentTimeString, bufferSize - 1);
-        timeBuffer[bufferSize - 1] = '\0';
-        return true;
     }
 }
-
 
 NetState getNetState() {
     // This function returns the last known state based on our internal state variable.

@@ -27,7 +27,7 @@ unsigned long lastRtcSyncTime = 0;   // 上次RTC同步系统时间
 // 全局变量
 MatrixPanel_I2S_DMA *dma_display = nullptr;
 unsigned long lastTimeUpdate = 0;
-char lastDisplayedTimeString[9] = "";
+char lastDisplayedTimeString[20] = "";
 bool hasExternalRTC = false; // 新增：跟踪是否有外置RTC
 
 // 状态消息显示位置
@@ -50,29 +50,47 @@ void showStatusMessage(const char* message) {
 
 // displayTime 函数
 void displayTime(const char* timeToShow) {
-    if (strcmp(timeToShow, lastDisplayedTimeString) != 0) {
-        Serial.print("Updating display: ");
-        Serial.print(lastDisplayedTimeString);
-        Serial.print(" -> ");
-        Serial.println(timeToShow);
-        if (dma_display) {
-            // 确保字体和颜色是用于时间的
-            dma_display->setFont(&FreeSans16pt7b);
-            dma_display->setTextColor(COLOR_WHITE, COLOR_BLACK);
+  if (strcmp(timeToShow, lastDisplayedTimeString) != 0) {
+      Serial.print("Updating display: ");
+      Serial.print(lastDisplayedTimeString);
+      Serial.print(" -> ");
+      Serial.println(timeToShow);
+      if (dma_display) {
+          // 确保字体和颜色是用于时间的
+          // dma_display->setFont(&FreeSans16pt7b);
+          dma_display->setTextColor(COLOR_WHITE, COLOR_BLACK);
 
-            dma_display->fillScreen(COLOR_BLACK); // 清除整个屏幕
-            dma_display->setCursor(FIXED_X, FIXED_Y); // 时间的位置
-            dma_display->print(timeToShow);
-            dma_display->flipDMABuffer();
-            strcpy(lastDisplayedTimeString, timeToShow); // 更新记录
-            Serial.println("Display updated");
-        } else {
-            Serial.println("Error: dma_display is null in displayTime!");
-            strcpy(lastDisplayedTimeString, timeToShow); // 仍然更新记录
-        }
-    }
+          dma_display->fillScreen(COLOR_BLACK); // 清除整个屏幕
+          
+          // 分离日期和时间部分以便分行显示
+          char datePart[11]; // YYYY-MM-DD + 结束符
+          char timePart[9];  // HH:MM:SS + 结束符
+          
+          // 提取日期部分
+          strncpy(datePart, timeToShow, 10);
+          datePart[10] = '\0';
+          
+          // 提取时间部分
+          strncpy(timePart, timeToShow + 11, 8);
+          timePart[8] = '\0';
+          
+          // 显示日期在第一行
+          dma_display->setCursor(FIXED_X, FIXED_Y - 18); // 日期位置
+          dma_display->print(datePart);
+          
+          // 显示时间在第二行
+          dma_display->setCursor(FIXED_X, FIXED_Y + 10); // 时间位置
+          dma_display->print(timePart);
+          
+          dma_display->flipDMABuffer();
+          strcpy(lastDisplayedTimeString, timeToShow); // 更新记录
+          Serial.println("Display updated");
+      } else {
+          Serial.println("Error: dma_display is null in displayTime!");
+          strcpy(lastDisplayedTimeString, timeToShow); // 仍然更新记录
+      }
+  }
 }
-
 void setup() {
   Serial.begin(115200);
   Serial.println("\nESP32 HUB75 WiFi Clock Starting (With RTC Support)");
@@ -95,13 +113,13 @@ void setup() {
   // 基本显示设置
   dma_display->fillScreen(COLOR_BLACK);
   dma_display->setTextColor(COLOR_WHITE, COLOR_BLACK);
-  dma_display->setFont(&FreeSans16pt7b);
+  // dma_display->setFont(&FreeSans16pt7b);
 
   // 使用网络模块
   setupNet();
 
   // 处理时间来源优先级：首先尝试外置RTC，然后尝试网络
-  char initialTimeStr[9] = "00:00:00";
+  char initialTimeStr[20] = "0000-00-00 00:00:00"; // 增加字符串长度
   bool timeSet = false;
 
   // 1. 首先尝试从外置RTC获取时间
@@ -141,7 +159,7 @@ void setup() {
               Serial.println("Failed to sync NTP time initially.");
               showStatusMessage("NTP Fail"); // 显示NTP失败
               delay(2000);
-              // 保持 initialTimeStr 为 "00:00:00"
+              // 保持 initialTimeStr 为默认值
           } else {
               Serial.println("NTP Sync OK.");
               showStatusMessage("NTP OK"); // 显示NTP成功
@@ -160,7 +178,7 @@ void setup() {
           Serial.println("Failed to connect to WiFi. Using default time.");
           showStatusMessage("WiFi Fail"); // 显示WiFi失败
           delay(2000);
-          // 保持 initialTimeStr 为 "00:00:00"
+          // 保持 initialTimeStr 为默认值
       }
   }
 
@@ -183,76 +201,13 @@ void loop() {
   
   // 每秒更新一次时间显示
   if (currentMillis - lastTimeUpdate >= 1000) {
-      char currentTimeStr[9];
+      char currentTimeStr[20]; // 增加字符串长度
       if (getCurrentTimeString(currentTimeStr, sizeof(currentTimeStr))) {
           displayTime(currentTimeStr);
       } else {
-          displayTime("00:00:00"); // 或 "No Time"
+          displayTime("0000-00-00 00:00:00"); // 修改默认时间格式
       }
       lastTimeUpdate = currentMillis;
   }
-
-  // 定期从RTC同步系统时间 (每6小时一次)
-  if (hasExternalRTC && (currentMillis - lastRtcSyncTime >= RTC_SYNC_INTERVAL)) {
-      Serial.println("Performing scheduled RTC to system time sync...");
-      struct tm timeinfo;
-      if (readTimeFromRTC(&timeinfo)) {
-          time_t t = mktime(&timeinfo);
-          struct timeval now = { .tv_sec = t };
-          settimeofday(&now, NULL);
-          Serial.println("System time synchronized with RTC");
-          
-          // 更新最后同步时间
-          lastRtcSyncTime = currentMillis;
-      }
-  }
-
   
-  // 定期NTP同步 (每12小时一次)
-  if (currentMillis - lastNtpSyncTime >= NTP_SYNC_INTERVAL) {
-      Serial.println("Performing scheduled NTP time sync...");
-      showStatusMessage("WiFi Conn...");
-      
-      // 尝试连接WiFi
-      bool wifiConnected = connectNetWithRetry();
-      
-      if (wifiConnected) {
-          showStatusMessage("NTP Syn...");
-          bool timeSynced = syncNtpTime();
-          
-          if (timeSynced) {
-              showStatusMessage("NTP OK");
-              Serial.println("NTP sync successful");
-              delay(1000);
-              
-              // 如果外置RTC可用，将同步后的时间更新到RTC
-              // 注意：此操作已在syncNtpTime函数中处理
-              
-              // 更新最后NTP同步时间
-              lastNtpSyncTime = currentMillis;
-          } else {
-              showStatusMessage("NTP Fail");
-              Serial.println("NTP sync failed");
-              delay(1000);
-          }
-          
-          // 完成后断开WiFi连接
-          disconnectNet();
-      } else {
-          showStatusMessage("WiFi Fail");
-          Serial.println("Failed to connect to WiFi for NTP sync");
-          delay(1000);
-      }
-      
-      // 即使失败，也更新最后尝试时间，避免持续失败的尝试
-      if (!wifiConnected) {
-          lastNtpSyncTime = currentMillis;
-      }
-      
-      // 清除状态消息，恢复显示时间
-      char currentTimeStr[9];
-      if (getCurrentTimeString(currentTimeStr, sizeof(currentTimeStr))) {
-          displayTime(currentTimeStr);
-      }
-  }
 }
