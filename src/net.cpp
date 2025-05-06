@@ -14,6 +14,7 @@ const char* ntpServer = "ntp.aliyun.com";
 const long  gmtOffset_sec = 8 * 3600;
 const int   daylightOffset_sec = 0;
 
+DS3231 rtc2;
 // --- WiFi 连接常量 ---
 // --- WiFi Connection Constants ---
 // User requested 20 attempts for the retry function
@@ -179,7 +180,7 @@ bool syncNtpTime() {
         
         // 如果外置RTC可用，将NTP同步的时间也写入RTC
        // 在syncNtpTime()函数中的相关代码部分：
-        if (isDS3231Available())
+        if (rtc2.isConnected())
         {
             struct tm timeinfo;
             if (getLocalTime(&timeinfo))
@@ -187,15 +188,7 @@ bool syncNtpTime() {
                 // 此时timeinfo已经是本地时间（东八区），可以直接写入RTC
                 Serial.print("Updating RTC with local time: ");
                 Serial.printf("%02d:%02d:%02d\n", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
-
-                if (writeTimeToRTC(&timeinfo))
-                {
-                    Serial.println("External RTC updated successfully!");
-                }
-                else
-                {
-                    Serial.println("Failed to update external RTC!");
-                }
+                rtc2.syncTimeToRTC();
             }
         }
 
@@ -211,91 +204,18 @@ bool syncNtpTime() {
 }
 
 // 添加一个新函数用于从外置RTC获取时间 - 修改版
-bool getTimeFromRTC() {
-    if (!isDS3231Available()) {
-        Serial.println("External RTC not available");
-        return false;
-    }
 
-    struct tm timeinfo_local; // 用于存储从RTC读取的本地时间
-    if (readTimeFromRTC(&timeinfo_local)) {
-        Serial.printf("RTC Read (Local Time): %04d-%02d-%02d %02d:%02d:%02d\n",
-                      timeinfo_local.tm_year + 1900, timeinfo_local.tm_mon + 1, timeinfo_local.tm_mday,
-                      timeinfo_local.tm_hour, timeinfo_local.tm_min, timeinfo_local.tm_sec);
-
-        // --- 手动计算正确的 UTC time_t ---
-        timeinfo_local.tm_isdst = 0; // 明确指定非夏令时
-
-        // 调用 mktime。假设它基于某种默认行为处理 timeinfo_local。
-        // 我们需要的结果是对应的 UTC time_t 值。
-        time_t t_temp = mktime(&timeinfo_local);
-
-        if (t_temp == -1) {
-            Serial.println("mktime failed during RTC init. RTC data might be invalid.");
-            // 可以增加打印 timeinfo_local 各个字段的值来调试
-            return false;
-        }
-        Serial.printf("mktime produced temporary epoch: %ld (based on system default interpretation)\n", t_temp);
-
-        // 校正 t_temp 得到实际的 UTC epoch 秒数。
-        // 因为 timeinfo_local 是 UTC+8，所以对应的 UTC 时间戳要减去偏移量。
-        time_t t_correct_utc = t_temp - gmtOffset_sec; // gmtOffset_sec 是 8 * 3600
-        Serial.printf("Calculated Correct UTC epoch by subtracting offset: %ld\n", t_correct_utc);
-        // --- 计算结束 ---
-
-        // 使用计算出的正确的 UTC time_t 设置系统时间
-        struct timeval now = { .tv_sec = t_correct_utc };
-        settimeofday(&now, NULL);
-        Serial.println("System time set using manually calculated UTC epoch from RTC local time.");
-
-        // 重要：此时系统 UTC 基准时间已设置，但 getLocalTime() 需要知道 gmtOffset_sec 才能工作。
-        // 这通常由 configTime() 完成。我们依赖于 setup() 中调用 syncNtpTime() 时执行的 configTime()。
-        // 如果 configTime 从未运行，getLocalTime() 可能只返回 UTC。
-
-        // 更新内部时间字符串，使用 getLocalTime()
-        // 这依赖于 settimeofday 成功设置了基准时间 *并且* configTime 设置了偏移量
-        if (updateLocalTimeInternal()) {
-            Serial.print("Internal time string updated via getLocalTime: ");
-            Serial.println(_currentTimeString);
-            _isTimeValid = true;
-            // 可以在这里更新网络状态，表示时间已从RTC获取
-            _currentNetState = NET_TIME_SYNC_SUCCESS; // 或者一个表示RTC同步成功的状态
-            return true;
-        } else {
-            Serial.println("Failed to update internal time string after setting time from RTC (maybe offset not set by configTime yet?).");
-            _isTimeValid = false;
-            _currentNetState = NET_TIME_SYNC_FAILED;
-            return false;
-        }
-    }
-
-    Serial.println("Failed to read time from external RTC");
-    _currentNetState = NET_TIME_SYNC_FAILED; // 更新状态
-    return false;
-}
 bool getCurrentTimeString(char* timeBuffer, size_t bufferSize) {
     if (bufferSize < 20) { // 需要更大的缓冲区来存储"YYYY-MM-DD HH:MM:SS"
         return false;
     }
     
     // 从RTC读取最新时间
-    if (isDS3231Available()) {
-        struct tm timeinfo;
-        if (readTimeFromRTC(&timeinfo)) {
-            // 格式化为"年-月-日 时:分:秒"
-            sprintf(timeBuffer, "%04d-%02d-%02d %02d:%02d:%02d",
-                    timeinfo.tm_year + 1900, // 年份需要加1900
-                    timeinfo.tm_mon + 1,     // 月份从0开始，需要加1
-                    timeinfo.tm_mday,        // 日期
-                    timeinfo.tm_hour,        // 小时
-                    timeinfo.tm_min,         // 分钟
-                    timeinfo.tm_sec);        // 秒钟
-            return true;
-        }
-    }
-    
+   
     // 如果没有RTC或RTC读取失败，尝试使用系统时间
     struct tm timeinfo;
+
+
     if (getLocalTime(&timeinfo)) {
         // 格式化为"年-月-日 时:分:秒"
         sprintf(timeBuffer, "%04d-%02d-%02d %02d:%02d:%02d",
