@@ -31,7 +31,4 @@ bool getCurrentTimeString(char* timeBuffer, size_t bufferSize);
 // 获取网络状态
 NetState getNetState();
 
-// 添加RTC相关函数声明
-bool getTimeFromRTC();
-
 #endif // NET_H

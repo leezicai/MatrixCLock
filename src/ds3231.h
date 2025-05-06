@@ -24,6 +24,11 @@
 #define DS3231_TEMP_MSB_REG 0x11
 #define DS3231_TEMP_LSB_REG 0x12
 
+// NTP 请求相关常量
+const int NTP_PACKET_SIZE = 48;  // NTP 时间戳在消息的前 48 字节
+const int NTP_PORT = 123;        // NTP 使用的端口号
+
+
 class DS3231 {
 private:
     TwoWire *wire;
@@ -54,6 +59,8 @@ public:
     bool getRTCDateTime(tm* timeinfo);
     void getStringDateTime(char* buffer, size_t bufferSize);
     float getTemperature();
+    void sendNTPpacket(const char *address);
+    bool syncNtpTime();
 };
 
 #endif /* DS3231_H */

@@ -2,6 +2,7 @@
 #include "dma.h" // <--- 包含 DMA 设置头文件 (Include DMA setup header)
 #include "net.h" // 包含网络模块头文件 (Include Network module header)
 #include "ds3231.h" // 添加DS3231头文件
+#include "task.h"
 #include <customFonts/FreeSans16pt7b.h> // 使用自定义字体
 
 // 固定的显示位置 - 屏幕居中位置
@@ -115,7 +116,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("\nESP32 HUB75 WiFi Clock Starting (With RTC Support)");
 
-  
+  initTasks();
   // Method 1: Initialize DS3231
   if (rtc.begin(SDA, SCL)) {
     Serial.println("DS3231 initialized successfully");
@@ -193,8 +194,6 @@ void setup() {
 }
 
 void loop() {
-    printLocalTime();
-    printRTCTime();
     // 获取当前毫秒数，用于所有定时器
     unsigned long currentMillis = millis();
 

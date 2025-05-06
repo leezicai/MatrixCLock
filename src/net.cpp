@@ -10,9 +10,7 @@
 // --- WiFi and NTP Configuration (Keep unchanged) ---
 const char* ssid       = "CatNet";
 const char* password = "wopaodekuai.1234";
-const char* ntpServer = "ntp.aliyun.com";
-const long  gmtOffset_sec = 8 * 3600;
-const int   daylightOffset_sec = 0;
+
 
 DS3231 rtc2;
 // --- WiFi 连接常量 ---
@@ -144,64 +142,64 @@ bool isWiFiConnected() {
     return (WiFi.status() == WL_CONNECTED);
 }
 
-bool syncNtpTime() {
-    if (!isWiFiConnected()) {
-        Serial.println("NTP sync failed: WiFi not connected.");
-        _currentNetState = NET_TIME_SYNC_FAILED; // 修正：使用_currentNetState而不是*currentNetState
-        return false;
-    }
+// bool syncNtpTime() {
+//     if (!isWiFiConnected()) {
+//         Serial.println("NTP sync failed: WiFi not connected.");
+//         _currentNetState = NET_TIME_SYNC_FAILED; // 修正：使用_currentNetState而不是*currentNetState
+//         return false;
+//     }
     
-    Serial.println("Configuring time using NTP server...");
-    _currentNetState = NET_SYNCING_TIME; // 修正：使用_currentNetState而不是*currentNetState
-    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-    Serial.println("Waiting for NTP time synchronization...");
+//     Serial.println("Configuring time using NTP server...");
+//     _currentNetState = NET_SYNCING_TIME; // 修正：使用_currentNetState而不是*currentNetState
+//     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+//     Serial.println("Waiting for NTP time synchronization...");
     
-    int ntpAttempts = 0;
-    bool timeSuccess = false;
-    // 尝试最多20次(大约10秒)以确保NTP同步稳健
-    // 注意: configTime启动一个进程，updateLocalTime检查是否完成
-    // 根据网络条件，可能需要更长的等待/更多尝试
-    while (ntpAttempts < 20) { // 增加尝试次数以提高稳健性
-        // updateLocalTimeInternal现在在成功时将_currentNetState更新为NET_TIME_SYNC_SUCCESS
-        timeSuccess = updateLocalTimeInternal();
-        if (timeSuccess) {
-            // updateLocalTimeInternal已将状态设置为NET_TIME_SYNC_SUCCESS
-            break; // 获取时间成功，提前退出循环
-        }
-        delay(500); // 等待并重试检查时间
-        ntpAttempts++;
-        Serial.print(".");
-    }
+//     int ntpAttempts = 0;
+//     bool timeSuccess = false;
+//     // 尝试最多20次(大约10秒)以确保NTP同步稳健
+//     // 注意: configTime启动一个进程，updateLocalTime检查是否完成
+//     // 根据网络条件，可能需要更长的等待/更多尝试
+//     while (ntpAttempts < 20) { // 增加尝试次数以提高稳健性
+//         // updateLocalTimeInternal现在在成功时将_currentNetState更新为NET_TIME_SYNC_SUCCESS
+//         timeSuccess = updateLocalTimeInternal();
+//         if (timeSuccess) {
+//             // updateLocalTimeInternal已将状态设置为NET_TIME_SYNC_SUCCESS
+//             break; // 获取时间成功，提前退出循环
+//         }
+//         delay(500); // 等待并重试检查时间
+//         ntpAttempts++;
+//         Serial.print(".");
+//     }
     
-    Serial.println();
-    // 检查循环后的状态以查看是否成功获取时间
-    if (_currentNetState == NET_TIME_SYNC_SUCCESS) {
-        Serial.println("NTP time synchronization successful.");
+//     Serial.println();
+//     // 检查循环后的状态以查看是否成功获取时间
+//     if (_currentNetState == NET_TIME_SYNC_SUCCESS) {
+//         Serial.println("NTP time synchronization successful.");
         
-        // 如果外置RTC可用，将NTP同步的时间也写入RTC
-       // 在syncNtpTime()函数中的相关代码部分：
-        if (rtc2.isConnected())
-        {
-            struct tm timeinfo;
-            if (getLocalTime(&timeinfo))
-            {
-                // 此时timeinfo已经是本地时间（东八区），可以直接写入RTC
-                Serial.print("Updating RTC with local time: ");
-                Serial.printf("%02d:%02d:%02d\n", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
-                rtc2.syncTimeToRTC();
-            }
-        }
+//         // 如果外置RTC可用，将NTP同步的时间也写入RTC
+//        // 在syncNtpTime()函数中的相关代码部分：
+//         if (rtc2.isConnected())
+//         {
+//             struct tm timeinfo;
+//             if (getLocalTime(&timeinfo))
+//             {
+//                 // 此时timeinfo已经是本地时间（东八区），可以直接写入RTC
+//                 Serial.print("Updating RTC with local time: ");
+//                 Serial.printf("%02d:%02d:%02d\n", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+//                 rtc2.syncTimeToRTC();
+//             }
+//         }
 
-        // 时间已由updateLocalTimeInternal更新，状态已设置
-        return true; // 同步成功
-    } else {
-        Serial.println("NTP time synchronization failed after all attempts.");
-        _currentNetState = NET_TIME_SYNC_FAILED; // 修正：使用_currentNetState而不是*currentNetState
-        _isTimeValid = false; // 标记时间为无效
-        strcpy(_currentTimeString, "00:00:00"); // 重置时间字符串
-        return false; // 同步失败
-    }
-}
+//         // 时间已由updateLocalTimeInternal更新，状态已设置
+//         return true; // 同步成功
+//     } else {
+//         Serial.println("NTP time synchronization failed after all attempts.");
+//         _currentNetState = NET_TIME_SYNC_FAILED; // 修正：使用_currentNetState而不是*currentNetState
+//         _isTimeValid = false; // 标记时间为无效
+//         strcpy(_currentTimeString, "00:00:00"); // 重置时间字符串
+//         return false; // 同步失败
+//     }
+// }
 
 // 添加一个新函数用于从外置RTC获取时间 - 修改版
 

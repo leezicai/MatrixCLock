@@ -1,7 +1,16 @@
 #include "DS3231.h"
+#include <ESP32Time.h>
+#include <WiFiUdp.h>
 
 // Global offset variable (8 hours in seconds)
+const char* ntpServer = "ntp.aliyun.com";
 int gmtOffset_sec = 8 * 3600;
+// const long  gmtOffset_sec = 8 * 3600;
+const int   daylightOffset_sec = 0;
+ESP32Time esp32Time;
+WiFiUDP udp;
+byte packetBuffer[NTP_PACKET_SIZE];
+
 
 DS3231::DS3231() {
     wire = &Wire;
@@ -41,19 +50,18 @@ bool DS3231::isConnected() {
 // Method 3: Sync time from ESP32-S3 to DS3231
 bool DS3231::syncTimeToRTC() {
     if (!_isConnected) {
-        return false;
+        this->begin(SDA, SCL);
     }
     
     struct tm timeinfo;
     if (!getLocalTime(&timeinfo)) {
-        Serial.println("Failed to obtain ESP32-S3 time");
         return false;
     }
     
-    // Convert from ESP32-S3's local time (GMT+8) to UTC for DS3231
+    // Convert from ESP32-S3's local time to UTC for DS3231
     time_t now;
     time(&now);
-    // now -= gmtOffset_sec; // Convert to UTC time 本身就是UTC时间 不需要再减一次
+    now -= gmtOffset_sec; // Convert to UTC time 
     gmtime_r(&now, &timeinfo);
     
     return setRTCDateTime(timeinfo);
@@ -154,6 +162,7 @@ uint8_t DS3231::decToBcd(uint8_t val) {
 // Set date and time on DS3231
 bool DS3231::setRTCDateTime(tm timeinfo) {
     if (!_isConnected) {
+        this->begin(SDA, SCL);
         return false;
     }
     
@@ -247,4 +256,75 @@ void DS3231::getStringDateTime(char* buffer, size_t bufferSize) {
     } else {
         snprintf(buffer, bufferSize, "Error reading RTC");
     }
+}
+
+
+// 手动用esp32Time 获取时间
+
+// 发送 NTP 请求包到指定的 NTP 服务器
+void DS3231::sendNTPpacket(const char *address)
+{
+    // 清空缓冲区
+    memset(packetBuffer, 0, NTP_PACKET_SIZE);
+
+    // 初始化 NTP 请求的值
+    packetBuffer[0] = 0b11100011; // LI, Version, Mode
+    packetBuffer[1] = 0;          // Stratum
+    packetBuffer[2] = 6;          // Polling Interval
+    packetBuffer[3] = 0xEC;       // Peer Clock Precision
+
+    // 8 字节的零作为 Root Delay & Root Dispersion
+    packetBuffer[12] = 49;
+    packetBuffer[13] = 0x4E;
+    packetBuffer[14] = 49;
+    packetBuffer[15] = 52;
+
+    // 发送 UDP 包
+    udp.beginPacket(address, NTP_PORT);
+    udp.write(packetBuffer, NTP_PACKET_SIZE);
+    udp.endPacket();
+}
+
+/**
+ * 从 NTP 服务器获取时间并同步给 ESP32S3，完全使用 ESP32Time 库
+ * @return bool - 同步成功返回 true，失败返回 false
+ */
+bool DS3231::syncNtpTime()
+{
+    Serial.println("Starting NTP time synchronization with ESP32Time...");
+    // 启动 UDP
+    udp.begin(NTP_PORT);
+    // 发送 NTP 请求
+    sendNTPpacket(ntpServer);
+    // 等待响应，最多等待 5 秒
+    unsigned long startWait = millis();
+    while (millis() - startWait < 5000)
+    {
+        int packetSize = udp.parsePacket();
+        if (packetSize >= NTP_PACKET_SIZE)
+        {
+            Serial.println("NTP response received");
+            // 读取 UDP 包内容
+            udp.read(packetBuffer, NTP_PACKET_SIZE);
+            // 从第 40 字节开始提取时间戳
+            unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
+            unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);
+            // 组合为大整数（NTP 时间戳）
+            unsigned long secsSince1900 = highWord << 16 | lowWord;
+            // NTP 时间从 1900 年开始，Unix 时间从 1970 年开始
+            // 二者相差 70 年（2208988800 秒）
+            const unsigned long seventyYears = 2208988800UL;
+            unsigned long epoch = secsSince1900 - seventyYears;
+            // 设置 ESP32Time 时间（添加时区偏移）
+            // ESP32Time 已经在创建实例时设置了时区，或者可以在setTime时加入偏移
+            esp32Time.setTime(epoch + gmtOffset_sec);
+            // 打印当前时间以验证
+            Serial.print("NTP time synchronized: ");
+            Serial.println(esp32Time.getTime("%Y-%m-%d %H:%M:%S"));
+            return true;
+        }
+        delay(100);
+    }
+    Serial.println("NTP time synchronization failed - timeout waiting for response.");
+    return false;
 }
