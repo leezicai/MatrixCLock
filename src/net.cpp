@@ -12,7 +12,6 @@ const char* ssid       = "CatNet";
 const char* password = "wopaodekuai.1234";
 
 
-DS3231 rtc2;
 // --- WiFi 连接常量 ---
 // --- WiFi Connection Constants ---
 // User requested 20 attempts for the retry function

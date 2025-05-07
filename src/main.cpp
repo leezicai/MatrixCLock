@@ -35,7 +35,6 @@ bool hasExternalRTC = false; // 新增：跟踪是否有外置RTC
 #define STATUS_X 5
 #define STATUS_Y 40 // 调整 Y 位置以避免与时间重叠
 
-DS3231 rtc;
 void printLocalTime()
 {
     struct tm timeinfo;
@@ -72,10 +71,6 @@ void showStatusMessage(const char* message) {
 // displayTime 函数
 void displayTime(const char* timeToShow) {
   if (strcmp(timeToShow, lastDisplayedTimeString) != 0) {
-      Serial.print("Updating display: ");
-      Serial.print(lastDisplayedTimeString);
-      Serial.print(" -> ");
-      Serial.println(timeToShow);
       if (dma_display) {
           // 确保字体和颜色是用于时间的
           // dma_display->setFont(&FreeSans16pt7b);
@@ -105,7 +100,7 @@ void displayTime(const char* timeToShow) {
           
           dma_display->flipDMABuffer();
           strcpy(lastDisplayedTimeString, timeToShow); // 更新记录
-          Serial.println("Display updated");
+          // Serial.println("Display updated");
       } else {
           Serial.println("Error: dma_display is null in displayTime!");
           strcpy(lastDisplayedTimeString, timeToShow); // 仍然更新记录

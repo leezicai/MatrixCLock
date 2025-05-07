@@ -11,6 +11,7 @@ ESP32Time esp32Time;
 WiFiUDP udp;
 byte packetBuffer[NTP_PACKET_SIZE];
 
+DS3231 rtc;
 
 DS3231::DS3231() {
     wire = &Wire;

@@ -63,4 +63,6 @@ public:
     bool syncNtpTime();
 };
 
+extern DS3231 rtc;
+
 #endif /* DS3231_H */

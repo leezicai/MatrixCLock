@@ -6,7 +6,7 @@
 TaskHandle_t method1TaskHandle = NULL;
 TaskHandle_t method2TaskHandle = NULL;
 
-DS3231 rtc_task;
+// DS3231 rtc_task;
 
 // 初始化任务
 void initTasks() {
@@ -41,9 +41,9 @@ void method1Task(void * parameter) {
     connectNetWithRetry();
     if (isWiFiConnected())
     {
-        rtc_task.syncNtpTime();
-        rtc_task.begin(SDA, SCL);
-        rtc_task.syncTimeToRTC();
+        rtc.syncNtpTime();
+        rtc.begin(SDA, SCL);
+        rtc.syncTimeToRTC();
     }
     disconnectNet();
     
@@ -59,7 +59,7 @@ void method2Task(void * parameter) {
   for(;;) {
     // 执行方法2
     Serial.println("执行方法2");
-    rtc_task.syncTimeToRTC();
+    rtc.syncTimeToRTC();
     
     // 休眠12小时
     vTaskDelay(12 * 60 * 60 * 1000 / portTICK_PERIOD_MS);
