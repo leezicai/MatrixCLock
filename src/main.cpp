@@ -4,6 +4,8 @@
 #include "ds3231.h" // 添加DS3231头文件
 #include "task.h"
 #include "btn.h"
+#include "ec11.h"
+
 #include <customFonts/FreeSans16pt7b.h> // 使用自定义字体
 
 // 固定的显示位置 - 屏幕居中位置
@@ -113,6 +115,17 @@ void setup() {
   Serial.println("\nESP32 HUB75 WiFi Clock Starting (With RTC Support)");
 
   buttonManager.begin();
+
+  EC11* encoder = EC11::getInstance(ROTARY_ENCODER_A_PIN, ROTARY_ENCODER_B_PIN, ROTARY_ENCODER_BUTTON_PIN, ROTARY_ENCODER_VCC_PIN, 4);  // 步数为1
+  encoder->begin(true, 0, 100); 
+  
+  // 配置按钮计时参数（可选）
+  // 参数: 去抖时间(ms), 长按时间(ms), 双击时间间隔(ms)
+  encoder->setButtonTiming(30, 800, 300);
+  
+  // 设置初始位置（可选）
+  encoder->setPosition(50);
+
   initTasks();
   // Method 1: Initialize DS3231
   if (rtc.begin(SDA, SCL)) {
@@ -207,5 +220,52 @@ void loop() {
       lastTimeUpdate = currentMillis;
   }
   buttonManager.tick();
+
+  EC11* encoder = EC11Instance();
+  
+  // 必须在每个循环中调用update以检测事件
+  encoder->update();
+  
+  // 检测所有可能的事件
+  if (encoder->rotatedClockwise()) {
+    int32_t pos = encoder->getPosition();
+    Serial.print("顺时针旋转，当前位置: ");
+    Serial.println(pos);
+  }
+  
+  if (encoder->rotatedCounterClockwise()) {
+    int32_t pos = encoder->getPosition();
+    Serial.print("逆时针旋转，当前位置: ");
+    Serial.println(pos);
+  }
+  
+  if (encoder->buttonPressed()) {
+    Serial.println("按钮被按下");
+  }
+  
+  if (encoder->buttonClicked()) {
+    Serial.println("按钮被点击（短按）");
+  }
+  
+  if (encoder->buttonDoubleClicked()) {
+    Serial.println("按钮被双击");
+  }
+  
+  if (encoder->buttonLongPressed()) {
+    Serial.println("按钮被长按");
+  }
+  
+  if (encoder->buttonPressedAndRotatedClockwise()) {
+    int32_t pos = encoder->getPosition();
+    Serial.print("按住按钮并顺时针旋转，当前位置: ");
+    Serial.println(pos);
+  }
+  
+  if (encoder->buttonPressedAndRotatedCounterClockwise()) {
+    int32_t pos = encoder->getPosition();
+    Serial.print("按住按钮并逆时针旋转，当前位置: ");
+    Serial.println(pos);
+  }
+  
   
 }
