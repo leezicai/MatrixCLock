@@ -3,6 +3,7 @@
 // Initialize static instance pointer
 EC11* EC11::instance = nullptr;
 
+EC11* encoder = EC11::getInstance(ROTARY_ENCODER_A_PIN, ROTARY_ENCODER_B_PIN, ROTARY_ENCODER_BUTTON_PIN, ROTARY_ENCODER_VCC_PIN, 4);  // 步数为1
 // Constructor (private for singleton pattern)
 EC11::EC11(int pinA, int pinB, int buttonPin, int vccPin, int encoderSteps) {
     this->pinA = pinA;
@@ -139,8 +140,9 @@ void EC11::begin(bool circleValues, int16_t minValue, int16_t maxValue) {
     this->minValue = minValue;
     this->maxValue = maxValue;
     
-    pinMode(pinA, INPUT_PULLUP);
-    pinMode(pinB, INPUT_PULLUP);
+
+    // pinMode(pinA, INPUT_PULLUP); // 已安装10K 电阻进行上拉, 信号稳定很多
+    // pinMode(pinB, INPUT_PULLUP);
     // Begin encoder
     rotaryEncoder->begin();
     

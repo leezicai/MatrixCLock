@@ -100,7 +100,7 @@ public:
     void setPosition(int32_t position);
     void reset();
 };
-
+extern EC11* encoder;
 // Global instance accessor function
 EC11* EC11Instance();
 
