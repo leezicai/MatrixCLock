@@ -33,7 +33,7 @@ class DS3231 {
 private:
     TwoWire *wire;
     bool _isConnected;
-    int gmtOffset_sec;
+    // int gmtOffset_sec;
     
     // Utility functions
     uint8_t bcdToDec(uint8_t val);

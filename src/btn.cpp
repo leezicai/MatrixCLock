@@ -1,5 +1,7 @@
 #include "btn.h"
 #include <Arduino.h>
+#include "data.h"
+#include "ds3231.h"
 
 // Create a global instance
 ButtonManager buttonManager;
@@ -57,6 +59,7 @@ void ButtonManager::tick() {
 
 // Button 1 callbacks
 void ButtonManager::handleButton1Click() {
+    Serial.println(AppData.getWifiConfigured());
     Serial.println("Button 1 clicked");
     // Your code for button 1 click here
 }
@@ -67,6 +70,11 @@ void ButtonManager::handleButton1DoubleClick() {
 }
 
 void ButtonManager::handleButton1LongPressStart() {
+    Serial.println(AppData.getWifiConfigured());
+    AppData.setWifiConfigured(!AppData.getWifiConfigured());
+    Serial.println(AppData.getWifiConfigured());
+    delay(1000);
+    ESP.restart();
     Serial.println("Button 1 long press started");
     // Your code for button 1 long press start here
 }
@@ -84,6 +92,8 @@ void ButtonManager::handleButton1LongPressStop() {
 // Button 2 callbacks
 void ButtonManager::handleButton2Click() {
     Serial.println("Button 2 clicked");
+    rtc.syncTimeToRTC();
+    Serial.println("syncTimeToRTC");
     // Your code for button 2 click here
 }
 
@@ -110,6 +120,8 @@ void ButtonManager::handleButton2LongPressStop() {
 // Button 3 callbacks
 void ButtonManager::handleButton3Click() {
     Serial.println("Button 3 clicked");
+    AppData.setTimezone(9);
+    Serial.println(AppData.getTimezone());
     // Your code for button 3 click here
 }
 
@@ -120,6 +132,8 @@ void ButtonManager::handleButton3DoubleClick() {
 
 void ButtonManager::handleButton3LongPressStart() {
     Serial.println("Button 3 long press started");
+    AppData.setTimezone(8);
+    
     // Your code for button 3 long press start here
 }
 
@@ -130,5 +144,6 @@ void ButtonManager::handleButton3LongPress() {
 
 void ButtonManager::handleButton3LongPressStop() {
     Serial.println("Button 3 long press stopped");
+    Serial.println(AppData.getTimezone());
     // Your code for button 3 long press stop here
 }
