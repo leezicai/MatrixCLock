@@ -116,7 +116,7 @@ void setup() {
 
   buttonManager.begin();
 
-  EC11* encoder = EC11::getInstance(ROTARY_ENCODER_A_PIN, ROTARY_ENCODER_B_PIN, ROTARY_ENCODER_BUTTON_PIN, ROTARY_ENCODER_VCC_PIN, 4);  // 步数为1
+  // EC11* encoder = EC11::getInstance(ROTARY_ENCODER_A_PIN, ROTARY_ENCODER_B_PIN, ROTARY_ENCODER_BUTTON_PIN, ROTARY_ENCODER_VCC_PIN, 4);  // 步数为1
   encoder->begin(true, 0, 100); 
   
   // 配置按钮计时参数（可选）
@@ -126,13 +126,14 @@ void setup() {
   // 设置初始位置（可选）
   encoder->setPosition(50);
 
-  initTasks();
   // Method 1: Initialize DS3231
   if (rtc.begin(SDA, SCL)) {
     Serial.println("DS3231 initialized successfully");
   } else {
     Serial.println("Failed to initialize DS3231");
   }
+
+  initTasks();  // task必须在设备初始化之后
   
   // Method 2: Check if DS3231 is connected
   if (rtc.isConnected()) {
@@ -181,7 +182,7 @@ void setup() {
   // dma_display->setFont(&FreeSans16pt7b);
 
   // 使用网络模块
-  setupNet();
+  // setupNet();
 
   // 处理时间来源优先级：首先尝试外置RTC，然后尝试网络
   char initialTimeStr[20] = "0000-00-00 00:00:00"; // 增加字符串长度
@@ -221,7 +222,7 @@ void loop() {
   }
   buttonManager.tick();
 
-  EC11* encoder = EC11Instance();
+  // EC11* encoder = EC11Instance();
   
   // 必须在每个循环中调用update以检测事件
   encoder->update();

@@ -23,9 +23,10 @@ bool attemptWiFiConnectOnce();
 bool connectNetWithRetry();
 void disconnectNet();
 bool isWiFiConnected();
+void setWiFiLowPower();
 
 // 时间同步和获取函数
-bool syncNtpTime();
+// bool syncNtpTime();
 bool getCurrentTimeString(char* timeBuffer, size_t bufferSize);
 
 // 获取网络状态

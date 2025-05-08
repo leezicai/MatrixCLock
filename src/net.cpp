@@ -135,6 +135,11 @@ void disconnectNet() {
     _currentNetState = NET_DISCONNECTED; // Update state
     Serial.println("WiFi disconnected and module turned off.");
 }
+void setWiFiLowPower() {
+    if (isWiFiConnected()) {
+      WiFi.setSleep(true); // 启用省电模式而不是完全断开
+    }
+  }
 
 bool isWiFiConnected() {
     // This function provides the current WiFi connection status directly from the hardware
