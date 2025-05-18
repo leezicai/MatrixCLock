@@ -16,6 +16,10 @@
  #define NVS_KEY_WIFI_CONFIGURED "wificfg"
  #define NVS_KEY_TIMEZONE "timezone"
  #define NVS_KEY_ARRAY_PREFIX "arr"
+ #define NVS_KEY_AUTO_MODE "automode"
+ #define NVS_KEY_MIN_BRIGHTNESS "minbright"
+ #define NVS_KEY_MAX_BRIGHTNESS "maxbright"
+ #define NVS_KEY_MANUAL_BRIGHTNESS "manbright"
  
  Data::Data() 
      : nvs("appdata"),              // 使用"appdata"作为NVS命名空间
@@ -25,7 +29,12 @@
        mLevel2Page(0),              // 默认二级页序号为0
        mLevel3Page(0),              // 默认三级页序号为0(不存NVS)
        mWifiConfigured(false),      // 默认未配网
-       mTimezone(0)                 // 默认时区为0
+       mTimezone(0),                // 默认时区为0
+       mAutoMode(false),            // 默认手动模式
+       mMinBrightness(5),           // 默认最小亮度为5
+       mMaxBrightness(200),         // 默认最大亮度为200
+       mManualBrightness(10),      // 默认手动亮度为50
+       mDynamicBrightness(50)      // 默认动态亮度为50
  {
      // 初始化三维数组
      for (int x = 0; x < MAX_X; x++) {
@@ -71,6 +80,20 @@
 
      // 从NVS读取时区，默认为0
      mTimezone = nvs.readInt(NVS_KEY_TIMEZONE, 8, &exists);
+     
+     // 从NVS读取亮度自动模式，默认为false
+     mAutoMode = nvs.readBool(NVS_KEY_AUTO_MODE, false, &exists);
+     
+     // 从NVS读取最小亮度，默认为5
+     mMinBrightness = nvs.readInt(NVS_KEY_MIN_BRIGHTNESS, 5, &exists);
+     
+     // 从NVS读取最大亮度，默认为200
+     mMaxBrightness = nvs.readInt(NVS_KEY_MAX_BRIGHTNESS, 200, &exists);
+     
+     // 从NVS读取手动亮度，默认为100
+     mManualBrightness = nvs.readInt(NVS_KEY_MANUAL_BRIGHTNESS, 50, &exists);
+     
+     // 动态亮度不需要从NVS中读取，使用构造函数中的默认值
      
      // 加载三维数组数据
      loadArrayData();
@@ -172,6 +195,88 @@
      mTimezone = timezone;
      esp_err_t err = nvs.writeInt(NVS_KEY_TIMEZONE, mTimezone);
      return (err == ESP_OK);
+ }
+ 
+ // 亮度自动模式管理
+ bool Data::getAutoMode() const {
+     return mAutoMode;
+ }
+ 
+ bool Data::setAutoMode(bool autoMode) {
+     mAutoMode = autoMode;
+     esp_err_t err = nvs.writeBool(NVS_KEY_AUTO_MODE, mAutoMode);
+     return (err == ESP_OK);
+ }
+ 
+ // 最小亮度管理
+ int Data::getMinBrightness() const {
+     return mMinBrightness;
+ }
+
+ int Data::increaseMinBrightness(int value) {
+   mMinBrightness += value;
+
+   if (mMinBrightness == mMaxBrightness) {
+       mMinBrightness = mMaxBrightness - 1;
+   }
+   // 限制最小亮度不小于0
+   if (mMinBrightness < 0) {
+       mMinBrightness = 0;
+   }
+
+   esp_err_t err = nvs.writeInt(NVS_KEY_MIN_BRIGHTNESS, mMinBrightness);
+   return mMinBrightness;
+ }
+
+ // 最大亮度管理
+ int Data::getMaxBrightness() const {
+     return mMaxBrightness;
+ }
+ 
+ int Data::increaseMaxBrightness(int value) {
+     mMaxBrightness += value;
+     
+     // 限制最大亮度在10-200之间
+     if (mMaxBrightness == mMinBrightness) {
+         mMaxBrightness = mMinBrightness + 1;
+     }
+     if (mMaxBrightness < 10) {
+         mMaxBrightness = 10;
+     } else if (mMaxBrightness > 200) {
+         mMaxBrightness = 200;
+     }
+
+     esp_err_t err = nvs.writeInt(NVS_KEY_MAX_BRIGHTNESS, mMaxBrightness);
+     return mMaxBrightness;
+ }
+ 
+ // 手动亮度管理
+ int Data::getManualBrightness() const {
+     return mManualBrightness;
+ }
+ 
+ int Data::increaseManualBrightness(int value) {
+     mManualBrightness += value;
+     
+     // 限制手动亮度在10-200之间
+     if (mManualBrightness < 10) {
+         mManualBrightness = 10;
+     } else if (mManualBrightness > 200) {
+         mManualBrightness = 200;
+     }
+     
+     esp_err_t err = nvs.writeInt(NVS_KEY_MANUAL_BRIGHTNESS, mManualBrightness);
+     return mManualBrightness;
+ }
+ 
+ // 动态亮度管理（不存NVS）
+ int Data::getDynamicBrightness() const {
+     return mDynamicBrightness;
+ }
+ 
+ void Data::setDynamicBrightness(int value) {
+     mDynamicBrightness = value;
+     // 不存储到NVS
  }
  
  // 三维数组数据管理

@@ -183,6 +183,75 @@
       * @return 保存成功返回true，否则返回false
       */
      bool saveArrayData();
+     
+     // 亮度模式管理
+     /**
+      * @brief 获取当前亮度模式
+      * @return 如果是自动模式返回true，否则返回false
+      */
+     bool getAutoMode() const;
+     
+     /**
+      * @brief 设置亮度模式并存储到NVS
+      * @param autoMode 要设置的亮度模式，true为自动，false为手动
+      * @return 设置成功返回true，否则返回false
+      */
+     bool setAutoMode(bool autoMode);
+     
+     // 最小亮度管理
+     /**
+      * @brief 获取最小亮度值
+      * @return 当前最小亮度值
+      */
+     int getMinBrightness() const;
+     
+     /**
+      * @brief 增加最小亮度值并存储到NVS
+      * @param value 要增加的值，可为正或负
+      * @return 增加后的最小亮度值
+      */
+     int increaseMinBrightness(int value);
+     
+     // 最大亮度管理
+     /**
+      * @brief 获取最大亮度值
+      * @return 当前最大亮度值
+      */
+     int getMaxBrightness() const;
+     
+     /**
+      * @brief 增加最大亮度值并存储到NVS
+      * @param value 要增加的值，可为正或负
+      * @return 增加后的最大亮度值
+      */
+     int increaseMaxBrightness(int value);
+     
+     // 手动亮度管理
+     /**
+      * @brief 获取手动亮度值
+      * @return 当前手动亮度值
+      */
+     int getManualBrightness() const;
+     
+     /**
+      * @brief 增加手动亮度值并存储到NVS
+      * @param value 要增加的值，可为正或负
+      * @return 增加后的手动亮度值
+      */
+     int increaseManualBrightness(int value);
+     
+     // 动态亮度管理（不存储在NVS）
+     /**
+      * @brief 获取动态亮度值
+      * @return 当前动态亮度值
+      */
+     int getDynamicBrightness() const;
+     
+     /**
+      * @brief 设置动态亮度值（不存储到NVS）
+      * @param value 要设置的动态亮度值
+      */
+     void setDynamicBrightness(int value);
  
  private:
      NVSManager nvs;                     // NVS管理器实例
@@ -195,6 +264,13 @@
      int mLevel3Page;                    // 当前三级页序号 (不存NVS)
      bool mWifiConfigured;               // 配网状态
      int mTimezone;                      // 时区信息
+     
+     // 亮度配置
+     bool mAutoMode;                     // 亮度模式：true为自动，false为手动
+     int mMinBrightness;                 // 最小亮度值
+     int mMaxBrightness;                 // 最大亮度值
+     int mManualBrightness;              // 手动亮度值
+     int mDynamicBrightness;             // 动态亮度值（不存NVS）
      
      // 三维数组配置
      static const int MAX_X = 5;         // 第一维大小

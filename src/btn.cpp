@@ -92,12 +92,16 @@ void ButtonManager::handleButton1LongPressStop() {
 // Button 2 callbacks
 void ButtonManager::handleButton2Click() {
     Serial.println("Button 2 clicked");
-    rtc.syncTimeToRTC();
+    AppData.setAutoMode(!AppData.getAutoMode());
+
     Serial.println("syncTimeToRTC");
     // Your code for button 2 click here
 }
 
 void ButtonManager::handleButton2DoubleClick() {
+    Serial.println(AppData.getAutoMode());
+    Serial.println(AppData.getDynamicBrightness());
+    Serial.println(AppData.getManualBrightness());
     Serial.println("Button 2 double-clicked");
     // Your code for button 2 double-click here
 }
