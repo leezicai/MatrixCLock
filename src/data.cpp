@@ -31,9 +31,9 @@
        mWifiConfigured(false),      // 默认未配网
        mTimezone(0),                // 默认时区为0
        mAutoMode(false),            // 默认手动模式
-       mMinBrightness(5),           // 默认最小亮度为5
-       mMaxBrightness(200),         // 默认最大亮度为200
-       mManualBrightness(10),      // 默认手动亮度为50
+       mMinBrightness(3),           // 默认最小亮度为3
+       mMaxBrightness(150),         // 默认最大亮度为150
+       mManualBrightness(30),      // 默认手动亮度为30
        mDynamicBrightness(50)      // 默认动态亮度为50
  {
      // 初始化三维数组

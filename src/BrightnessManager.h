@@ -6,7 +6,7 @@
 #include "data.h"
 
 // 配置参数
-#define LIGHT_ADC 36                // 光线传感器 ADC 引脚 (GPIO 36)
+#define LIGHT_ADC 1                // 光线传感器 ADC 引脚 (GPIO 1)
 #define SAMPLING_INTERVAL 100       // 采样间隔（毫秒）
 #define CALCULATION_INTERVAL 1000   // 计算间隔（毫秒）
 

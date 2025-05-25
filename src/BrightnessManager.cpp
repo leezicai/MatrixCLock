@@ -48,12 +48,12 @@ void BrightnessManager::init() {
 void BrightnessManager::handle() {
     // 处理自动亮度测量
     // Handle auto brightness measurement
-    handleAutoBrightness();
     
     // 如果在自动模式下并且亮度已更改，则更新显示
     // If in auto mode and brightness has changed, update display
     if (_display && _appData && _appData->getAutoMode()) {
-        updateDisplayBrightness();
+      handleAutoBrightness();
+      updateDisplayBrightness();
     }
 }
 

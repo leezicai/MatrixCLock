@@ -8,6 +8,7 @@
 #include "ec11_handler.h" // 引入我们的编码器事件处理模块
 #include "data.h"
 #include "setAP.h"
+#include "BrightnessManager.h"
 
 #include <customFonts/FreeSans16pt7b.h> // 使用自定义字体
 
@@ -31,6 +32,7 @@ unsigned long lastRtcSyncTime = 0; // 上次RTC同步系统时间
 // 用于双缓冲的变量 - 保持全局指针
 // 全局变量
 MatrixPanel_I2S_DMA *dma_display = nullptr;
+BrightnessManager* brightnessManager = nullptr;
 unsigned long lastTimeUpdate = 0;
 char lastDisplayedTimeString[20] = "";
 bool hasExternalRTC = false; // 新增：跟踪是否有外置RTC
@@ -122,6 +124,8 @@ void setup()
   Serial.begin(115200);
   Serial.println("\nESP32 HUB75 WiFi Clock Starting (With RTC Support)");
 
+  AppData.init(); // 永久数据 优先初始化
+  
   buttonManager.begin();
 
   // 初始化编码器
@@ -147,7 +151,8 @@ void setup()
   {
     Serial.println("Failed to initialize DS3231");
   }
-  AppData.init();
+
+
   Serial.println("AppData1");
   Serial.println(AppData.getWifiConfigured());
   Serial.println("AppData2");
@@ -199,6 +204,8 @@ void setup()
       delay(1000);
     }
   }
+  brightnessManager = new BrightnessManager(dma_display, &AppData);
+  brightnessManager->init();
   // 基本显示设置
   dma_display->fillScreen(COLOR_BLACK);
   dma_display->setTextColor(COLOR_WHITE, COLOR_BLACK);
@@ -257,4 +264,8 @@ void loop()
 
   // 处理编码器事件 - 现在只需要这一行代码就可以处理所有编码器事件
   handleEncoderEvents(encoder);
+
+  if (brightnessManager) {
+        brightnessManager->handle();  // 这将处理自动亮度采样和更新
+    }
 }

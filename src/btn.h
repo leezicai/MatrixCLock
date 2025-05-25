@@ -5,8 +5,8 @@
 
 // Button pins
 #define BUTTON1_PIN 46
-#define BUTTON2_PIN 21
-#define BUTTON3_PIN 47
+#define BUTTON2_PIN 47
+#define BUTTON3_PIN 21
 
 // Button timing parameters (in milliseconds)
 #define DEBOUNCE_TIME_MS 50      // Time for debounce
