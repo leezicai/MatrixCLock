@@ -1,5 +1,5 @@
 // #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h> // 不再需要，已包含在 dma.h 中
-#include "BrightnessManager.h"
+#include "brightnessManager.h"
 #include "btn.h"
 #include "data.h"
 #include "dma.h"    // <--- 包含 DMA 设置头文件 (Include DMA setup header)

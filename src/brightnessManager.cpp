@@ -1,4 +1,4 @@
-#include "BrightnessManager.h"
+#include "brightnessManager.h"
 
 BrightnessManager brightnessManager;
 
