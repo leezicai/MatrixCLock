@@ -2,11 +2,12 @@
 #define BTN_H
 
 #include <OneButton.h>
+#include "common_define.h"
 
 // Button pins
-#define BUTTON1_PIN 46
-#define BUTTON2_PIN 47
-#define BUTTON3_PIN 21
+// ∫#define BUTTON1_PIN 46
+// #define BUTTON2_PIN 16
+// #define BUTTON3_PIN 15
 
 // Button timing parameters (in milliseconds)
 #define DEBOUNCE_TIME_MS 50      // Time for debounce

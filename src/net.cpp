@@ -16,8 +16,8 @@
 // --- WiFi 连接常量 ---
 // --- WiFi Connection Constants ---
 // User requested 20 attempts for the retry function
-#define MAX_WIFI_ATTEMPTS 10
-#define WIFI_CONNECT_TIMEOUT_MS 5000
+#define MAX_WIFI_ATTEMPTS 3
+#define WIFI_CONNECT_TIMEOUT_MS 2000
 
 static char _currentTimeString[9] = "00:00:00";
 static bool _isTimeValid = false;
@@ -70,7 +70,7 @@ bool attemptWiFiConnectOnce() {
     _currentNetState = NET_CONNECTING_WIFI; // Update state
 
     WiFi.mode(WIFI_STA); // Ensure mode is set before beginning
-    WiFi.begin(AppData.getSSID(), AppData.getPassword());
+    WiFi.begin(appData.getSSID(), appData.getPassword());
 
     unsigned long startAttemptTime = millis();
     while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < WIFI_CONNECT_TIMEOUT_MS) {
@@ -117,9 +117,9 @@ bool connectNetWithRetry() {
             Serial.println(attempt);
             return true; // Success on this attempt, exit retry loop
         } else {
-             Serial.println("Attempt failed, preparing for next try...");
-             // Add a small delay between retries
-             delay(500);
+          Serial.println("Attempt failed, preparing for next try...");
+          // Add a small delay between retries
+          delay(200);
         }
     }
 

@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include "data.h"
 #include "ds3231.h"
+#include "page.h"
 
 // Create a global instance
 ButtonManager buttonManager;
@@ -59,20 +60,22 @@ void ButtonManager::tick() {
 
 // Button 1 callbacks
 void ButtonManager::handleButton1Click() {
-    Serial.println(AppData.getWifiConfigured());
-    Serial.println("Button 1 clicked");
-    // Your code for button 1 click here
+  page.increaseFirstClassPage();
+  Serial.println(appData.getWifiConfigured());
+  Serial.println("Button 1 clicked");
+  // Your code for button 1 click here
 }
 
 void ButtonManager::handleButton1DoubleClick() {
-    Serial.println("Button 1 double-clicked");
-    // Your code for button 1 double-click here
+  page.decreaseFirstClassPage();
+  Serial.println("Button 1 double-clicked");
+  // Your code for button 1 double-click here
 }
 
 void ButtonManager::handleButton1LongPressStart() {
-    Serial.println(AppData.getWifiConfigured());
-    AppData.setWifiConfigured(!AppData.getWifiConfigured());
-    Serial.println(AppData.getWifiConfigured());
+    Serial.println(appData.getWifiConfigured());
+    appData.setWifiConfigured(!appData.getWifiConfigured());
+    Serial.println(appData.getWifiConfigured());
     delay(1000);
     ESP.restart();
     Serial.println("Button 1 long press started");
@@ -92,9 +95,9 @@ void ButtonManager::handleButton1LongPressStop() {
 // Button 2 callbacks
 void ButtonManager::handleButton2Click() {
     Serial.println("Button 2 clicked");
-    Serial.println(AppData.getAutoMode());
-    AppData.setAutoMode(!AppData.getAutoMode());
-    Serial.println(AppData.getAutoMode());
+    Serial.println(appData.getAutoMode());
+    appData.setAutoMode(!appData.getAutoMode());
+    Serial.println(appData.getAutoMode());
 
     Serial.println("syncTimeToRTC");
     Serial.println("Button 2 clicked End!");
@@ -102,9 +105,9 @@ void ButtonManager::handleButton2Click() {
 }
 
 void ButtonManager::handleButton2DoubleClick() {
-    Serial.println(AppData.getAutoMode());
-    Serial.println(AppData.getDynamicBrightness());
-    Serial.println(AppData.getManualBrightness());
+    Serial.println(appData.getAutoMode());
+    Serial.println(appData.getDynamicBrightness());
+    Serial.println(appData.getManualBrightness());
     Serial.println("Button 2 double-clicked");
     // Your code for button 2 double-click here
 }
@@ -127,19 +130,21 @@ void ButtonManager::handleButton2LongPressStop() {
 // Button 3 callbacks
 void ButtonManager::handleButton3Click() {
     Serial.println("Button 3 clicked");
-    AppData.setTimezone(9);
-    Serial.println(AppData.getTimezone());
+    appData.setTimezone(9);
+    Serial.println(appData.getTimezone());
     // Your code for button 3 click here
 }
 
 void ButtonManager::handleButton3DoubleClick() {
     Serial.println("Button 3 double-clicked");
+    appData.setTimezone(8);
+    Serial.println(appData.getTimezone());
     // Your code for button 3 double-click here
 }
 
 void ButtonManager::handleButton3LongPressStart() {
     Serial.println("Button 3 long press started");
-    AppData.setTimezone(8);
+    appData.setTimezone(8);
     
     // Your code for button 3 long press start here
 }
@@ -151,6 +156,6 @@ void ButtonManager::handleButton3LongPress() {
 
 void ButtonManager::handleButton3LongPressStop() {
     Serial.println("Button 3 long press stopped");
-    Serial.println(AppData.getTimezone());
+    Serial.println(appData.getTimezone());
     // Your code for button 3 long press stop here
 }

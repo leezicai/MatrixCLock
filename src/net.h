@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <stddef.h> // 为size_t定义
+#include "loading.h"
 
 // 网络模块状态枚举
 enum NetState {

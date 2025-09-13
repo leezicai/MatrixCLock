@@ -4,10 +4,11 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "time.h"
+#include "common_define.h"
 
 // DS3231 I2C address
-#define SDA 1
-#define SCL 2
+// #define SDA 1
+// #define SCL 2
 #define DS3231_ADDRESS 0x68
 
 // DS3231 register addresses

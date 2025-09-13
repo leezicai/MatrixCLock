@@ -1,14 +1,17 @@
 #ifndef BRIGHTNESS_MANAGER_H
 #define BRIGHTNESS_MANAGER_H
-
 #include <Arduino.h>
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 #include "data.h"
+#include "common_define.h"
 
-// 配置参数
-#define LIGHT_ADC 1                // 光线传感器 ADC 引脚 (GPIO 1)
-#define SAMPLING_INTERVAL 100       // 采样间隔（毫秒）
-#define CALCULATION_INTERVAL 1000   // 计算间隔（毫秒）
+extern MatrixPanel_I2S_DMA *dma_display;
+extern Data appData;  // Changed from extern Data *appData;
+
+// Configuration parameters
+// #define LIGHT_ADC 4                // Light sensor ADC pin (GPIO 1)
+#define SAMPLING_INTERVAL 100       // Sampling interval (milliseconds)
+#define CALCULATION_INTERVAL 1000   // Calculation interval (milliseconds)
 
 /**
  * @brief 管理显示亮度的综合类，包括自动亮度检测和显示亮度设置
@@ -20,13 +23,8 @@ public:
     /**
      * @brief BrightnessManager 的构造函数
      * Constructor for BrightnessManager
-     * 
-     * @param display 指向 MatrixPanel_I2S_DMA 显示的指针
-     *        Pointer to the MatrixPanel_I2S_DMA display
-     * @param appData 指向 AppData 对象的指针
-     *        Pointer to the AppData object
      */
-    BrightnessManager(MatrixPanel_I2S_DMA* display, Data* appData);
+    BrightnessManager();
     
     /**
      * @brief 初始化亮度管理器
@@ -47,15 +45,6 @@ public:
     void updateDisplayBrightness();
     
     /**
-     * @brief 设置 AppData 指针（如果需要更改）
-     * Sets AppData pointer if it needs to be changed
-     * 
-     * @param appData 新的 AppData 指针
-     *        New AppData pointer
-     */
-    void setAppData(Data* appData);
-    
-    /**
      * @brief 获取最后应用的亮度值
      * Gets the last applied brightness value
      * 
@@ -71,12 +60,10 @@ public:
     void forceUpdate();
 
 private:
-    // 显示和数据成员
-    MatrixPanel_I2S_DMA* _display;  // 指向显示的指针 Pointer to the display
-    Data* _appData;              // 指向 AppData 的指针 Pointer to the AppData
     uint8_t _lastBrightness;        // 最后应用的亮度 Last applied brightness
     
     // 自动亮度检测相关成员
+    // Auto brightness detection related members
     int _brightSamplingTime;        // 亮度样本数量 Number of brightness samples
     int _brightSamplingValue;       // 累积样本值 Accumulated sample value
     int _currentBrightness;         // 当前亮度值 Current brightness value
@@ -95,5 +82,7 @@ private:
      */
     void handleAutoBrightness();
 };
+
+extern BrightnessManager brightnessManager;
 
 #endif // BRIGHTNESS_MANAGER_H

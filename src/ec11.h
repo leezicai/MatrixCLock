@@ -2,11 +2,12 @@
 #define EC11_H
 #include <Arduino.h>
 #include <AiEsp32RotaryEncoder.h>
+#include "common_define.h"
 
 // Pins definition for EC11
-#define ROTARY_ENCODER_A_PIN 35
-#define ROTARY_ENCODER_B_PIN 45
-#define ROTARY_ENCODER_BUTTON_PIN 48
+// #define ROTARY_ENCODER_A_PIN 11
+// #define ROTARY_ENCODER_B_PIN 10
+// #define ROTARY_ENCODER_BUTTON_PIN 12
 #define ROTARY_ENCODER_VCC_PIN -1  // Set to -1 if directly connected to 3.3V
 #define ROTARY_ENCODER_STEPS 1     // 默认步数为1
 

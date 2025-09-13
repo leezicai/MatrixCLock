@@ -302,6 +302,6 @@
  };
  
  // 外部声明，使其他文件可以访问此实例
- extern Data AppData;
+ extern Data appData;
  
  #endif // DATA_H

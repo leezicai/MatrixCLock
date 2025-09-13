@@ -3,10 +3,11 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include "common_define.h"
 
-// Pin definitions
-#define SDA_2 1
-#define SCL_2 2
+// // Pin definitions
+// #define SDA_2 1
+// #define SCL_2 2
 
 // SHT30 I2C address
 #define SHT30_ADDRESS 0x44

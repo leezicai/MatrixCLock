@@ -8,7 +8,7 @@ SHT30::SHT30() : temperature(0.0), humidity(0.0), initialized(false) {
 
 bool SHT30::begin() {
     // Initialize I2C with custom pins
-    Wire.begin(SDA_2, SCL_2);
+    Wire.begin(SDA, SCL);
     Wire.setClock(100000); // Set I2C frequency to 100kHz
     
     delay(10); // Wait for sensor to be ready

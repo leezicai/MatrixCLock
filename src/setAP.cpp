@@ -1,7 +1,7 @@
 #include "setAP.h"
 #include "data.h"
 
-#define AP_SSID "AAA"  // Access point name
+#define AP_SSID "MatrixClock"  // Access point name
 #define AP_IP IPAddress(10, 0, 0, 1)
 #define AP_SUBNET IPAddress(255, 255, 255, 0)
 #define DNS_PORT 53
@@ -100,10 +100,10 @@ void SetAP::handleSubmit() {
     
     server.send(200, "text/html", response);
     
-    AppData.setSSID(selectedSSID.c_str());
-    AppData.setPassword(wifiPassword.c_str());
-    AppData.setTimezone(timezone);
-    AppData.setWifiConfigured(true);
+    appData.setSSID(selectedSSID.c_str());
+    appData.setPassword(wifiPassword.c_str());
+    appData.setTimezone(timezone);
+    appData.setWifiConfigured(true);
     // 延迟3秒后重启
     delay(3000);
     restartESP();

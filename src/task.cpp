@@ -2,6 +2,8 @@
 #include "ds3231.h"
 #include "net.h"
 #include "sht30.h"  // 新增SHT30头文件
+#include "loading.h"
+#include "common_define.h"
 
 // 任务句柄
 TaskHandle_t method1TaskHandle = NULL;
@@ -48,12 +50,19 @@ void method1Task(void * parameter) {
   for(;;) {
     // 执行方法1
     Serial.println("执行方法1");
-    connectNetWithRetry();
+    attemptWiFiConnectOnce();
     if (isWiFiConnected())
     {
-        rtc.syncNtpTime();
-        rtc.begin(SDA, SCL);
-        rtc.syncTimeToRTC();
+        bool syncNtpFlag = rtc.syncNtpTime();
+        bool rtcFlag = rtc.begin(SDA, SCL);
+        if(!syncNtpFlag){
+          loading.setMessage(LOADING_ERR_MSG_FAIL_NETWORK);
+        }
+        if(syncNtpFlag && rtcFlag){
+          bool syncTimeToRTCFlag = rtc.syncTimeToRTC();
+        }
+    } else {
+      loading.setMessage(LOADING_ERR_MSG_FAIL_WIFI);
     }
     disconnectNet();
     
@@ -69,7 +78,10 @@ void method2Task(void * parameter) {
   for(;;) {
     // 执行方法2
     Serial.println("执行方法2");
-    rtc.syncTimeToRTC();
+    bool rtcFlag = rtc.begin(SDA, SCL);
+    if(rtcFlag){
+      rtc.syncTimeToRTC();
+    }
     
     // 休眠12小时
     vTaskDelay(12 * 60 * 60 * 1000 / portTICK_PERIOD_MS);
@@ -83,21 +95,11 @@ void sensorTask(void * parameter) {
     Serial.println("执行传感器数据读取");
     
     if (sht30.readData()) {
-      float temperature = sht30.getTemperature();
-      float humidity = sht30.getHumidity();
-      
-      Serial.print("温度: ");
-      Serial.print(temperature, 2);
-      Serial.println(" °C");
-      
-      Serial.print("湿度: ");
-      Serial.print(humidity, 2);
-      Serial.println(" %");
     } else {
       Serial.println("SHT30读取失败");
     }
     
-    // 休眠3分钟 (3 * 60 * 1000 毫秒)
-    vTaskDelay(3 * 60 * 1000 / portTICK_PERIOD_MS);
+    // 休眠10分钟 (10 * 60 * 1000 毫秒)
+    vTaskDelay(10 * 60 * 1000 / portTICK_PERIOD_MS);
   }
 }

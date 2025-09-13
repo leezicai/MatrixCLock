@@ -5,16 +5,19 @@
 
 #include "ec11_handler.h"
 #include <Arduino.h>
+#include "page.h"
 
 // 定义EC11编码器事件处理函数
 void handleClockwiseRotation(EC11* encoder) {
   int32_t pos = encoder->getPosition();
+  page.increaseSecondClassPage();
   Serial.print("顺时针旋转，当前位置: ");
   Serial.println(pos);
 }
 
 void handleCounterClockwiseRotation(EC11* encoder) {
   int32_t pos = encoder->getPosition();
+  page.decreaseSecondClassPage();
   Serial.print("逆时针旋转，当前位置: ");
   Serial.println(pos);
 }

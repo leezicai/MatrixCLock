@@ -1,15 +1,10 @@
 #include "BrightnessManager.h"
 
-BrightnessManager::BrightnessManager(MatrixPanel_I2S_DMA* display, Data* appData)
-    : _display(display), 
-      _appData(appData), 
-      _lastBrightness(10),
-      _brightSamplingTime(0),
-      _brightSamplingValue(0),
-      _currentBrightness(0),
-      _lastSampleTime(0),
-      _lastCalculationTime(0) {
-}
+BrightnessManager brightnessManager;
+
+BrightnessManager::BrightnessManager()
+    : _lastBrightness(10), _brightSamplingTime(0), _brightSamplingValue(0),
+      _currentBrightness(0), _lastSampleTime(0), _lastCalculationTime(0) {}
 
 void BrightnessManager::init() {
     // 配置 ADC 为更高分辨率 (12 位)
@@ -37,7 +32,7 @@ void BrightnessManager::init() {
     
     // 初始化显示亮度
     // Initialize display brightness
-    if (_display && _appData) {
+    if (dma_display) {
         updateDisplayBrightness();
     }
     
@@ -51,7 +46,7 @@ void BrightnessManager::handle() {
     
     // 如果在自动模式下并且亮度已更改，则更新显示
     // If in auto mode and brightness has changed, update display
-    if (_display && _appData && _appData->getAutoMode()) {
+    if (dma_display && appData.getAutoMode()) {
       handleAutoBrightness();
       updateDisplayBrightness();
     }
@@ -84,10 +79,6 @@ void BrightnessManager::handleAutoBrightness() {
 }
 
 void BrightnessManager::calculateBrightnessValue() {
-    if (!_appData) {
-        return;
-    }
-    
     // 从样本计算平均值
     // Calculate average from samples
     int val = 0;
@@ -99,22 +90,22 @@ void BrightnessManager::calculateBrightnessValue() {
     // Map brightness value based on threshold
     if (val >= 700) {
         _currentBrightness = map(val, 700, 4095, 
-                               _appData->getMinBrightness() + 1,
-                               _appData->getMaxBrightness());
-        _appData->setDynamicBrightness(_currentBrightness);
+                               appData.getMinBrightness() + 1,
+                               appData.getMaxBrightness());
+        appData.setDynamicBrightness(_currentBrightness);
     } else {
-        _currentBrightness = _appData->getMinBrightness();
-        _appData->setDynamicBrightness(_currentBrightness);
+        _currentBrightness = appData.getMinBrightness();
+        appData.setDynamicBrightness(_currentBrightness);
     }
     
     // 打印调试信息
     // Print debug information
-    Serial.print("Sample count: ");
-    Serial.print(_brightSamplingTime);
-    Serial.print(", Average value: ");
-    Serial.print(val);
-    Serial.print(", Dynamic brightness: ");
-    Serial.println(_currentBrightness);
+    // Serial.print("Sample count: ");
+    // Serial.print(_brightSamplingTime);
+    // Serial.print(", Average value: ");
+    // Serial.print(val);
+    // Serial.print(", Dynamic brightness: ");
+    // Serial.println(_currentBrightness);
     
     // 重置计数器，为下一个计算周期做准备
     // Reset counters for next calculation cycle
@@ -123,32 +114,25 @@ void BrightnessManager::calculateBrightnessValue() {
 }
 
 void BrightnessManager::updateDisplayBrightness() {
-    if (!_display || !_appData) {
-        Serial.println("Cannot update brightness: invalid display or AppData");
+    if (!dma_display) {
+        Serial.println("Cannot update brightness: invalid display");
         return;
     }
     
     // 根据模式设置获取亮度值
     // Get brightness value based on mode setting
-    uint8_t brightness = _appData->getAutoMode() ? 
-                         _appData->getDynamicBrightness() : 
-                         _appData->getManualBrightness();
+    uint8_t brightness = appData.getAutoMode() ? 
+                         appData.getDynamicBrightness() : 
+                         appData.getManualBrightness();
     
     // 仅在亮度已更改时更新
     // Only update if brightness has changed
     if (brightness != _lastBrightness) {
-        _display->setBrightness8(brightness);
+        dma_display->setBrightness8(brightness);
         _lastBrightness = brightness;
         
         Serial.print("Updated DMA display brightness to: ");
         Serial.println(brightness);
-    }
-}
-
-void BrightnessManager::setAppData(Data* appData) {
-    _appData = appData;
-    if (_appData && _display) {
-        updateDisplayBrightness();
     }
 }
 
@@ -157,14 +141,14 @@ uint8_t BrightnessManager::getLastAppliedBrightness() const {
 }
 
 void BrightnessManager::forceUpdate() {
-    if (_display && _appData) {
+    if (dma_display) {
         // 强制获取当前亮度值并应用
         // Force get current brightness value and apply it
-        uint8_t brightness = _appData->getAutoMode() ? 
-                             _appData->getDynamicBrightness() : 
-                             _appData->getManualBrightness();
+        uint8_t brightness = appData.getAutoMode() ? 
+                             appData.getDynamicBrightness() : 
+                             appData.getManualBrightness();
         
-        _display->setBrightness8(brightness);
+        dma_display->setBrightness8(brightness);
         _lastBrightness = brightness;
         
         Serial.print("Force updated DMA display brightness to: ");

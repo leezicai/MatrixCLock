@@ -1,10 +1,10 @@
-#include "DS3231.h"
+#include "ds3231.h"
 #include <ESP32Time.h>
 #include <WiFiUdp.h>
 #include "data.h"
 
 // Global offset variable (8 hours in seconds)
-const char* ntpServer = "ntp.aliyun.com";
+const char* ntpServer = "ntp7.aliyun.com";
 // int gmtOffset_sec = 8 * 3600;
 // const long  gmtOffset_sec = 8 * 3600;
 const int   daylightOffset_sec = 0;
@@ -64,7 +64,7 @@ bool DS3231::syncTimeToRTC() {
     time_t now;
     time(&now);
     Serial.printf("Current time1: %d\n", now);
-    now -= (AppData.getTimezone() * 3600); // Convert to UTC time 
+    now -= (appData.getTimezone() * 3600); // Convert to UTC time 
     Serial.printf("Current time2: %d\n", now);
     gmtime_r(&now, &timeinfo);
     
@@ -94,7 +94,7 @@ bool DS3231::syncTimeFromRTC() {
     struct tm localtimeinfo = timeinfo;
     
     // Apply timezone offset manually
-    int hoursToAdd = AppData.getTimezone();
+    int hoursToAdd = appData.getTimezone();
     
     // Add hours and handle date rollover
     localtimeinfo.tm_hour += hoursToAdd;
@@ -302,7 +302,7 @@ bool DS3231::syncNtpTime()
     sendNTPpacket(ntpServer);
     // 等待响应，最多等待 5 秒
     unsigned long startWait = millis();
-    while (millis() - startWait < 5000)
+    while (millis() - startWait < 2500)
     {
         int packetSize = udp.parsePacket();
         if (packetSize >= NTP_PACKET_SIZE)
@@ -321,7 +321,7 @@ bool DS3231::syncNtpTime()
             unsigned long epoch = secsSince1900 - seventyYears;
             // 设置 ESP32Time 时间（添加时区偏移）
             // ESP32Time 已经在创建实例时设置了时区，或者可以在setTime时加入偏移
-            esp32Time.setTime(epoch + AppData.getTimezone() * 3600);
+            esp32Time.setTime(epoch + appData.getTimezone() * 3600);
             // 打印当前时间以验证
             Serial.print("NTP time synchronized: ");
             Serial.println(esp32Time.getTime("%Y-%m-%d %H:%M:%S"));

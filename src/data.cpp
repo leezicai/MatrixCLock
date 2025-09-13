@@ -5,45 +5,45 @@
 
  #include "data.h"
 
- // 创建全局实例，使其可以从其他文件访问
- Data AppData = Data();
- 
- // NVS键名定义
- #define NVS_KEY_SSID "ssid"
- #define NVS_KEY_PASSWORD "pwd"
- #define NVS_KEY_LEVEL1_PAGE "lvl1page"
- #define NVS_KEY_LEVEL2_PAGE "lvl2page"
- #define NVS_KEY_WIFI_CONFIGURED "wificfg"
- #define NVS_KEY_TIMEZONE "timezone"
- #define NVS_KEY_ARRAY_PREFIX "arr"
- #define NVS_KEY_AUTO_MODE "automode"
- #define NVS_KEY_MIN_BRIGHTNESS "minbright"
- #define NVS_KEY_MAX_BRIGHTNESS "maxbright"
- #define NVS_KEY_MANUAL_BRIGHTNESS "manbright"
- 
- Data::Data() 
-     : nvs("appdata"),              // 使用"appdata"作为NVS命名空间
-       mSSID(""),                   // 初始SSID为空
-       mPassword(""),               // 初始密码为空
-       mLevel1Page(1),              // 默认一级页序号为1
-       mLevel2Page(0),              // 默认二级页序号为0
-       mLevel3Page(0),              // 默认三级页序号为0(不存NVS)
-       mWifiConfigured(false),      // 默认未配网
-       mTimezone(0),                // 默认时区为0
-       mAutoMode(false),            // 默认手动模式
-       mMinBrightness(3),           // 默认最小亮度为3
-       mMaxBrightness(150),         // 默认最大亮度为150
-       mManualBrightness(30),      // 默认手动亮度为30
-       mDynamicBrightness(50)      // 默认动态亮度为50
- {
-     // 初始化三维数组
-     for (int x = 0; x < MAX_X; x++) {
-         for (int y = 0; y < MAX_Y; y++) {
-             for (int z = 0; z < MAX_Z; z++) {
-                 mArray[x][y][z] = {0, false}; // 默认值
-             }
-         }
-     }
+Data appData;
+// 创建全局实例，使其可以从其他文件访问
+
+// NVS键名定义
+#define NVS_KEY_SSID "ssid"
+#define NVS_KEY_PASSWORD "pwd"
+#define NVS_KEY_LEVEL1_PAGE "lvl1page"
+#define NVS_KEY_LEVEL2_PAGE "lvl2page"
+#define NVS_KEY_WIFI_CONFIGURED "wificfg"
+#define NVS_KEY_TIMEZONE "timezone"
+#define NVS_KEY_ARRAY_PREFIX "arr"
+#define NVS_KEY_AUTO_MODE "automode"
+#define NVS_KEY_MIN_BRIGHTNESS "minbright"
+#define NVS_KEY_MAX_BRIGHTNESS "maxbright"
+#define NVS_KEY_MANUAL_BRIGHTNESS "manbright"
+
+Data::Data()
+    : nvs("appdata"),         // 使用"appdata"作为NVS命名空间
+      mSSID(""),              // 初始SSID为空
+      mPassword(""),          // 初始密码为空
+      mLevel1Page(1),         // 默认一级页序号为1
+      mLevel2Page(0),         // 默认二级页序号为0
+      mLevel3Page(0),         // 默认三级页序号为0(不存NVS)
+      mWifiConfigured(false), // 默认未配网
+      mTimezone(0),           // 默认时区为0
+      mAutoMode(false),       // 默认手动模式
+      mMinBrightness(3),      // 默认最小亮度为3
+      mMaxBrightness(150),    // 默认最大亮度为150
+      mManualBrightness(30),  // 默认手动亮度为30
+      mDynamicBrightness(50)  // 默认动态亮度为50
+{
+  // 初始化三维数组
+  for (int x = 0; x < MAX_X; x++) {
+    for (int y = 0; y < MAX_Y; y++) {
+      for (int z = 0; z < MAX_Z; z++) {
+        mArray[x][y][z] = {0, false}; // 默认值
+      }
+    }
+  }
  }
  
  Data::~Data() {
