@@ -19,10 +19,10 @@ Page::~Page() {
 // Get max second class page for current first class page
 int Page::getMaxSecondClassPage() const {
     switch (currentFirstClassPage) {
-        case PAGE_ZERO:
-            return MAX_SECOND_CLASS_ZERO_PAGE;
-        case PAGE_ONE:
-            return MAX_SECOND_CLASS_ONE_PAGE;
+        case PAGE_0:
+            return MAX_SECOND_CLASS_0_PAGE;
+        case PAGE_1:
+            return MAX_SECOND_CLASS_1_PAGE;
         default:
             return 1;  // Default to at least 1 page
     }
@@ -30,18 +30,18 @@ int Page::getMaxSecondClassPage() const {
 
 // Save current second class page to history
 void Page::saveCurrentSecondClassToHistory() {
-    if (currentFirstClassPage == PAGE_ZERO) {
+    if (currentFirstClassPage == PAGE_0) {
         history_page_zero_second_class_page = currentSecondClassPage;
-    } else if (currentFirstClassPage == PAGE_ONE) {
+    } else if (currentFirstClassPage == PAGE_1) {
         history_page_one_second_class_page = currentSecondClassPage;
     }
 }
 
 // Load second class page from history for given first class page
 void Page::loadSecondClassFromHistory(int firstClassPage) {
-    if (firstClassPage == PAGE_ZERO) {
+    if (firstClassPage == PAGE_0) {
         currentSecondClassPage = history_page_zero_second_class_page;
-    } else if (firstClassPage == PAGE_ONE) {
+    } else if (firstClassPage == PAGE_1) {
         currentSecondClassPage = history_page_one_second_class_page;
     } else {
         currentSecondClassPage = 0;
@@ -94,4 +94,21 @@ void Page::decreaseSecondClassPage() {
     
     // Update history for current first class page
     saveCurrentSecondClassToHistory();
+}
+
+
+// Increase first class page (with circular logic)
+void Page::increaseAnimationType() {
+    currentAnimationType = (currentAnimationType + 1) % MAX_ANIMATION_TYPE;
+}
+
+// Decrease first class page (with circular logic)
+void Page::decreaseAnimationType() {
+    
+    currentAnimationType = (currentAnimationType - 1 + MAX_ANIMATION_TYPE) % MAX_ANIMATION_TYPE;
+}
+
+void Page::setAnimationType(int type) {
+  type = abs(type);
+  currentAnimationType = type;
 }

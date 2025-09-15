@@ -49,6 +49,11 @@ void Loading::drawErrMsg() {
 void Loading::flipDMABuffer(){
     dma_display->flipDMABuffer();
 }
+
+void Loading::clearScreen() { 
+    dma_display->clearScreen();
+}
+
 void Loading::setFlag(bool value) {
     flag = value;
 }

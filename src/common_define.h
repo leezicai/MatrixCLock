@@ -81,6 +81,10 @@
 #define PANEL_HEIGHT 64
 #define PANEL_CHAIN 1
 
+#define PANEL_NAME "ICN2012"
+#define PANEL_NAME_ICN2012 "ICN2012"
+#define PANEL_NAME_TC7528 "TC7528D"
+
 // loading
 #define DURATION 3000;
 // loading error message

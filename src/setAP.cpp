@@ -6,6 +6,8 @@
 #define AP_SUBNET IPAddress(255, 255, 255, 0)
 #define DNS_PORT 53
 
+SetAP wifiManager;
+
 SetAP::SetAP() : 
     server(80),
     timezone(0) {
@@ -74,7 +76,7 @@ int SetAP::getTimezone() const {
 
 void SetAP::restartESP() {
     Serial.println("Restarting ESP32S3...");
-    delay(1000);
+    delay(500);
     ESP.restart();
 }
 
@@ -95,7 +97,7 @@ void SetAP::handleSubmit() {
     response += "<p>SSID: " + selectedSSID + "</p>";
     response += "<p>Password: " + wifiPassword + "</p>";
     response += "<p>Timezone: " + String(timezone) + "</p>";
-    response += "<p>Device will restart in 3 seconds...</p>";
+    response += "<p>Device will restart in 2 seconds...</p>";
     response += "</body></html>";
     
     server.send(200, "text/html", response);
@@ -105,7 +107,7 @@ void SetAP::handleSubmit() {
     appData.setTimezone(timezone);
     appData.setWifiConfigured(true);
     // 延迟3秒后重启
-    delay(3000);
+    delay(2000);
     restartESP();
 }
 

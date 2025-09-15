@@ -10,8 +10,14 @@ MatrixPanel_I2S_DMA* setupDMA(uint8_t brightness) {
     // Configure HUB75 pins using definitions from dma.h
     // 使用 dma.h 中的定义配置 HUB75 引脚
     HUB75_I2S_CFG::i2s_pins pins;
-    pins.r1 = R1_PIN; pins.g1 = G1_PIN; pins.b1 = B1_PIN;
-    pins.r2 = R2_PIN; pins.g2 = G2_PIN; pins.b2 = B2_PIN;
+
+    if(strcmp(PANEL_NAME, PANEL_NAME_TC7528) == 0){
+        pins.r1 = R1_PIN; pins.g1 = B1_PIN; pins.b1 = G1_PIN;
+        pins.r2 = R2_PIN; pins.g2 = B2_PIN; pins.b2 = G2_PIN;
+    } else {
+        pins.r1 = R1_PIN; pins.g1 = G1_PIN; pins.b1 = B1_PIN;
+        pins.r2 = R2_PIN; pins.g2 = G2_PIN; pins.b2 = B2_PIN;
+    }
     pins.a = A_PIN; pins.b = B_PIN; pins.c = C_PIN;
     pins.d = D_PIN; pins.e = E_PIN;
     pins.lat = LAT_PIN; pins.oe = OE_PIN; pins.clk = CLK_PIN;

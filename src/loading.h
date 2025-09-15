@@ -19,6 +19,7 @@ public:
     void updateProgress(float percent); // 方法三: 更新进度条
     void showSetupMsg();
     void flipDMABuffer();
+    void clearScreen();
 
     void setFlag(bool flag);  // 设置标记
     bool getFlag() const;     // 获取标记

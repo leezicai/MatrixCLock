@@ -130,23 +130,19 @@ void ButtonManager::handleButton2LongPressStop() {
 // Button 3 callbacks
 void ButtonManager::handleButton3Click() {
     Serial.println("Button 3 clicked");
-    appData.setTimezone(9);
-    Serial.println(appData.getTimezone());
+    page.increaseAnimationType();
     // Your code for button 3 click here
 }
 
 void ButtonManager::handleButton3DoubleClick() {
     Serial.println("Button 3 double-clicked");
-    appData.setTimezone(8);
-    Serial.println(appData.getTimezone());
+    page.decreaseAnimationType();
     // Your code for button 3 double-click here
 }
 
 void ButtonManager::handleButton3LongPressStart() {
     Serial.println("Button 3 long press started");
-    appData.setTimezone(8);
-    
-    // Your code for button 3 long press start here
+    page.setAnimationType(0);
 }
 
 void ButtonManager::handleButton3LongPress() {

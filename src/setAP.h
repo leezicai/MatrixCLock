@@ -51,4 +51,6 @@ private:
     String generateHTML();
 };
 
+extern SetAP wifiManager;
+
 #endif // SET_AP_H
