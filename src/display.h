@@ -8,6 +8,7 @@
 #include "page.h"
 #include "animation1.h"
 #include "animation2.h"
+#include "animation3.h"
 
 extern MatrixPanel_I2S_DMA *dma_display;
 extern U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit_gfx;
@@ -99,10 +100,21 @@ struct DiffTimeStrings {
     int16_t ampm_1;        // 0 for AM, 1 for PM
     int16_t ampm_2;        // 0 for AM, 1 for PM
 };
+
+struct FontMetrics {
+  int height;
+  int ascent;
+  int descent;
+  int charWidth;
+};
+
 class Display {
     private:
       float animationSpeed;
-
+      void setupDisplayContext(uint16_t colorRGB565, int x, int y,
+                               int fontWidth, int fontHeight, int offsetFontNum,
+                               int separatorWidth, int offsetSepar,
+                               const uint8_t *fontName);
     public:
       Display();
       // Function declarations
@@ -143,47 +155,24 @@ class Display {
       void displayU8g2(uint16_t colorRGB565, int x, int y,
                       const uint8_t *fontName, String printStr);
       // Static display methods
-      void displayStaticHour(TimeStrings timeNow,
-                             DiffTimeStrings diffTimeStrings,
-                             uint16_t colorRGB565, int x, int y, int fontWidth,
-                             int fontHeight, int offsetNum,
-                             const uint8_t *fontName);
-
-      void displayStaticMinute(TimeStrings timeNow,
-                               DiffTimeStrings diffTimeStrings,
-                               uint16_t colorRGB565, int x, int y,
-                               int fontWidth, int fontHeight, int offsetNum,
+      void setupDisplayContext(uint16_t colorRGB565, int x, int y,
+                               int fontWidth, int fontHeight,
+                               int separatorWidth, int offSetNumFont,
+                               int offSetNumSep, int offSetFont, int offSetSepX,int offSetSepY,
                                const uint8_t *fontName);
+      template <typename T>
+      void displayStaticOneTemplate(T one, uint16_t colorRGB565, int x, int y,
+                                    int fontWidth, int fontHeight,
+                                    int separatorWidth, int offSetNumFont,
+                                    int offSetNumSep, int offSetFont,
+                                    int offSetSepX, int offSetSepY, const uint8_t *fontName) {
+        setupDisplayContext(colorRGB565, x, y, fontWidth, fontHeight,
+                            separatorWidth, offSetNumFont, offSetNumSep,
+                            offSetFont, offSetSepX, offSetSepY, fontName);
+        u8g2_for_adafruit_gfx.print(one);
+      }
 
-      void displayStaticSecond(TimeStrings timeNow,
-                               DiffTimeStrings diffTimeStrings,
-                               uint16_t colorRGB565, int x, int y,
-                               int fontWidth, int fontHeight, int offsetNum,
-                               const uint8_t *fontName);
-
-      void displayStaticYear(TimeStrings timeNow,
-                             DiffTimeStrings diffTimeStrings,
-                             uint16_t colorRGB565, int x, int y, int fontWidth,
-                             int fontHeight, int offsetNum,
-                             const uint8_t *fontName);
-
-      void displayStaticMonth(TimeStrings timeNow,
-                              DiffTimeStrings diffTimeStrings,
-                              uint16_t colorRGB565, int x, int y, int fontWidth,
-                              int fontHeight, int offsetNum,
-                              const uint8_t *fontName);
-
-      void displayStaticDay(TimeStrings timeNow,
-                            DiffTimeStrings diffTimeStrings,
-                            uint16_t colorRGB565, int x, int y, int fontWidth,
-                            int fontHeight, int offsetNum,
-                            const uint8_t *fontName);
-
-      
-      void displaySeparator(const char *separator,
-                                     uint16_t colorRGB565, int x, int y,
-                                     int offsetNum, int fontWidth,
-                                     const uint8_t *fontName);
+      FontMetrics getFontMetrics(const uint8_t *font, const char *character);
 
       void displayHourMinuteSecond(unsigned long elapsed, TimeStrings timeNow,
                                    TimeStrings timeNowNextSec,

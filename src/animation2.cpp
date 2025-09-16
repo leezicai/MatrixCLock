@@ -196,14 +196,14 @@ void Animation2::displayTimeNextSecond(
 
   display.displayU8g2(
       display.scaleColorRGB565Forward(colorRGB565, animationSpeed,
-                                      diffTimeStrings.second_1, 0),
+                                      diffTimeStrings.second_1, 0.1),
       x + (1 + fontWidth) * offsetNum,
       y,
       timeNowNextSec.second_1);
 
   display.displayU8g2(
       display.scaleColorRGB565Forward(colorRGB565, animationSpeed,
-                                      diffTimeStrings.second_2, 0),
+                                      diffTimeStrings.second_2, 0.1),
       x + (1 + fontWidth) * (offsetNum + 1),
       y,
       timeNowNextSec.second_2);

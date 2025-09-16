@@ -164,7 +164,7 @@ void loop() {
           display.displayHourMinuteSecond(
               elapsed, timeNow, timeNowNextSec, diffTimeStrings,
               page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-              u8g2_font_t0_22b_tn);
+              u8g2_font_crox5hb_tf);
           display.flipDMABuffer();
           break;
         case PAGE_0_2:
@@ -172,7 +172,7 @@ void loop() {
           display.displayHourMinuteSecond(
               elapsed, timeNow, timeNowNextSec, diffTimeStrings,
               page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-              u8g2_font_t0_22b_tn);
+              u8g2_font_fub17_tf);
           display.flipDMABuffer();
           break;
         case PAGE_0_3:
@@ -180,7 +180,7 @@ void loop() {
           display.displayHourMinuteSecond(
               elapsed, timeNow, timeNowNextSec, diffTimeStrings,
               page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-              u8g2_font_t0_22b_tn);
+              u8g2_font_ncenB18_tn);
           display.flipDMABuffer();
           break;
         case PAGE_0_4:
@@ -188,7 +188,7 @@ void loop() {
           display.displayHourMinuteSecond(
               elapsed, timeNow, timeNowNextSec, diffTimeStrings,
               page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-              u8g2_font_t0_22b_tn);
+              u8g2_font_luBS18_tf);
           display.flipDMABuffer();
           break;
         case PAGE_0_5:
@@ -196,7 +196,7 @@ void loop() {
           display.displayHourMinuteSecond(
               elapsed, timeNow, timeNowNextSec, diffTimeStrings,
               page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-              u8g2_font_t0_22b_tn);
+              u8g2_font_crox4hb_tn);
           display.flipDMABuffer();
           break;
         default:
