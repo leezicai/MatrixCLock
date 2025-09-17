@@ -8,7 +8,6 @@
 #include "page.h"
 #include "animation1.h"
 #include "animation2.h"
-#include "animation3.h"
 
 extern MatrixPanel_I2S_DMA *dma_display;
 extern U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit_gfx;
@@ -27,6 +26,7 @@ struct TimeStrings {
     int16_t day;         // 14
     int16_t day_1;       // 1 (first digit)
     int16_t day_2;       // 4 (second digit)
+    int16_t mday;
     int16_t hour24;      // 23
     int16_t hour24_1;    // 2 (first digit)
     int16_t hour24_2;    // 3 (second digit)
@@ -84,6 +84,7 @@ struct DiffTimeStrings {
     int16_t day;         // 14
     int16_t day_1;       // 1 (first digit)
     int16_t day_2;       // 4 (second digit)
+    int16_t mday;
     int16_t hour24;      // 23
     int16_t hour24_1;    // 2 (first digit)
     int16_t hour24_2;    // 3 (second digit)
@@ -111,10 +112,6 @@ struct FontMetrics {
 class Display {
     private:
       float animationSpeed;
-      void setupDisplayContext(uint16_t colorRGB565, int x, int y,
-                               int fontWidth, int fontHeight, int offsetFontNum,
-                               int separatorWidth, int offsetSepar,
-                               const uint8_t *fontName);
     public:
       Display();
       // Function declarations
@@ -153,7 +150,7 @@ class Display {
       void displayU8g2(uint16_t colorRGB565, int x, int y,
                        const uint8_t *fontName, int printInt);
       void displayU8g2(uint16_t colorRGB565, int x, int y,
-                      const uint8_t *fontName, String printStr);
+                       const uint8_t *fontName, String printStr);
       // Static display methods
       void setupDisplayContext(uint16_t colorRGB565, int x, int y,
                                int fontWidth, int fontHeight,
@@ -179,7 +176,7 @@ class Display {
                                    DiffTimeStrings diffTimeStrings,
                                    int16_t animationType, uint16_t colorRGB565,
                                    int x, int y, int fontWidth, int fontHeight,
-                                   const uint8_t *fontName);
+                                   const uint8_t *fontName, const char* fontM, const char* sepM);
       void displayHourMinute(
           unsigned long elapsed, TimeStrings timeNow,
           TimeStrings timeNowNextSec, DiffTimeStrings diffTimeStrings,

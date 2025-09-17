@@ -25,8 +25,8 @@
 #define ANIMATION_TYPE_0 0
 #define ANIMATION_TYPE_1 1
 #define ANIMATION_TYPE_2 2
-#define ANIMATION_TYPE_3 3
-#define MAX_ANIMATION_TYPE 4
+
+#define MAX_ANIMATION_TYPE 3
 class Page {
 private:
     int currentFirstClassPage;
