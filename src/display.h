@@ -6,8 +6,6 @@
 #include <iomanip>
 #include <sstream>
 #include "page.h"
-#include "animation1.h"
-#include "animation2.h"
 
 extern MatrixPanel_I2S_DMA *dma_display;
 extern U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit_gfx;
