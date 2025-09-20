@@ -4,39 +4,42 @@
 #include <vector>
 
 struct FontInfo{
-    const uint8_t * font_data;   
+    const uint8_t * fontName;   
     float offsetSepX;
     float offsetSepY;
     float offsetFontX;
     float offsetFontY;
-    FontInfo(const uint8_t* font_data, float offsetSepX, float offsetSepY, float offsetFontX,float offsetFontY);
+    FontInfo(const uint8_t* fontName, float offsetSepX, float offsetSepY, float offsetFontX,float offsetFontY);
 };
 
 typedef std::vector<FontInfo> FontGroup;
+typedef std::vector<FontGroup> FontGroups;
 
-class SimpleFontManager {
+class MatrixFontManager {
 private:
-    // Static font groups (defined as constants)
-    static const FontGroup* font_groups[];
-    static const uint8_t font_groups_count;
+    // Two-level font groups structure
+    FontGroups fontGroups;
     
 public:
     // Constructor
-    SimpleFontManager();
+    MatrixFontManager();
+    
+    // Initialization method
+    void init();
     
     // Font retrieval method
-    const FontInfo* getCurrentFont(uint8_t groupIndex, uint8_t index);
+    const FontInfo* getCurrentFont(int16_t groupIndex, int16_t index);
     
     // Button control methods
-    int switchToNextFontIndex(uint8_t groupIndex, uint8_t index);            
-    int switchToPreviousFontIndex(uint8_t groupIndex, uint8_t index);
+    int16_t switchToNextFontIndex(int16_t groupIndex, int16_t index);            
+    int16_t switchToPreFontIndex(int16_t groupIndex, int16_t index);
     
+    // Get total group count
+    size_t getGroupCount() const;
+    
+    // Get font count in specific group
+    size_t getFontCount(int16_t groupIndex) const;
 };
 
-// Static font groups definition (to be defined in .cpp)
-extern const FontGroup SMALL_FONTS;
-extern const FontGroup MEDIUM_FONTS;  
-extern const FontGroup LARGE_FONTS;
-
 // Global SimpleFontManager object
-extern SimpleFontManager simpleFontManager;
+extern MatrixFontManager matrixFontManager;

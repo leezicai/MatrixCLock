@@ -9,6 +9,12 @@
 
 // 定义EC11编码器事件处理函数
 void handleClockwiseRotation(EC11* encoder) {
+  MatrixCore matrixCore = matrixCoreManager.getCurrentMatrixCore();
+  matrixCore.colorIndex1 = matrixColorManager.nextIndex(matrixCore.colorIndex1);
+  matrixCoreManager.modifyElement(matrixCoreManager.getCurrentPageIndex(),
+                                matrixCoreManager.getCurrentSecondaryIndex(),
+                                matrixCoreManager.getCurrentElementGroupIndex(),
+                                matrixCore);
   int32_t pos = encoder->getPosition();
   page.increaseSecondClassPage();
   Serial.print("顺时针旋转，当前位置: ");
@@ -16,6 +22,13 @@ void handleClockwiseRotation(EC11* encoder) {
 }
 
 void handleCounterClockwiseRotation(EC11* encoder) {
+  MatrixCore matrixCore = matrixCoreManager.getCurrentMatrixCore();
+  matrixCore.colorIndex1 = matrixColorManager.previousIndex(matrixCore.colorIndex1);
+  matrixCoreManager.modifyElement(matrixCoreManager.getCurrentPageIndex(),
+                                matrixCoreManager.getCurrentSecondaryIndex(),
+                                matrixCoreManager.getCurrentElementGroupIndex(),
+                                matrixCore);
+
   int32_t pos = encoder->getPosition();
   page.decreaseSecondClassPage();
   Serial.print("逆时针旋转，当前位置: ");
@@ -23,14 +36,17 @@ void handleCounterClockwiseRotation(EC11* encoder) {
 }
 
 void handleButtonPress(EC11* encoder) {
+
   Serial.println("按钮被按下");
 }
 
 void handleButtonClick(EC11* encoder) {
+  matrixCoreManager.nextElementGroup();
   Serial.println("按钮被点击（短按）");
 }
 
 void handleButtonDoubleClick(EC11* encoder) {
+  matrixCoreManager.prevElementGroup();
   Serial.println("按钮被双击");
 }
 
@@ -39,12 +55,25 @@ void handleButtonLongPress(EC11* encoder) {
 }
 
 void handleButtonPressedRotateCW(EC11* encoder) {
+  MatrixCore matrixCore = matrixCoreManager.getCurrentMatrixCore();
+  matrixCore.fontIndex = matrixFontManager.switchToNextFontIndex(matrixCore.fontGroupIndex, matrixCore.fontIndex);
+  matrixCoreManager.modifyElement(matrixCoreManager.getCurrentPageIndex(),
+                                matrixCoreManager.getCurrentSecondaryIndex(),
+                                matrixCoreManager.getCurrentElementGroupIndex(),
+                                matrixCore);
   int32_t pos = encoder->getPosition();
   Serial.print("按住按钮并顺时针旋转，当前位置: ");
   Serial.println(pos);
 }
 
 void handleButtonPressedRotateCCW(EC11* encoder) {
+  MatrixCore matrixCore = matrixCoreManager.getCurrentMatrixCore();
+  matrixCore.fontIndex = matrixFontManager.switchToPreFontIndex(
+      matrixCore.fontGroupIndex, matrixCore.fontIndex);
+  matrixCoreManager.modifyElement(
+      matrixCoreManager.getCurrentPageIndex(),
+      matrixCoreManager.getCurrentSecondaryIndex(),
+      matrixCoreManager.getCurrentElementGroupIndex(), matrixCore);
   int32_t pos = encoder->getPosition();
   Serial.print("按住按钮并逆时针旋转，当前位置: ");
   Serial.println(pos);

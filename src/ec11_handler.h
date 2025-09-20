@@ -7,6 +7,11 @@
 #define EC11_HANDLER_H
 
 #include "ec11.h" // 包含EC11头文件
+#include "matrixColors.h"
+#include "matrixCore.h"
+#include "matrixFonts.h"
+
+#include "animation.h"
 
 // 初始化编码器事件处理器
 void initEncoderHandlers();

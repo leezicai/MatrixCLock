@@ -1,6 +1,7 @@
 #pragma once
 
-# define MAX_METHOD_NUM 8
+# define MAX_GROUP_0_METHOD_NUM 8
+# define MAX_GROUP_1_METHOD_NUM 8
 #include <string>
 
 struct TimeData {
@@ -62,7 +63,7 @@ struct TimeData {
     
     // Get AM/PM string
     const char* getAmpm() const {
-		flag = 1;
+		flag = 0;
         return (ampm == 0) ? "AM" : "PM";
     }
     
@@ -116,21 +117,24 @@ struct TimeData {
     }
 
     const char *getHour12_MinuteAmpm() const {
-      flag = 1;
-      sprintf(temp_buffer, "%02d:%02d %s", hour12, minute, 
-              (ampm == 0) ? "AM" : "PM");
+      flag = 0;
+    //   sprintf(temp_buffer, "%02d:%02d %s", hour12, minute, 
+    //           (ampm == 0) ? "AM" : "PM");
+      sprintf(temp_buffer, "%s", 
+              (ampm == 0) ? "M,M/M.M:M" : "M,M/M.M:M");
       return temp_buffer;
     }
 };
 
-class TimeUtils {
+class MatrixTimeUtils {
 private:
-  int current = 0;
-
+    int16_t flag = 0;
 public:
-  int previousCurrent(int current);
-  int nextCurrent(int current);
-  const char* getStrStaff(TimeData& timeData, int current);
+  int16_t previousCurrent(int16_t group, int16_t current);
+  int16_t nextCurrent(int16_t group, int16_t current);
+  const char* getStrStaff(TimeData& timeData,int16_t current);
+  TimeData getTimeDataFromTimestamp(time_t now);
+
 };
 
-extern TimeUtils timeUtils;
+extern MatrixTimeUtils matrixTimeUtils;

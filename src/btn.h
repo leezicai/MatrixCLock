@@ -3,7 +3,8 @@
 
 #include <OneButton.h>
 #include "common_define.h"
-
+#include "matrixCore.h"
+#include "animation.h"
 // Button pins
 // ∫#define BUTTON1_PIN 46
 // #define BUTTON2_PIN 16

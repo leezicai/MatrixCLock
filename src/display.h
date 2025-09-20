@@ -6,11 +6,35 @@
 #include <iomanip>
 #include <sstream>
 #include "page.h"
+#include "matrixCore.h"
+#include "matrixFonts.h"
+#include "matrixColors.h"
+#include "matrixTimeData.h"
+#include "common_define.h"
 
 extern MatrixPanel_I2S_DMA *dma_display;
 extern U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit_gfx;
 
+struct TimeData;
 
+struct CharCount{
+    int16_t countNum;
+    int16_t countSpace;
+    int16_t countABC;
+    int16_t countHyphen;
+
+     // Constructor - initialize all members to zero
+    CharCount();
+    
+    // Parameterized constructor
+    CharCount(int16_t num, int16_t space, int16_t abc, int16_t hyphen);
+    
+    // Reset method to clear all counts
+    void reset();
+    
+    // Initialize with specific values
+    void initialize(int16_t num, int16_t space, int16_t abc, int16_t hyphen);
+};
 // 定义一个结构体，保存所有需要的字符串
 struct TimeStrings {
     int16_t year;        // 2025
@@ -110,8 +134,15 @@ struct FontMetrics {
 class Display {
     private:
       float animationSpeed;
+      static int charType[256];
+      static bool tableInitialized;
+      static void initializeTable();
+      CharCount charCountForCalWidth;
+      CharCount charCountForString;
+
     public:
       Display();
+
       // Function declarations
       uint16_t scaleColorRGB565Custom(uint16_t colorRGB565,
                                       float animationSpeed,
@@ -155,12 +186,19 @@ class Display {
                                int separatorWidth, int offSetNumFont,
                                int offSetNumSep, int offSetFont, int offSetSepX,int offSetSepY,
                                const uint8_t *fontName);
+      void setupDisplayContext(uint16_t colorRGB565, int x, int y,
+                                        int fontWidth, int fontHeight,
+                                        int separatorWidth, int offSetNumFont,
+                                        int offSetNumSep, int offSetFont,
+                                        float offSetSepX, float offSetSepY,
+                                        const uint8_t *fontName);
       template <typename T>
       void displayStaticOneTemplate(T one, uint16_t colorRGB565, int x, int y,
                                     int fontWidth, int fontHeight,
                                     int separatorWidth, int offSetNumFont,
                                     int offSetNumSep, int offSetFont,
-                                    int offSetSepX, int offSetSepY, const uint8_t *fontName) {
+                                    int offSetSepX, int offSetSepY,
+                                    const uint8_t *fontName) {
         setupDisplayContext(colorRGB565, x, y, fontWidth, fontHeight,
                             separatorWidth, offSetNumFont, offSetNumSep,
                             offSetFont, offSetSepX, offSetSepY, fontName);
@@ -168,6 +206,15 @@ class Display {
       }
 
       FontMetrics getFontMetrics(const uint8_t *font, const char *character);
+
+      int16_t getStrWidth(int16_t fontWidth, int16_t sepWidth, const char *str);
+      CharCount analyzeCharInStr(const char *str) ;
+      std::vector<bool> compare_with_vector(const char* str1, const char* str2);
+      void display(unsigned long elapsed, const char *nowStr,
+                   const char *nextStr, std::vector<bool> results,
+                   boolean flag, MatrixCore matrixCore);
+      void displayString(unsigned long elapsed, TimeData timeNow,
+                                   TimeData timeNowNextSec,MatrixCore matrixCore);
 
       void displayHourMinuteSecond(unsigned long elapsed, TimeStrings timeNow,
                                    TimeStrings timeNowNextSec,

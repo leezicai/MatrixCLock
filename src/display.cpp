@@ -4,10 +4,67 @@
 #include <sstream>
 #include <string>
 
+// Default constructor - initialize all counts to zero
+CharCount::CharCount() {
+    countNum = 0;
+    countSpace = 0;
+    countABC = 0;
+    countHyphen = 0;
+}
+
+// Parameterized constructor
+CharCount::CharCount(int16_t num, int16_t space, int16_t abc, int16_t hyphen) {
+    countNum = num;
+    countSpace = space;
+    countABC = abc;
+    countHyphen = hyphen;
+}
+
+// Reset all counts to zero
+void CharCount::reset() {
+    countNum = 0;
+    countSpace = 0;
+    countABC = 0;
+    countHyphen = 0;
+}
+
+// Initialize with specific values
+void CharCount::initialize(int16_t num, int16_t space, int16_t abc, int16_t hyphen) {
+    countNum = num;
+    countSpace = space;
+    countABC = abc;
+    countHyphen = hyphen;
+}
+
+int Display::charType[256];
+bool Display::tableInitialized = false;
+
+// Initialize lookup table
+void Display::initializeTable() {
+    if (tableInitialized) return;
+    
+    // Initialize all to default type (abc)
+    for (int i = 0; i < 256; i++) {
+        charType[i] = 3; // default: abc
+    }
+    
+    // Set specific types
+    for (int i = '0'; i <= '9'; i++) {
+        charType[i] = 0; // digit
+    }
+    
+    charType['-'] = 1; charType['/'] = 1; // hyphen
+    charType['.'] = 2; charType[','] = 2; // space
+    charType[':'] = 2; charType[' '] = 2;
+    
+    tableInitialized = true;
+}
 // 定义全局唯一实例
 Display display;
 
-Display::Display() {}
+Display::Display() {
+  initializeTable();
+}
 
 uint16_t Display::scaleColorRGB565Custom(uint16_t colorRGB565,
                                          float animationSpeed,
@@ -259,6 +316,18 @@ void Display::setupDisplayContext(uint16_t colorRGB565, int x, int y,
           (offSetFont + separatorWidth) * offSetNumSep - offSetSepX,
       y - offSetSepY);
 }
+void Display::setupDisplayContext(uint16_t colorRGB565, int x, int y,
+                                  int fontWidth, int fontHeight,
+                                  int separatorWidth, int offSetNumFont,
+                                  int offSetNumSep, int offSetFont,
+                                  float offSetSepX,float offSetSepY,const uint8_t *fontName) {
+  u8g2_for_adafruit_gfx.setFont(fontName);
+  u8g2_for_adafruit_gfx.setForegroundColor(colorRGB565);
+  u8g2_for_adafruit_gfx.setCursor(
+      x + (offSetFont + fontWidth) * offSetNumFont +
+          (offSetFont + separatorWidth) * offSetNumSep - offSetSepX * fontHeight,
+      y - offSetSepY * fontHeight);
+}
 
 FontMetrics Display::getFontMetrics(const uint8_t *font, const char *character) {
   u8g2_for_adafruit_gfx.setFont(font);
@@ -267,143 +336,509 @@ FontMetrics Display::getFontMetrics(const uint8_t *font, const char *character) 
   metrics.ascent = u8g2_for_adafruit_gfx.getFontAscent();
   metrics.descent = u8g2_for_adafruit_gfx.getFontDescent();
   metrics.height = metrics.ascent - metrics.descent;
-  metrics.charWidth = u8g2_for_adafruit_gfx.getUTF8Width(character);
+
+  char firstChar[2] = {character[0], '\0'}; // 提取第一个字符并添加结束符
+  metrics.charWidth = u8g2_for_adafruit_gfx.getUTF8Width(firstChar);
 
   return metrics;
 }
-
-// 使用示例：优化后的displayAnimationHourMinuteSecond方法
-void Display::displayHourMinuteSecond(
-    unsigned long elapsed, TimeStrings timeNow, TimeStrings timeNowNextSec,
-    DiffTimeStrings diffTimeStrings, int16_t animationType,
-    uint16_t colorRGB565, int x, int y, int fontWidth, int fontHeight,
-    const uint8_t *fontName, const char* fontM, const char* sepM) {
-
-  FontMetrics fontMetrics = getFontMetrics(fontName, fontM);
-  FontMetrics sepMetrics = getFontMetrics(fontName, sepM);
-  
-  switch (animationType) {
-  case ANIMATION_TYPE_0:
-    // Static display using new methods
-    // displayStaticOneTemplate(timeNow.hour24_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
-    // displayStaticOneTemplate(timeNow.hour24_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
-
-    displayStaticOneTemplate(timeNow.hour24, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
-
-    displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 0, 1, 0, 0, fontName);
-    displayStaticOneTemplate(timeNow.minute_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
-    displayStaticOneTemplate(timeNow.minute_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
-    displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 1, 1, 0, 0, fontName);
-    displayStaticOneTemplate(timeNow.second_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
-    displayStaticOneTemplate(timeNow.second_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
-
-    break;
-
-  case ANIMATION_TYPE_1:
-    if (elapsed < 699 || elapsed > 999) {
-      // Static display during non-animation periods
-      displayStaticOneTemplate(timeNow.hour24_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNow.hour24_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNow.minute_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNow.minute_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNow.second_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNow.second_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
-    } else {
-      // Animation display using new methods
-      animationSpeed = (elapsed - 699) / 300.0;
-
-      // Current time fading out
-      displayStaticOneTemplate( timeNow.hour24_1, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.hour24_1),
-          x, y - animationSpeed * fontMetrics.height * diffTimeStrings.hour24_1, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNow.hour24_2, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.hour24_2),
-          x, y - animationSpeed * fontMetrics.height * diffTimeStrings.hour24_2, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNow.minute_1, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.minute_1),
-          x, y - animationSpeed * fontMetrics.height * diffTimeStrings.minute_1, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNow.minute_2, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.minute_2),
-          x, y - animationSpeed * fontMetrics.height * diffTimeStrings.minute_2, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNow.second_1, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.second_1),
-          x, y - animationSpeed * fontMetrics.height * diffTimeStrings.second_1, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNow.second_2, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.second_2),
-          x, y - animationSpeed * fontMetrics.height * diffTimeStrings.second_2, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
-
-      // Static colons
-      displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 1, 1, 0, 0, fontName);
-
-      // Next time fading in
-
-      displayStaticOneTemplate( timeNowNextSec.hour24_1, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.hour24_1),
-        x, y + (1 - animationSpeed) * fontMetrics.height * diffTimeStrings.hour24_1, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNowNextSec.hour24_2, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.hour24_2),
-        x, y + (1 - animationSpeed) * fontMetrics.height * diffTimeStrings.hour24_2, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNowNextSec.minute_1, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.minute_1), 
-        x, y + (1 - animationSpeed) * fontMetrics.height * diffTimeStrings.minute_1, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName); 
-      displayStaticOneTemplate( timeNowNextSec.minute_2, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.minute_2),
-        x, y + (1 - animationSpeed) * fontMetrics.height * diffTimeStrings.minute_2, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNowNextSec.second_1, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.second_1),
-        x, y + (1 - animationSpeed) * fontMetrics.height * diffTimeStrings.second_1, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNowNextSec.second_2, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.second_2),
-        x, y + (1 - animationSpeed) * fontMetrics.height * diffTimeStrings.second_2, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
+int16_t Display::getStrWidth(int16_t fontWidth, int16_t sepWidth, const char *str) {
+    int16_t totalWidth = 0;
+    
+    // Check if string pointer is null
+    if (str == NULL) {
+        return 0;
     }
-    break;
-  case ANIMATION_TYPE_2:
-    if (elapsed < 400) {
-      animationSpeed = elapsed / 400.0;
-      displayStaticOneTemplate( timeNow.hour24_1, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.hour24_1, 0),
-          x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNow.hour24_2, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.hour24_2, 0),
-          x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNow.minute_1, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.minute_1, 0),
-          x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNow.minute_2, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.minute_2, 0),
-          x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNow.second_1, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.second_1, 0),
-          x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNow.second_2, scaleColorRGB565Custom(colorRGB565, animationSpeed, diffTimeStrings.second_2, 0),
-          x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
-
-    } else if (elapsed < 800) {
-      // Animation display using new methods
-      animationSpeed = (elapsed - 400) / (800.0 - 400.0);
-
-      displayStaticOneTemplate( timeNowNextSec.hour24_1, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.hour24_1, 0.1),
-        x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNowNextSec.hour24_2, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.hour24_2, 0.1),
-        x, y , fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNowNextSec.minute_1, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.minute_1, 0.1), 
-        x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName); 
-      displayStaticOneTemplate( timeNowNextSec.minute_2, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.minute_2, 0.1),
-        x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNowNextSec.second_1, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.second_1, 0.1),
-        x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
-      displayStaticOneTemplate( timeNowNextSec.second_2, scaleColorRGB565Forward(colorRGB565, animationSpeed, diffTimeStrings.second_2, 0.10),
-        x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
-
-    } else if (elapsed >= 1000) {
-      displayStaticOneTemplate(timeNow.hour24_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNow.hour24_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNow.minute_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNow.minute_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNow.second_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNow.second_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
-
-    } else {
-      displayStaticOneTemplate(timeNowNextSec.hour24_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNowNextSec.hour24_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNowNextSec.minute_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNowNextSec.minute_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNowNextSec.second_1, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
-      displayStaticOneTemplate(timeNowNextSec.second_2, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
+    
+    // Iterate through each character in the string
+    while (*str != '\0') {
+        if (*str == ':') {
+            // If character is ':', add separator width
+            totalWidth += sepWidth;
+        } else {
+            // For all other characters, add font width
+            totalWidth += fontWidth;
+        }
+        str++; // Move to next character
     }
-    displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2, 0, 1, 0, 0, fontName);
-    displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4, 1, 1, 0, 0, fontName);
-    break;
-  
-  default:
-    break;
+    
+    return totalWidth;
+}
+
+CharCount Display::analyzeCharInStr(const char *str) {
+    CharCount result = {0, 0, 0, 0};
+    
+    // Check if string pointer is null
+    if (str == NULL) {
+        return result;
+    }
+    
+    // Iterate through each character in the string
+    for (int i = 0; str[i] != '\0'; i++) {
+        char c = str[i];
+        
+        if (c >= '0' && c <= '9') {
+            // Count digits 0-9
+            result.countNum++;
+        }
+        else if (c == '-' || c == '/' ) {
+            // Count lowercase letters, uppercase letters, and hyphen
+            result.countHyphen++;
+        }
+        else if (c == '.' || c == ',' || c == ':' || c == ' ') {
+            // Count separators: period, comma, colon, space
+            result.countSpace++;
+        } else {
+          result.countABC++;
+        }
+    }
+    
+    return result;
+}
+
+std::vector<bool> Display::compare_with_vector(const char* str1, const char* str2) {
+    size_t length = strlen(str1);  // Get length of first string
+    std::vector<bool> results(length);  // Initialize with calculated size
+    
+    for (size_t i = 0; i < length; ++i) {
+        results[i] = (str1[i] == str2[i]);  // Direct assignment
+    }
+    
+    return results;
+}
+
+
+ void Display::display(unsigned long elapsed, const char *nowStr,
+                   const char *nextStr, std::vector<bool> results,
+                   boolean sigleCharAnimation, MatrixCore matrixCore){
+   const FontInfo *fontInfo = matrixFontManager.getCurrentFont(
+       matrixCore.fontGroupIndex, matrixCore.fontIndex);
+
+   FontMetrics fontNumMetrics = getFontMetrics(fontInfo->fontName, "5");
+   FontMetrics fontABCMetrics = getFontMetrics(fontInfo->fontName, "M");
+   FontMetrics fontHyphenMetrics = getFontMetrics(fontInfo->fontName, "-");
+   
+   Serial.println("----------------8");
+   Serial.println(nowStr);
+   Serial.println("----------------");
+
+   Serial.println(fontNumMetrics.charWidth);
+   Serial.println(fontNumMetrics.height);
+   FontMetrics sepMetrics = getFontMetrics(fontInfo->fontName, ":");
+   Serial.println("----------------9");
+   charCountForCalWidth = analyzeCharInStr(nowStr);
+   Serial.println(charCountForCalWidth.countNum);
+   Serial.println(charCountForCalWidth.countSpace);
+   Serial.println(charCountForCalWidth.countABC);
+   int16_t strAllWidth = (fontNumMetrics.charWidth ) * charCountForCalWidth.countNum +
+                      (fontABCMetrics.charWidth) * charCountForCalWidth.countABC +
+                      (sepMetrics.charWidth ) * charCountForCalWidth.countSpace ;
+   int16_t strSingleWidth =
+       (sepMetrics.charWidth + 1) * charCountForCalWidth.countSpace +
+       (fontNumMetrics.charWidth + 1) * charCountForCalWidth.countNum +
+       (fontABCMetrics.charWidth + 1) * charCountForCalWidth.countABC +
+       (fontHyphenMetrics.charWidth + 1) * charCountForCalWidth.countHyphen;
+   Serial.println("----------------strWidth9");
+   Serial.println(strAllWidth);
+   int16_t x = PANEL_WIDTH * PANEL_CHAIN * matrixCore.x - strSingleWidth/2;
+     Serial.println("----------------x");
+   Serial.println(x);
+   int16_t y =
+       PANEL_HEIGHT * PANEL_CHAIN * matrixCore.y + fontNumMetrics.height / 2;
+   Serial.println("----------------7");
+   Serial.println(y);
+   Serial.println("----------------core");
+   Serial.println(matrixCore.x);
+   Serial.println(matrixCore.y);
+   uint16_t colorRGB565 = matrixColorManager.getColor(matrixCore.colorIndex1);
+   Serial.println(colorRGB565);
+   int16_t offsetSepX = fontInfo->offsetSepX * sepMetrics.charWidth;
+   Serial.println(offsetSepX);
+   int16_t offsetSepY = fontInfo->offsetSepY * sepMetrics.height;
+   Serial.println(offsetSepY);
+   Serial.println(sigleCharAnimation);
+   Serial.println("----------------20");
+   Serial.println(nowStr);
+   Serial.println("----------------");
+
+   Serial.println("----------------17");
+   switch (matrixCore.animationType) {
+   case 0:
+     if (sigleCharAnimation) {
+       charCountForString.reset(); 
+       for (int i = 0; nowStr[i] != '\0'; i++) {
+         switch (charType[(unsigned char)nowStr[i]]) {
+         case 0:
+           charCountForString.countNum++;
+           break;
+         case 1:
+           charCountForString.countHyphen++;
+           break;
+         case 2:
+           charCountForString.countSpace++;
+           break;
+         case 3:
+           charCountForString.countABC++;
+           break;
+         }
+       }
+     } else {
+       Serial.println("----------------21");
+       Serial.println(nowStr);
+       Serial.println("----------------");
+       displayStaticOneTemplate(
+           nowStr, colorRGB565, x, y, fontNumMetrics.charWidth, fontNumMetrics.height,
+           sepMetrics.charWidth, 0, 0, 1, 0, 0, fontInfo->fontName);
+       break;
+     }
+     break;
+   default:
+     break;
+   }
+ }
+void Display::displayString(unsigned long elapsed, TimeData timeNow, TimeData timeNowNextSec,MatrixCore matrixCore){
+  Serial.println("----------------3");
+  const char *nowStr;
+  const char *nowNextStr;
+  if(matrixCore.displayGroup == 0){
+          Serial.println("----------------4");
+    nowStr = matrixTimeUtils.getStrStaff(timeNow, matrixCore.displayIndex);
+    nowNextStr = matrixTimeUtils.getStrStaff(timeNowNextSec, matrixCore.displayIndex);
+    std::vector<bool> results = compare_with_vector(nowStr, nowNextStr);
+
+      Serial.println("----------------5");
+      Serial.println(elapsed);
+      Serial.println(nowStr);
+      Serial.println(nowNextStr);
+      Serial.println(timeNow.flag);
+    display(elapsed, nowStr, nowNextStr, results, timeNow.flag, matrixCore);
+      Serial.println("----------------6");
   }
+}
+
+ // 使用示例：优化后的displayAnimationHourMinuteSecond方法
+ void Display::displayHourMinuteSecond(
+     unsigned long elapsed, TimeStrings timeNow, TimeStrings timeNowNextSec,
+     DiffTimeStrings diffTimeStrings, int16_t animationType,
+     uint16_t colorRGB565, int x, int y, int fontWidth, int fontHeight,
+     const uint8_t *fontName, const char *fontM, const char *sepM) {
+
+   FontMetrics fontMetrics = getFontMetrics(fontName, fontM);
+   FontMetrics sepMetrics = getFontMetrics(fontName, sepM);
+
+   switch (animationType) {
+   case ANIMATION_TYPE_0:
+     // Static display using new methods
+     // displayStaticOneTemplate(timeNow.hour24_1, colorRGB565, x, y,
+     // fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0, 0,
+     // 1, 0, 0, fontName); displayStaticOneTemplate(timeNow.hour24_2,
+     // colorRGB565, x, y, fontMetrics.charWidth, fontMetrics.height,
+     // sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
+
+     displayStaticOneTemplate(timeNow.hour24, colorRGB565, x, y,
+                              fontMetrics.charWidth, fontMetrics.height,
+                              sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
+
+     displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth,
+                              fontMetrics.height, sepMetrics.charWidth, 2, 0, 1,
+                              0, 0, fontName);
+     displayStaticOneTemplate(timeNow.minute_1, colorRGB565, x, y,
+                              fontMetrics.charWidth, fontMetrics.height,
+                              sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
+     displayStaticOneTemplate(timeNow.minute_2, colorRGB565, x, y,
+                              fontMetrics.charWidth, fontMetrics.height,
+                              sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
+     displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth,
+                              fontMetrics.height, sepMetrics.charWidth, 4, 1, 1,
+                              0, 0, fontName);
+     displayStaticOneTemplate(timeNow.second_1, colorRGB565, x, y,
+                              fontMetrics.charWidth, fontMetrics.height,
+                              sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
+     displayStaticOneTemplate(timeNow.second_2, colorRGB565, x, y,
+                              fontMetrics.charWidth, fontMetrics.height,
+                              sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
+
+     break;
+
+   case ANIMATION_TYPE_1:
+     if (elapsed < 699 || elapsed > 999) {
+       // Static display during non-animation periods
+       displayStaticOneTemplate(timeNow.hour24_1, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNow.hour24_2, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth,
+                                fontMetrics.height, sepMetrics.charWidth, 2, 0,
+                                1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNow.minute_1, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNow.minute_2, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth,
+                                fontMetrics.height, sepMetrics.charWidth, 4, 1,
+                                1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNow.second_1, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNow.second_2, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
+     } else {
+       // Animation display using new methods
+       animationSpeed = (elapsed - 699) / 300.0;
+
+       // Current time fading out
+       displayStaticOneTemplate(
+           timeNow.hour24_1,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.hour24_1),
+           x,
+           y - animationSpeed * fontMetrics.height * diffTimeStrings.hour24_1,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0,
+           0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNow.hour24_2,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.hour24_2),
+           x,
+           y - animationSpeed * fontMetrics.height * diffTimeStrings.hour24_2,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 1,
+           0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNow.minute_1,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.minute_1),
+           x,
+           y - animationSpeed * fontMetrics.height * diffTimeStrings.minute_1,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2,
+           1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNow.minute_2,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.minute_2),
+           x,
+           y - animationSpeed * fontMetrics.height * diffTimeStrings.minute_2,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 3,
+           1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNow.second_1,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.second_1),
+           x,
+           y - animationSpeed * fontMetrics.height * diffTimeStrings.second_1,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4,
+           2, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNow.second_2,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.second_2),
+           x,
+           y - animationSpeed * fontMetrics.height * diffTimeStrings.second_2,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 5,
+           2, 1, 0, 0, fontName);
+
+       // Static colons
+       displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth,
+                                fontMetrics.height, sepMetrics.charWidth, 2, 0,
+                                1, 0, 0, fontName);
+       displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth,
+                                fontMetrics.height, sepMetrics.charWidth, 4, 1,
+                                1, 0, 0, fontName);
+
+       // Next time fading in
+
+       displayStaticOneTemplate(
+           timeNowNextSec.hour24_1,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.hour24_1),
+           x,
+           y + (1 - animationSpeed) * fontMetrics.height *
+                   diffTimeStrings.hour24_1,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 0,
+           0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNowNextSec.hour24_2,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.hour24_2),
+           x,
+           y + (1 - animationSpeed) * fontMetrics.height *
+                   diffTimeStrings.hour24_2,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 1,
+           0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNowNextSec.minute_1,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.minute_1),
+           x,
+           y + (1 - animationSpeed) * fontMetrics.height *
+                   diffTimeStrings.minute_1,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 2,
+           1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNowNextSec.minute_2,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.minute_2),
+           x,
+           y + (1 - animationSpeed) * fontMetrics.height *
+                   diffTimeStrings.minute_2,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 3,
+           1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNowNextSec.second_1,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.second_1),
+           x,
+           y + (1 - animationSpeed) * fontMetrics.height *
+                   diffTimeStrings.second_1,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 4,
+           2, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNowNextSec.second_2,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.second_2),
+           x,
+           y + (1 - animationSpeed) * fontMetrics.height *
+                   diffTimeStrings.second_2,
+           fontMetrics.charWidth, fontMetrics.height, sepMetrics.charWidth, 5,
+           2, 1, 0, 0, fontName);
+     }
+     break;
+   case ANIMATION_TYPE_2:
+     if (elapsed < 400) {
+       animationSpeed = elapsed / 400.0;
+       displayStaticOneTemplate(
+           timeNow.hour24_1,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.hour24_1, 0),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNow.hour24_2,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.hour24_2, 0),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNow.minute_1,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.minute_1, 0),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNow.minute_2,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.minute_2, 0),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNow.second_1,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.second_1, 0),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNow.second_2,
+           scaleColorRGB565Custom(colorRGB565, animationSpeed,
+                                  diffTimeStrings.second_2, 0),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
+
+     } else if (elapsed < 800) {
+       // Animation display using new methods
+       animationSpeed = (elapsed - 400) / (800.0 - 400.0);
+
+       displayStaticOneTemplate(
+           timeNowNextSec.hour24_1,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.hour24_1, 0.1),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNowNextSec.hour24_2,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.hour24_2, 0.1),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNowNextSec.minute_1,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.minute_1, 0.1),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNowNextSec.minute_2,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.minute_2, 0.1),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNowNextSec.second_1,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.second_1, 0.1),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
+       displayStaticOneTemplate(
+           timeNowNextSec.second_2,
+           scaleColorRGB565Forward(colorRGB565, animationSpeed,
+                                   diffTimeStrings.second_2, 0.10),
+           x, y, fontMetrics.charWidth, fontMetrics.height,
+           sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
+
+     } else if (elapsed >= 1000) {
+       displayStaticOneTemplate(timeNow.hour24_1, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNow.hour24_2, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNow.minute_1, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNow.minute_2, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNow.second_1, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNow.second_2, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
+
+     } else {
+       displayStaticOneTemplate(timeNowNextSec.hour24_1, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 0, 0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNowNextSec.hour24_2, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 1, 0, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNowNextSec.minute_1, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 2, 1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNowNextSec.minute_2, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 3, 1, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNowNextSec.second_1, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 4, 2, 1, 0, 0, fontName);
+       displayStaticOneTemplate(timeNowNextSec.second_2, colorRGB565, x, y,
+                                fontMetrics.charWidth, fontMetrics.height,
+                                sepMetrics.charWidth, 5, 2, 1, 0, 0, fontName);
+     }
+     displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth,
+                              fontMetrics.height, sepMetrics.charWidth, 2, 0, 1,
+                              0, 0, fontName);
+     displayStaticOneTemplate(sepM, colorRGB565, x, y, fontMetrics.charWidth,
+                              fontMetrics.height, sepMetrics.charWidth, 4, 1, 1,
+                              0, 0, fontName);
+     break;
+
+   default:
+     break;
+   }
 }
 
 void Display::displayHourMinute(

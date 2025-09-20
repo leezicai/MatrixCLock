@@ -60,6 +60,7 @@ void ButtonManager::tick() {
 
 // Button 1 callbacks
 void ButtonManager::handleButton1Click() {
+    matrixCoreManager.nextPrimaryPage();
   page.increaseFirstClassPage();
   Serial.println(appData.getWifiConfigured());
   Serial.println("Button 1 clicked");
@@ -67,6 +68,7 @@ void ButtonManager::handleButton1Click() {
 }
 
 void ButtonManager::handleButton1DoubleClick() {
+    matrixCoreManager.nextPrimaryPage();
   page.decreaseFirstClassPage();
   Serial.println("Button 1 double-clicked");
   // Your code for button 1 double-click here
@@ -76,7 +78,6 @@ void ButtonManager::handleButton1LongPressStart() {
     Serial.println(appData.getWifiConfigured());
     appData.setWifiConfigured(!appData.getWifiConfigured());
     Serial.println(appData.getWifiConfigured());
-    delay(1000);
     ESP.restart();
     Serial.println("Button 1 long press started");
     // Your code for button 1 long press start here
@@ -95,26 +96,21 @@ void ButtonManager::handleButton1LongPressStop() {
 // Button 2 callbacks
 void ButtonManager::handleButton2Click() {
     Serial.println("Button 2 clicked");
-    Serial.println(appData.getAutoMode());
-    appData.setAutoMode(!appData.getAutoMode());
-    Serial.println(appData.getAutoMode());
-
-    Serial.println("syncTimeToRTC");
+    matrixCoreManager.nextSecondaryPage();
     Serial.println("Button 2 clicked End!");
     // Your code for button 2 click here
 }
 
 void ButtonManager::handleButton2DoubleClick() {
-    Serial.println(appData.getAutoMode());
-    Serial.println(appData.getDynamicBrightness());
-    Serial.println(appData.getManualBrightness());
+    matrixCoreManager.prevSecondaryPage();
     Serial.println("Button 2 double-clicked");
     // Your code for button 2 double-click here
 }
 
 void ButtonManager::handleButton2LongPressStart() {
-    Serial.println("Button 2 long press started");
-    // Your code for button 2 long press start here
+  matrixCoreManager.button2LongPressStart();
+  Serial.println("Button 2 long press started");
+  // Your code for button 2 long press start here
 }
 
 void ButtonManager::handleButton2LongPress() {
@@ -123,24 +119,43 @@ void ButtonManager::handleButton2LongPress() {
 }
 
 void ButtonManager::handleButton2LongPressStop() {
+    matrixCoreManager.button2LongPressEnd();
     Serial.println("Button 2 long press stopped");
     // Your code for button 2 long press stop here
 }
 
 // Button 3 callbacks
 void ButtonManager::handleButton3Click() {
+    MatrixCore mm =  matrixCoreManager.getCurrentMatrixCore();
+    mm.animationType = animationManager.nextAnimationType(mm.animationType);
+    matrixCoreManager.modifyElement(matrixCoreManager.getCurrentPageIndex(),
+                                  matrixCoreManager.getCurrentSecondaryIndex(),
+                                  matrixCoreManager.getCurrentElementGroupIndex(),
+                                  mm);
     Serial.println("Button 3 clicked");
     page.increaseAnimationType();
     // Your code for button 3 click here
 }
 
 void ButtonManager::handleButton3DoubleClick() {
-    Serial.println("Button 3 double-clicked");
-    page.decreaseAnimationType();
-    // Your code for button 3 double-click here
+  MatrixCore mm = matrixCoreManager.getCurrentMatrixCore();
+  mm.animationType = animationManager.preAnimationType(mm.animationType);
+  matrixCoreManager.modifyElement(matrixCoreManager.getCurrentPageIndex(),
+                                matrixCoreManager.getCurrentSecondaryIndex(),
+                                matrixCoreManager.getCurrentElementGroupIndex(),
+                                mm);
+  Serial.println("Button 3 double-clicked");
+  page.decreaseAnimationType();
+  // Your code for button 3 double-click here
 }
 
 void ButtonManager::handleButton3LongPressStart() {
+  MatrixCore mm = matrixCoreManager.getCurrentMatrixCore();
+  mm.animationType = animationManager.preAnimationType(0);
+  matrixCoreManager.modifyElement(matrixCoreManager.getCurrentPageIndex(),
+                                matrixCoreManager.getCurrentSecondaryIndex(),
+                                matrixCoreManager.getCurrentElementGroupIndex(),
+                                mm);
     Serial.println("Button 3 long press started");
     page.setAnimationType(0);
 }

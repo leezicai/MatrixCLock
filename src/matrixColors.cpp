@@ -1,35 +1,50 @@
-// matrixColors.cpp
 #include "matrixColors.h"
 
-// Global instance
-MatrixColors matrixColors;
+// Global vector with 8 colors total (RGB565 format)
+std::vector<uint16_t> Matrix_COLORS = {
+    0xF800,  // RED (index 0) - Pure red
+    0xFD20,  // ORANGE (index 1) - Pure orange
+    0xFFE0,  // YELLOW (index 2) - Pure yellow
+    0x07E0,  // GREEN (index 3) - Pure green
+    0x07FF,  // CYAN (index 4) - Pure cyan
+    0x001F,  // BLUE (index 5) - Pure blue
+    0xF81F,  // VIOLET (index 6) - Pure violet/magenta
+    0xFFFF   // WHITE (index 7) - Pure white
+};
 
-int MatrixColors::previousIndex(int index) {
+// Global instance
+MatrixColorManager matrixColorManager;
+
+int16_t MatrixColorManager::previousIndex(int16_t index) {
     // Handle boundary checks
-    if (index < 0 || index >= MAX_COLORS_NUM) {
-        return -1; // Invalid index
+    if (Matrix_COLORS.empty() || index < 0 || index >= static_cast<int16_t>(Matrix_COLORS.size())) {
+        return -1; // Invalid index or empty vector
     }
     
-    // If at the first color (index 0), wrap to the last color
-    if (index == 0) {
-        return MAX_COLORS_NUM - 1;
-    }
-    
-    // Otherwise, return previous index in the entire color array
-    return index - 1;
+    // Use modular arithmetic for wrapping: (index - 1 + size) % size
+    return (index - 1 + static_cast<int16_t>(Matrix_COLORS.size())) % static_cast<int16_t>(Matrix_COLORS.size());
 }
 
-int MatrixColors::nextIndex(int index) {
+int16_t MatrixColorManager::nextIndex(int16_t index) {
     // Handle boundary checks
-    if (index < 0 || index >= MAX_COLORS_NUM) {
-        return -1; // Invalid index
+    if (Matrix_COLORS.empty() || index < 0 || index >= static_cast<int16_t>(Matrix_COLORS.size())) {
+        return -1; // Invalid index or empty vector
     }
     
-    // If at the last color, wrap to the first color (index 0)
-    if (index == MAX_COLORS_NUM - 1) {
-        return 0;
+    // Use modular arithmetic for wrapping: (index + 1) % size
+    return (index + 1) % static_cast<int16_t>(Matrix_COLORS.size());
+}
+
+uint16_t MatrixColorManager::getColor(int16_t index) {
+    // Handle boundary checks
+    if (Matrix_COLORS.empty() || index < 0 || index >= static_cast<int16_t>(Matrix_COLORS.size())) {
+        return 0x0000; // Return black for invalid index or empty vector
     }
     
-    // Otherwise, return next index in the entire color array
-    return index + 1;
+    // Return the color at the specified index
+    return Matrix_COLORS[index];
+}
+
+size_t MatrixColorManager::getColorCount() const {
+    return Matrix_COLORS.size();
 }
