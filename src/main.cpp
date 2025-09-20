@@ -161,11 +161,9 @@ void loop() {
   if (secondaryPage != nullptr) {
     
     for (const auto &matrixCore : *secondaryPage) {
-      Serial.println("----------------1");
       display.clearScreen();
       display.displayString(elapsed, timeDataNow, timeDataNowNextSec, matrixCore);
       display.flipDMABuffer();
-      Serial.println("----------------2");
     }
   }
 

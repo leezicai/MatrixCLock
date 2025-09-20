@@ -192,6 +192,7 @@ class Display {
                                         int offSetNumSep, int offSetFont,
                                         float offSetSepX, float offSetSepY,
                                         const uint8_t *fontName);
+      
       template <typename T>
       void displayStaticOneTemplate(T one, uint16_t colorRGB565, int x, int y,
                                     int fontWidth, int fontHeight,
@@ -202,6 +203,30 @@ class Display {
         setupDisplayContext(colorRGB565, x, y, fontWidth, fontHeight,
                             separatorWidth, offSetNumFont, offSetNumSep,
                             offSetFont, offSetSepX, offSetSepY, fontName);
+        u8g2_for_adafruit_gfx.print(one);
+      }
+
+      void setupDisplayContext(uint16_t colorRGB565, int16_t x, int16_t y,
+                               int16_t fontWidth, int16_t fontHeight,
+                               int16_t numberWidth, int16_t spaceWidth,
+                               int16_t hyphenWidth, int16_t offsetFontCountABC,
+                               int16_t offsetCountNum, int16_t offsetCountSpace,
+                               int16_t offsetCountHyphen, int16_t offsetPreFont,
+                               int16_t offsetSpaceX, int16_t offsetSpaceY,
+                               const uint8_t *fontName);
+      template <typename T>
+      void displayStaticOneTemplate(
+          T one, uint16_t colorRGB565, int16_t x, int16_t y, int16_t fontABCWidth,
+          int16_t fontHeight, int16_t numberWidth, int16_t spaceWidth,
+          int16_t hyphenWidth, int16_t offsetFontCountABC,
+          int16_t offsetCountNum, int16_t offsetCountSpace,
+          int16_t offsetCountHyphen, int16_t offsetPreFont,
+          int16_t offsetSpaceX, int16_t offsetSpaceY, const uint8_t *fontName) {
+        setupDisplayContext(colorRGB565, x, y, fontABCWidth, fontHeight,
+                            numberWidth, spaceWidth, hyphenWidth,
+                            offsetFontCountABC, offsetCountNum,
+                            offsetCountSpace, offsetCountHyphen, offsetPreFont,
+                            offsetSpaceX, offsetSpaceY, fontName);
         u8g2_for_adafruit_gfx.print(one);
       }
 

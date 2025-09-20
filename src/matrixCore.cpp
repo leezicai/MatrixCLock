@@ -27,7 +27,7 @@ void MatrixCoreManager::initializeMatrixCores() {
     
     // Primary Page 0 - Secondary Page 1
     SecondaryPage secondaryPage0_1 = {
-        MatrixCore(0.5f, 0.5f, 0, 0, 0, 0, 0, 2, 1)  // PAGE_0_1_0
+        MatrixCore(0.495f, 0.43f, 0, 0, 0, 0, 0, 2, 0)  // PAGE_0_1_0
     };
     primaryPage0.push_back(secondaryPage0_1);
     

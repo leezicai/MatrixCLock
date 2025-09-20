@@ -23,13 +23,13 @@ void MatrixFontManager::init() {
     
     // Create small fonts group
     FontGroup smallFonts;
-    smallFonts.push_back(FontInfo(u8g2_font_crox5hb_tf, 0.2, 0.3, 0, 0));
+    smallFonts.push_back(FontInfo(u8g2_font_crox5hb_tf, 0.3, 0.1, 0, 0));
     smallFonts.push_back(FontInfo(u8g2_font_fub17_tf, 0.2, 0.3, 0, 0));
     smallFonts.push_back(FontInfo(u8g2_font_ncenB18_tf, 0.2, 0.3, 0, 0));
     
     // Create medium fonts group
     FontGroup mediumFonts;
-    mediumFonts.push_back(FontInfo(u8g2_font_10x20_tf, 0.2, 0.3, 0, 0));
+    mediumFonts.push_back(FontInfo(u8g2_font_10x20_tf, 0.3, 0.09, 0, 0));
     mediumFonts.push_back(FontInfo(u8g2_font_7x13_tf, 0.2, 0.3, 0, 0));
     
     // Create large fonts group
@@ -46,9 +46,6 @@ void MatrixFontManager::init() {
 // Get current font info based on group index and font index within group
 const FontInfo* MatrixFontManager::getCurrentFont(int16_t groupIndex, int16_t index) {
     // Validate group index
-       Serial.println("----------------s18");
-       Serial.println(groupIndex);
-       Serial.println(index);
     if (groupIndex < 0 || groupIndex >= static_cast<int16_t>(fontGroups.size())) {
         return nullptr;  // Invalid group index
     }

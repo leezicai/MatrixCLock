@@ -329,6 +329,22 @@ void Display::setupDisplayContext(uint16_t colorRGB565, int x, int y,
       y - offSetSepY * fontHeight);
 }
 
+void Display::setupDisplayContext(uint16_t colorRGB565, int16_t x, int16_t y,
+                               int16_t fontWidth, int16_t fontHeight, int16_t numberWidth,int16_t spaceWidth, int16_t hyphenWidth,
+                                int16_t offsetFontCountABC, int16_t offsetCountNum, int16_t offsetCountSpace,int16_t offsetCountHyphen,
+                                int16_t offsetPreFont,
+                                 int16_t offsetSpaceX, int16_t offsetSpaceY,
+                               const uint8_t *fontName) {
+  u8g2_for_adafruit_gfx.setFont(fontName);
+  u8g2_for_adafruit_gfx.setForegroundColor(colorRGB565);
+  u8g2_for_adafruit_gfx.setCursor(
+      x +  (offsetPreFont + fontWidth) * offsetFontCountABC +
+      (offsetPreFont + numberWidth) * offsetCountNum +
+       (offsetPreFont + spaceWidth) * offsetCountSpace +
+       (offsetPreFont + hyphenWidth) * offsetCountHyphen - offsetSpaceX,
+      y - offsetSpaceY );
+}
+
 FontMetrics Display::getFontMetrics(const uint8_t *font, const char *character) {
   u8g2_for_adafruit_gfx.setFont(font);
 
@@ -374,22 +390,12 @@ CharCount Display::analyzeCharInStr(const char *str) {
     }
     
     // Iterate through each character in the string
-    for (int i = 0; str[i] != '\0'; i++) {
-        char c = str[i];
-        
-        if (c >= '0' && c <= '9') {
-            // Count digits 0-9
-            result.countNum++;
-        }
-        else if (c == '-' || c == '/' ) {
-            // Count lowercase letters, uppercase letters, and hyphen
-            result.countHyphen++;
-        }
-        else if (c == '.' || c == ',' || c == ':' || c == ' ') {
-            // Count separators: period, comma, colon, space
-            result.countSpace++;
-        } else {
-          result.countABC++;
+     for (int i = 0; str[i] != '\0'; i++) {
+        switch (charType[(unsigned char)str[i]]) {
+            case 0: result.countNum++; break;
+            case 1: result.countHyphen++; break;
+            case 2: result.countSpace++; break;
+            case 3: result.countABC++; break;
         }
     }
     
@@ -417,67 +423,66 @@ std::vector<bool> Display::compare_with_vector(const char* str1, const char* str
    FontMetrics fontNumMetrics = getFontMetrics(fontInfo->fontName, "5");
    FontMetrics fontABCMetrics = getFontMetrics(fontInfo->fontName, "M");
    FontMetrics fontHyphenMetrics = getFontMetrics(fontInfo->fontName, "-");
-   
-   Serial.println("----------------8");
-   Serial.println(nowStr);
-   Serial.println("----------------");
+   FontMetrics spaceMetrics = getFontMetrics(fontInfo->fontName, ":");
 
-   Serial.println(fontNumMetrics.charWidth);
-   Serial.println(fontNumMetrics.height);
-   FontMetrics sepMetrics = getFontMetrics(fontInfo->fontName, ":");
-   Serial.println("----------------9");
    charCountForCalWidth = analyzeCharInStr(nowStr);
-   Serial.println(charCountForCalWidth.countNum);
-   Serial.println(charCountForCalWidth.countSpace);
-   Serial.println(charCountForCalWidth.countABC);
-   int16_t strAllWidth = (fontNumMetrics.charWidth ) * charCountForCalWidth.countNum +
-                      (fontABCMetrics.charWidth) * charCountForCalWidth.countABC +
-                      (sepMetrics.charWidth ) * charCountForCalWidth.countSpace ;
    int16_t strSingleWidth =
-       (sepMetrics.charWidth + 1) * charCountForCalWidth.countSpace +
+       (spaceMetrics.charWidth + 1) * charCountForCalWidth.countSpace +
        (fontNumMetrics.charWidth + 1) * charCountForCalWidth.countNum +
        (fontABCMetrics.charWidth + 1) * charCountForCalWidth.countABC +
        (fontHyphenMetrics.charWidth + 1) * charCountForCalWidth.countHyphen;
-   Serial.println("----------------strWidth9");
-   Serial.println(strAllWidth);
    int16_t x = PANEL_WIDTH * PANEL_CHAIN * matrixCore.x - strSingleWidth/2;
-     Serial.println("----------------x");
-   Serial.println(x);
    int16_t y =
        PANEL_HEIGHT * PANEL_CHAIN * matrixCore.y + fontNumMetrics.height / 2;
-   Serial.println("----------------7");
-   Serial.println(y);
-   Serial.println("----------------core");
-   Serial.println(matrixCore.x);
-   Serial.println(matrixCore.y);
    uint16_t colorRGB565 = matrixColorManager.getColor(matrixCore.colorIndex1);
-   Serial.println(colorRGB565);
-   int16_t offsetSepX = fontInfo->offsetSepX * sepMetrics.charWidth;
-   Serial.println(offsetSepX);
-   int16_t offsetSepY = fontInfo->offsetSepY * sepMetrics.height;
-   Serial.println(offsetSepY);
-   Serial.println(sigleCharAnimation);
-   Serial.println("----------------20");
-   Serial.println(nowStr);
-   Serial.println("----------------");
-
-   Serial.println("----------------17");
+   int16_t offsetSpaceX = fontInfo->offsetSepX * spaceMetrics.charWidth;
+   int16_t offsetSpaceY = fontInfo->offsetSepY * spaceMetrics.height;
    switch (matrixCore.animationType) {
    case 0:
      if (sigleCharAnimation) {
        charCountForString.reset(); 
+       char ch;
        for (int i = 0; nowStr[i] != '\0'; i++) {
-         switch (charType[(unsigned char)nowStr[i]]) {
+         ch = nowStr[i];
+         switch (charType[(unsigned char)ch]) {
          case 0:
+           displayStaticOneTemplate(
+               ch, colorRGB565, x, y, fontABCMetrics.charWidth,
+               fontABCMetrics.height, fontNumMetrics.charWidth,
+               spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+               charCountForString.countABC, charCountForString.countNum,
+               charCountForString.countSpace, charCountForString.countHyphen, 1,
+               0, 0, fontInfo->fontName);
            charCountForString.countNum++;
            break;
          case 1:
+         displayStaticOneTemplate(
+               ch, colorRGB565, x, y, fontABCMetrics.charWidth,
+               fontABCMetrics.height, fontNumMetrics.charWidth,
+               spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+               charCountForString.countABC, charCountForString.countNum,
+               charCountForString.countSpace, charCountForString.countHyphen, 1,
+               0, 0, fontInfo->fontName);
            charCountForString.countHyphen++;
            break;
          case 2:
+         displayStaticOneTemplate(
+               ch, colorRGB565, x, y, fontABCMetrics.charWidth,
+               fontABCMetrics.height, fontNumMetrics.charWidth,
+               spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+               charCountForString.countABC, charCountForString.countNum,
+               charCountForString.countSpace, charCountForString.countHyphen, 1,
+               offsetSpaceX, offsetSpaceY, fontInfo->fontName);
            charCountForString.countSpace++;
            break;
          case 3:
+         displayStaticOneTemplate(
+               ch, colorRGB565, x, y, fontABCMetrics.charWidth,
+               fontABCMetrics.height, fontNumMetrics.charWidth,
+               spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+               charCountForString.countABC, charCountForString.countNum,
+               charCountForString.countSpace, charCountForString.countHyphen, 1,
+               0, 0, fontInfo->fontName);
            charCountForString.countABC++;
            break;
          }
@@ -488,7 +493,7 @@ std::vector<bool> Display::compare_with_vector(const char* str1, const char* str
        Serial.println("----------------");
        displayStaticOneTemplate(
            nowStr, colorRGB565, x, y, fontNumMetrics.charWidth, fontNumMetrics.height,
-           sepMetrics.charWidth, 0, 0, 1, 0, 0, fontInfo->fontName);
+           spaceMetrics.charWidth, 0, 0, 1, 0, 0, fontInfo->fontName);
        break;
      }
      break;
@@ -497,22 +502,13 @@ std::vector<bool> Display::compare_with_vector(const char* str1, const char* str
    }
  }
 void Display::displayString(unsigned long elapsed, TimeData timeNow, TimeData timeNowNextSec,MatrixCore matrixCore){
-  Serial.println("----------------3");
   const char *nowStr;
   const char *nowNextStr;
   if(matrixCore.displayGroup == 0){
-          Serial.println("----------------4");
     nowStr = matrixTimeUtils.getStrStaff(timeNow, matrixCore.displayIndex);
     nowNextStr = matrixTimeUtils.getStrStaff(timeNowNextSec, matrixCore.displayIndex);
     std::vector<bool> results = compare_with_vector(nowStr, nowNextStr);
-
-      Serial.println("----------------5");
-      Serial.println(elapsed);
-      Serial.println(nowStr);
-      Serial.println(nowNextStr);
-      Serial.println(timeNow.flag);
     display(elapsed, nowStr, nowNextStr, results, timeNow.flag, matrixCore);
-      Serial.println("----------------6");
   }
 }
 
