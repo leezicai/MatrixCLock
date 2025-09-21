@@ -11,6 +11,7 @@
 #include "matrixColors.h"
 #include "matrixTimeData.h"
 #include "common_define.h"
+#include "animation.h"
 
 extern MatrixPanel_I2S_DMA *dma_display;
 extern U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit_gfx;
@@ -158,28 +159,16 @@ class Display {
       // 显示文字（RGB565）
       void displayText(uint16_t colorRGB565, int x, int y,
                        const uint8_t *fontName, const char *text);
-      // 显示文字（RGB565）
-      void displayText(uint16_t colorRGB565, int x, int y,
-                       const uint8_t *fontName, const int16_t time_int);
       // 显示文字（RGB888）
       void displayTextRGB(uint8_t red, uint8_t green, uint8_t blue, int x,
                           int y, const uint8_t *fontName, const char *text);
-      // 显示文字（RGB888）
-      void displayTextRGB(uint8_t red, uint8_t green, uint8_t blue, int x,
-                          int y, const uint8_t *fontName,
-                          const int16_t time_int);
+                          
       // 时间字符串结构体
       TimeStrings getTimeStrings(time_t now);
       DiffTimeStrings compareTimeStrings(const TimeStrings &ts1,
                                          const TimeStrings &ts2);
       void flipDMABuffer();
       void clearScreen();
-      void displayU8g2(uint16_t colorRGB565, int x, int y, int printInt);
-      void displayU8g2(uint16_t colorRGB565, int x, int y, String printStr);
-      void displayU8g2(uint16_t colorRGB565, int x, int y,
-                       const uint8_t *fontName, int printInt);
-      void displayU8g2(uint16_t colorRGB565, int x, int y,
-                       const uint8_t *fontName, String printStr);
       // Static display methods
       void setupDisplayContext(uint16_t colorRGB565, int x, int y,
                                int fontWidth, int fontHeight,
@@ -234,34 +223,14 @@ class Display {
 
       int16_t getStrWidth(int16_t fontWidth, int16_t sepWidth, const char *str);
       CharCount analyzeCharInStr(const char *str) ;
-      std::vector<bool> compare_with_vector(const char* str1, const char* str2);
+      std::vector<int8_t> compare_with_vector(const char* str1, const char* str2);
       void display(unsigned long elapsed, const char *nowStr,
-                   const char *nextStr, std::vector<bool> results,
+                   const char *nextStr, std::vector<int8_t> results,
                    boolean flag, MatrixCore matrixCore);
       void displayString(unsigned long elapsed, TimeData timeNow,
                                    TimeData timeNowNextSec,MatrixCore matrixCore);
 
-      void displayHourMinuteSecond(unsigned long elapsed, TimeStrings timeNow,
-                                   TimeStrings timeNowNextSec,
-                                   DiffTimeStrings diffTimeStrings,
-                                   int16_t animationType, uint16_t colorRGB565,
-                                   int x, int y, int fontWidth, int fontHeight,
-                                   const uint8_t *fontName, const char* fontM, const char* sepM);
-      void displayHourMinute(
-          unsigned long elapsed, TimeStrings timeNow,
-          TimeStrings timeNowNextSec, DiffTimeStrings diffTimeStrings,
-          int16_t animationType, uint16_t colorRGB565, int x, int y,
-          int fontWidth, int fontHeight, const uint8_t *fontName);
-      void displayYearMonthDay(
-          unsigned long elapsed, TimeStrings timeNow,
-          TimeStrings timeNowNextSec, DiffTimeStrings diffTimeStrings,
-          int16_t animationType, uint16_t colorRGB565, int x, int y,
-          int fontWidth, int fontHeight, const uint8_t *fontName);
-      void displayMonthDay(
-          unsigned long elapsed, TimeStrings timeNow,
-          TimeStrings timeNowNextSec, DiffTimeStrings diffTimeStrings,
-          int16_t animationType, uint16_t colorRGB565, int x, int y,
-          int fontWidth, int fontHeight, const uint8_t *fontName);
+      
 };
 
 // 全局实例声明

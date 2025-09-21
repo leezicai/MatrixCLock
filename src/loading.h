@@ -2,7 +2,7 @@
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 #include <U8g2_for_Adafruit_GFX.h>
 #include "common_define.h"
-#include "display.h"
+#include "matrixDisplay.h"
 
 // 外部全局对象
 extern MatrixPanel_I2S_DMA *dma_display;

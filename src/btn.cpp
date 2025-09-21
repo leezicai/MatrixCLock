@@ -131,14 +131,7 @@ void ButtonManager::handleButton2LongPressStop() {
 // Button 3 callbacks
 void ButtonManager::handleButton3Click() {
     MatrixCore mm =  matrixCoreManager.getCurrentMatrixCore();
-       Serial.println("----------------s22");
-       Serial.println(mm.animationType);
     mm.animationType = animationManager.nextAnimationType(mm.animationType);
-       Serial.println(mm.animationType);
-       Serial.println(matrixCoreManager.getCurrentPageIndex());
-       Serial.println(matrixCoreManager.getCurrentSecondaryIndex());
-       Serial.println(matrixCoreManager.getCurrentElementGroupIndex());
-       Serial.println("----------------s23");
     matrixCoreManager.modifyCurrentElement( mm);
     Serial.println("Button 3 clicked");
     page.increaseAnimationType();

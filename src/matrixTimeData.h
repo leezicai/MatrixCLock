@@ -118,10 +118,8 @@ struct TimeData {
 
     const char *getHour12_MinuteAmpm() const {
       flag = 0;
-    //   sprintf(temp_buffer, "%02d:%02d %s", hour12, minute, 
-    //           (ampm == 0) ? "AM" : "PM");
-      sprintf(temp_buffer, "%s", 
-              (ampm == 0) ? "M,M/M.M:M" : "M,M/M.M:M");
+      sprintf(temp_buffer, "%02d:%02d %s", hour12, minute, 
+              (ampm == 0) ? "AM" : "PM");
       return temp_buffer;
     }
 };

@@ -13,11 +13,6 @@ void handleClockwiseRotation(EC11* encoder) {
   Serial.println(matrixCore.colorIndex1);
   matrixCore.colorIndex1 = matrixColorManager.nextIndex(matrixCore.colorIndex1);
   matrixCoreManager.modifyCurrentElement(matrixCore);
-  Serial.println(matrixCore.colorIndex1);
-  Serial.println(matrixCoreManager.getCurrentPageIndex());
-  Serial.println(matrixCoreManager.getCurrentSecondaryIndex());
-  Serial.println(matrixCoreManager.getCurrentElementGroupIndex());
-  Serial.println(matrixCoreManager.getCurrentMatrixCore().colorIndex1);
   int32_t pos = encoder->getPosition();
   page.increaseSecondClassPage();
   Serial.print("顺时针旋转，当前位置: ");

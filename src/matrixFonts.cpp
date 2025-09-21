@@ -24,18 +24,18 @@ void MatrixFontManager::init() {
     // Create small fonts group
     FontGroup smallFonts;
     smallFonts.push_back(FontInfo(u8g2_font_crox5hb_tf, 0.3, 0.1, 0, 0));
-    smallFonts.push_back(FontInfo(u8g2_font_fub17_tf, 0.2, 0.3, 0, 0));
-    smallFonts.push_back(FontInfo(u8g2_font_ncenB18_tf, 0.2, 0.3, 0, 0));
+    smallFonts.push_back(FontInfo(u8g2_font_fub17_tf, 0.3, 0.1, 0, 0));
+    smallFonts.push_back(FontInfo(u8g2_font_ncenB18_tf, 0.3, 0.1, 0, 0));
     
     // Create medium fonts group
     FontGroup mediumFonts;
-    mediumFonts.push_back(FontInfo(u8g2_font_10x20_tf, 0.3, 0.09, 0, 0));
-    mediumFonts.push_back(FontInfo(u8g2_font_7x13_tf, 0.2, 0.3, 0, 0));
+    mediumFonts.push_back(FontInfo(u8g2_font_10x20_tf, 0.3, 0.1, 0, 0));
+    mediumFonts.push_back(FontInfo(u8g2_font_7x13_tf, 0.3, 0.1, 0, 0));
     
     // Create large fonts group
     FontGroup largeFonts;
-    largeFonts.push_back(FontInfo(u8g2_font_6x12_tf, 0.2, 0.3, 0, 0));
-    largeFonts.push_back(FontInfo(u8g2_font_6x12_tf, 0.2, 0.3, 0, 0));
+    largeFonts.push_back(FontInfo(u8g2_font_6x12_tf, 0.3, 0.1, 0, 0));
+    largeFonts.push_back(FontInfo(u8g2_font_6x12_tf, 0.3, 0.1, 0, 0));
     
     // Add all groups to the main FontGroups container
     fontGroups.push_back(smallFonts);

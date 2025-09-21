@@ -11,7 +11,7 @@
 #include "task.h"
 #include "sht30.h"
 #include <U8g2_for_Adafruit_GFX.h>
-#include "display.h"
+#include "matrixDisplay.h"
 #include "page.h"
 #include "loading.h"
 #include "matrixCore.h"
@@ -159,107 +159,13 @@ void loop() {
   const SecondaryPage *secondaryPage =
       matrixCoreManager.getCurrentSecondaryPage();
   if (secondaryPage != nullptr) {
-    
+
+    display.clearScreen();
     for (const auto &matrixCore : *secondaryPage) {
-      display.clearScreen();
       display.displayString(elapsed, timeDataNow, timeDataNowNextSec, matrixCore);
-      display.flipDMABuffer();
     }
+    display.flipDMABuffer();
   }
-
-  // switch(page.getCurrentFirstClassPage()){
-  //   case PAGE_0:
-  //     switch(page.getCurrentSecondClassPage()){
-  //       case PAGE_0_0:
-  //         display.clearScreen();
-  //         display.displayHourMinuteSecond(
-  //             elapsed, timeNow, timeNowNextSec, diffTimeStrings,
-  //             page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-  //             u8g2_font_t0_22b_tn, "2", ":");
-  //         display.flipDMABuffer();
-  //         break;
-  //       case PAGE_0_1:
-  //         display.clearScreen();
-  //         display.displayHourMinuteSecond(
-  //             elapsed, timeNow, timeNowNextSec, diffTimeStrings,
-  //             page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-  //             u8g2_font_crox5hb_tf, "2", ":");
-  //         display.flipDMABuffer();
-  //         break;
-  //       case PAGE_0_2:
-  //         display.clearScreen();
-  //         display.displayHourMinuteSecond(
-  //             elapsed, timeNow, timeNowNextSec, diffTimeStrings,
-  //             page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-  //             u8g2_font_fub17_tf, "2", ":");
-  //         display.flipDMABuffer();
-  //         break;
-  //       case PAGE_0_3:
-  //         display.clearScreen();
-  //         display.displayHourMinuteSecond(
-  //             elapsed, timeNow, timeNowNextSec, diffTimeStrings,
-  //             page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-  //             u8g2_font_ncenB18_tn, "2", ":");
-  //         display.flipDMABuffer();
-  //         break;
-  //       case PAGE_0_4:
-  //         display.clearScreen();
-  //         display.displayHourMinuteSecond(
-  //             elapsed, timeNow, timeNowNextSec, diffTimeStrings,
-  //             page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-  //             u8g2_font_luBS18_tf, "2", ":");
-  //         display.flipDMABuffer();
-  //         break;
-  //       case PAGE_0_5:
-  //         display.clearScreen();
-  //         display.displayHourMinuteSecond(
-  //             elapsed, timeNow, timeNowNextSec, diffTimeStrings,
-  //             page.getCurrentAnimationType(), 0xF800, 0, 30, 8, 12,
-  //             u8g2_font_crox4hb_tn, "2", ":");
-  //         display.flipDMABuffer();
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //     break;
-  //   case PAGE_1:
-  //      switch(page.getCurrentSecondClassPage()){
-  //       case PAGE_1_0:
-  //         display.clearScreen();
-  //         display.displayHourMinute(
-  //             elapsed, timeNow, timeNowNextSec, diffTimeStrings,
-  //             page.getCurrentAnimationType(), 0xF800, 0, 30, 12, 20,
-  //             u8g2_font_helvB18_tf);
-  //         display.flipDMABuffer();
-  //         break;
-  //       case PAGE_1_1:
-  //         display.clearScreen();
-  //         display.displayYearMonthDay(
-  //             elapsed, timeNow, timeNowNextSec, diffTimeStrings,
-  //             page.getCurrentAnimationType(), 0xF800, 0, 30, 12, 20,
-  //             u8g2_font_luBS19_tf);
-  //         display.flipDMABuffer();
-  //         break;
-  //       case PAGE_1_2:
-  //         display.clearScreen();
-  //         display.displayMonthDay(
-  //             elapsed, timeNow, timeNowNextSec, diffTimeStrings,
-  //             page.getCurrentAnimationType(), 0xF800, 0, 30, 12, 20,
-  //             u8g2_font_fur20_tf);
-  //         display.flipDMABuffer();
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //     break;
-  //   default:
-  //     Serial.print("PAGE_UNKNOWN: ");
-  //     break;
-  // }
-  
-
-
-
 
 
   buttonManager.tick();

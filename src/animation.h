@@ -3,6 +3,9 @@
 #include <vector>
 #include <cstdint>
 
+#define ANIMATION_0 0
+#define ANIMATION_1 1
+#define ANIMATION_2 2
 class AnimationManager {
 private:
     std::vector<int16_t> animationTypes;
