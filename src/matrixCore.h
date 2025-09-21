@@ -66,9 +66,10 @@ public:
     void button2LongPressEnd();
     int16_t getButtton2LongPressFlag();
     // Modification methods
-    void modifyElement(int16_t secondaryIdx, int16_t elementGroupIdx, int16_t elementIdx, 
+    void modifyElement(int16_t pageIndex, int16_t secondaryIndex, int16_t elementGroupIndex, 
                       const MatrixCore& newElement);
-    
+    void modifyCurrentElement(const MatrixCore &newElement);
+
     // Getter methods
     int16_t getCurrentPageIndex() const { return pageIndex; }
     int16_t getCurrentSecondaryIndex() const { return secondaryIndex; }

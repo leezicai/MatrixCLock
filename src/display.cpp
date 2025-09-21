@@ -488,9 +488,6 @@ std::vector<bool> Display::compare_with_vector(const char* str1, const char* str
          }
        }
      } else {
-       Serial.println("----------------21");
-       Serial.println(nowStr);
-       Serial.println("----------------");
        displayStaticOneTemplate(
            nowStr, colorRGB565, x, y, fontNumMetrics.charWidth, fontNumMetrics.height,
            spaceMetrics.charWidth, 0, 0, 1, 0, 0, fontInfo->fontName);

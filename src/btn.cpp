@@ -97,6 +97,10 @@ void ButtonManager::handleButton1LongPressStop() {
 void ButtonManager::handleButton2Click() {
     Serial.println("Button 2 clicked");
     matrixCoreManager.nextSecondaryPage();
+    Serial.println(matrixCoreManager.getCurrentPageIndex());
+    Serial.println(matrixCoreManager.getCurrentSecondaryIndex());
+    Serial.println(matrixCoreManager.getCurrentElementGroupIndex());
+    Serial.println("----------------s23");
     Serial.println("Button 2 clicked End!");
     // Your code for button 2 click here
 }
@@ -131,11 +135,11 @@ void ButtonManager::handleButton3Click() {
        Serial.println(mm.animationType);
     mm.animationType = animationManager.nextAnimationType(mm.animationType);
        Serial.println(mm.animationType);
+       Serial.println(matrixCoreManager.getCurrentPageIndex());
+       Serial.println(matrixCoreManager.getCurrentSecondaryIndex());
+       Serial.println(matrixCoreManager.getCurrentElementGroupIndex());
        Serial.println("----------------s23");
-    matrixCoreManager.modifyElement(matrixCoreManager.getCurrentPageIndex(),
-                                  matrixCoreManager.getCurrentSecondaryIndex(),
-                                  matrixCoreManager.getCurrentElementGroupIndex(),
-                                  mm);
+    matrixCoreManager.modifyCurrentElement( mm);
     Serial.println("Button 3 clicked");
     page.increaseAnimationType();
     // Your code for button 3 click here
@@ -144,10 +148,7 @@ void ButtonManager::handleButton3Click() {
 void ButtonManager::handleButton3DoubleClick() {
   MatrixCore mm = matrixCoreManager.getCurrentMatrixCore();
   mm.animationType = animationManager.preAnimationType(mm.animationType);
-  matrixCoreManager.modifyElement(matrixCoreManager.getCurrentPageIndex(),
-                                matrixCoreManager.getCurrentSecondaryIndex(),
-                                matrixCoreManager.getCurrentElementGroupIndex(),
-                                mm);
+  matrixCoreManager.modifyCurrentElement( mm);
   Serial.println("Button 3 double-clicked");
   page.decreaseAnimationType();
   // Your code for button 3 double-click here
@@ -156,10 +157,7 @@ void ButtonManager::handleButton3DoubleClick() {
 void ButtonManager::handleButton3LongPressStart() {
   MatrixCore mm = matrixCoreManager.getCurrentMatrixCore();
   mm.animationType = animationManager.preAnimationType(0);
-  matrixCoreManager.modifyElement(matrixCoreManager.getCurrentPageIndex(),
-                                matrixCoreManager.getCurrentSecondaryIndex(),
-                                matrixCoreManager.getCurrentElementGroupIndex(),
-                                mm);
+  matrixCoreManager.modifyCurrentElement( mm);
     Serial.println("Button 3 long press started");
     page.setAnimationType(0);
 }

@@ -143,14 +143,23 @@ void MatrixCoreManager::button2LongPressEnd() { button2LongPressFlag = 0; }
 int16_t MatrixCoreManager::getButtton2LongPressFlag() { return button2LongPressFlag ; }
 
 // Modification methods (removed the first overload as requested)
-void MatrixCoreManager::modifyElement(int16_t secondaryIdx, int16_t elementGroupIdx, 
-                                   int16_t elementIdx, const MatrixCore& newElement) {
+void MatrixCoreManager::modifyElement(int16_t pageIndex, int16_t secondaryIndex, 
+                                   int16_t elementGroupIndex, const MatrixCore& newElement) {
     // In 3-layer structure, elementGroupIdx is the element index in secondary page
     // elementIdx parameter is now redundant but kept for API compatibility
-    if (secondaryIdx < static_cast<int16_t>(interface[pageIndex].size()) &&
-        elementGroupIdx < static_cast<int16_t>(interface[pageIndex][secondaryIdx].size())) {
+
+    if (secondaryIndex < static_cast<int16_t>(interface[pageIndex].size()) &&
+        elementGroupIndex < static_cast<int16_t>(interface[pageIndex][secondaryIndex].size())) {
         
-        interface[pageIndex][secondaryIdx][elementGroupIdx] = newElement;
+        interface[pageIndex][secondaryIndex][elementGroupIndex] = newElement;
+    }
+}
+void MatrixCoreManager::modifyCurrentElement(const MatrixCore& newElement) {
+    if (pageIndex < static_cast<int16_t>(interface.size()) &&
+        secondaryIndex < static_cast<int16_t>(interface[pageIndex].size()) &&
+        elementGroupIndex < static_cast<int16_t>(interface[pageIndex][secondaryIndex].size())) {
+        
+        interface[pageIndex][secondaryIndex][elementGroupIndex] = newElement;
     }
 }
 
