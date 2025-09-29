@@ -12,6 +12,7 @@
 #include "matrixTimeData.h"
 #include "common_define.h"
 #include "animation.h"
+#include "setting.h"
 
 extern MatrixPanel_I2S_DMA *dma_display;
 extern U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit_gfx;
@@ -130,6 +131,7 @@ struct FontMetrics {
   int ascent;
   int descent;
   int charWidth;
+  
 };
 
 class Display {
@@ -159,9 +161,13 @@ class Display {
       // 显示文字（RGB565）
       void displayText(uint16_t colorRGB565, int x, int y,
                        const uint8_t *fontName, const char *text);
+                       void displayText(uint16_t colorRGB565, int x, int y,
+                       const uint8_t *fontName, int16_t intP);
       // 显示文字（RGB888）
       void displayTextRGB(uint8_t red, uint8_t green, uint8_t blue, int x,
                           int y, const uint8_t *fontName, const char *text);
+                          void displayTextRGB(uint8_t red, uint8_t green, uint8_t blue, int x,
+                          int y, const uint8_t *fontName, int16_t pageInfo);
                           
       // 时间字符串结构体
       TimeStrings getTimeStrings(time_t now);
@@ -229,8 +235,9 @@ class Display {
                    boolean flag, MatrixCore matrixCore);
       void displayString(unsigned long elapsed, TimeData timeNow,
                                    TimeData timeNowNextSec,MatrixCore matrixCore);
+      void displayUnderline(MatrixCore matrixCore);
 
-      
+      void showPageInfo();
 };
 
 // 全局实例声明

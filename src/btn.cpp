@@ -1,6 +1,5 @@
 #include "btn.h"
 #include <Arduino.h>
-#include "data.h"
 #include "ds3231.h"
 #include "page.h"
 
@@ -60,24 +59,23 @@ void ButtonManager::tick() {
 
 // Button 1 callbacks
 void ButtonManager::handleButton1Click() {
-    matrixCoreManager.nextPrimaryPage();
+  matrixCoreManager.nextPrimaryPage();
+  matrixCoreManager.setPageFlagTime(0);
   page.increaseFirstClassPage();
-  Serial.println(appData.getWifiConfigured());
   Serial.println("Button 1 clicked");
   // Your code for button 1 click here
 }
 
 void ButtonManager::handleButton1DoubleClick() {
-    matrixCoreManager.nextPrimaryPage();
+  matrixCoreManager.nextPrimaryPage();
+  matrixCoreManager.setPageFlagTime(0);
   page.decreaseFirstClassPage();
   Serial.println("Button 1 double-clicked");
   // Your code for button 1 double-click here
 }
 
 void ButtonManager::handleButton1LongPressStart() {
-    Serial.println(appData.getWifiConfigured());
-    appData.setWifiConfigured(!appData.getWifiConfigured());
-    Serial.println(appData.getWifiConfigured());
+    matrixDataManager.setWifiConfig(!matrixDataManager.getWifiConfig());
     ESP.restart();
     Serial.println("Button 1 long press started");
     // Your code for button 1 long press start here
@@ -97,6 +95,7 @@ void ButtonManager::handleButton1LongPressStop() {
 void ButtonManager::handleButton2Click() {
     Serial.println("Button 2 clicked");
     matrixCoreManager.nextSecondaryPage();
+    matrixCoreManager.setPageFlagTime(0);
     Serial.println(matrixCoreManager.getCurrentPageIndex());
     Serial.println(matrixCoreManager.getCurrentSecondaryIndex());
     Serial.println(matrixCoreManager.getCurrentElementGroupIndex());
@@ -107,6 +106,7 @@ void ButtonManager::handleButton2Click() {
 
 void ButtonManager::handleButton2DoubleClick() {
     matrixCoreManager.prevSecondaryPage();
+    matrixCoreManager.setPageFlagTime(0);
     Serial.println("Button 2 double-clicked");
     // Your code for button 2 double-click here
 }
@@ -142,14 +142,21 @@ void ButtonManager::handleButton3DoubleClick() {
   MatrixCore mm = matrixCoreManager.getCurrentMatrixCore();
   mm.animationType = animationManager.preAnimationType(mm.animationType);
   matrixCoreManager.modifyCurrentElement( mm);
+
   Serial.println("Button 3 double-clicked");
   page.decreaseAnimationType();
   // Your code for button 3 double-click here
 }
 
 void ButtonManager::handleButton3LongPressStart() {
+    // 长按重置动画
+//   MatrixCore mm = matrixCoreManager.getCurrentMatrixCore();
+//   mm.animationType = animationManager.preAnimationType(0);
+//   matrixCoreManager.modifyCurrentElement( mm);
+
+// 长按重置 字体
   MatrixCore mm = matrixCoreManager.getCurrentMatrixCore();
-  mm.animationType = animationManager.preAnimationType(0);
+  mm.fontIndex = 0;
   matrixCoreManager.modifyCurrentElement( mm);
     Serial.println("Button 3 long press started");
     page.setAnimationType(0);
@@ -162,6 +169,5 @@ void ButtonManager::handleButton3LongPress() {
 
 void ButtonManager::handleButton3LongPressStop() {
     Serial.println("Button 3 long press stopped");
-    Serial.println(appData.getTimezone());
     // Your code for button 3 long press stop here
 }

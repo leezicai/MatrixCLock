@@ -2,11 +2,10 @@
 #define BRIGHTNESS_MANAGER_H
 #include <Arduino.h>
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
-#include "data.h"
 #include "common_define.h"
+#include "matrixData.h"
 
 extern MatrixPanel_I2S_DMA *dma_display;
-extern Data appData;  // Changed from extern Data *appData;
 
 // Configuration parameters
 // #define LIGHT_ADC 4                // Light sensor ADC pin (GPIO 1)
@@ -59,9 +58,27 @@ public:
      */
     void forceUpdate();
 
-private:
+    // Auto mode
+    bool getAutoMode() const;
+    void setAutoMode(bool mode);
+    // Minimum brightness
+    int getMinBrightness() const;
+    void setMinBrightness(int brightness);
+    // Maximum brightness
+    int getMaxBrightness() const;
+    void setMaxBrightness(int brightness);
+    // Manual brightness
+    int getManBrightness() const;
+    void setManBrightness(int brightness);
+
+  private:
     uint8_t _lastBrightness;        // 最后应用的亮度 Last applied brightness
     
+    bool autoMode;
+    int minBrightness;
+    int maxBrightness;
+    int manBrightness;
+
     // 自动亮度检测相关成员
     // Auto brightness detection related members
     int _brightSamplingTime;        // 亮度样本数量 Number of brightness samples

@@ -1,4 +1,5 @@
 #include "sht30.h"
+#include <math.h>  // For round() function
 
 // Global instance definition
 SHT30 sht30;
@@ -61,13 +62,15 @@ bool SHT30::readData() {
         return false;
     }
     
-    // Calculate temperature in Celsius
+    // Calculate temperature in Celsius and round to 1 decimal place
     uint16_t tempRaw = (data[0] << 8) | data[1];
-    temperature = -45.0 + (175.0 * tempRaw / 65535.0);
+    float tempCalc = -45.0 + (175.0 * tempRaw / 65535.0);
+    temperature = round(tempCalc * 10.0) / 10.0;  // Round to 1 decimal place
     
-    // Calculate humidity in percentage
+    // Calculate humidity in percentage and round to 1 decimal place
     uint16_t humRaw = (data[3] << 8) | data[4];
-    humidity = 100.0 * humRaw / 65535.0;
+    float humCalc = 100.0 * humRaw / 65535.0;
+    humidity = round(humCalc * 10.0) / 10.0;  // Round to 1 decimal place
     
     return true;
 }
@@ -81,7 +84,9 @@ float SHT30::getHumidity() const {
 }
 
 float SHT30::getTemperatureF() const {
-    return temperature * 9.0 / 5.0 + 32.0;
+    // Convert to Fahrenheit and round to 1 decimal place
+    float tempF = temperature * 9.0 / 5.0 + 32.0;
+    return round(tempF * 10.0) / 10.0;
 }
 
 bool SHT30::isConnected() {

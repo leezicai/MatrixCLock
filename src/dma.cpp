@@ -27,7 +27,7 @@ MatrixPanel_I2S_DMA* setupDMA(uint8_t brightness) {
     HUB75_I2S_CFG mxconfig(
         PANEL_WIDTH, PANEL_HEIGHT, PANEL_CHAIN, pins
     );
-
+    mxconfig.min_refresh_rate = 30;
     // Enable double buffering for smoother updates
     // 启用双缓冲以实现更平滑的更新
     mxconfig.double_buff = true;

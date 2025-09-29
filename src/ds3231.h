@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include "time.h"
 #include "common_define.h"
+#include "matrixData.h"
 
 // DS3231 I2C address
 // #define SDA 1
@@ -62,6 +63,29 @@ public:
     float getTemperature();
     void sendNTPpacket(const char *address);
     bool syncNtpTime();
+
+    // Time adjustment methods for ESP32-S3 with RTC sync
+    bool adjustTime(int years, int months, int days, int hours, int minutes);
+
+    // Year adjustment methods
+    bool addYear();
+    bool subtractYear();
+
+    // Month adjustment methods
+    bool addMonth();
+    bool subtractMonth();
+
+    // Day adjustment methods
+    bool addDay();
+    bool subtractDay();
+
+    // Hour adjustment methods
+    bool addHour();
+    bool subtractHour();
+
+    // Minute adjustment methods
+    bool addMinute();
+    bool subtractMinute();
 };
 
 extern DS3231 rtc;

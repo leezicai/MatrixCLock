@@ -17,6 +17,7 @@ struct MatrixCore {
     MatrixCore(float x, float y, int16_t fontGroupIndex, int16_t fontIndex, 
                int16_t colorIndex1, int16_t colorIndex2, int16_t displayGroup, 
                int16_t displayIndex, int16_t animationType);
+    MatrixCore() = default;
 };
 
 // 3-layer vector structure
@@ -33,6 +34,8 @@ private:
     int16_t secondaryIndex;     // Secondary page index
     int16_t elementGroupIndex;  // Element group index (now refers to individual MatrixCore elements)
 
+    int16_t lineFlagTime = 0;
+    int16_t pageFlagTime = 0;
     int16_t button2LongPressFlag = 0;
     
     // History array to remember last secondary page position for each primary page
@@ -65,6 +68,13 @@ public:
     void button2LongPressStart();
     void button2LongPressEnd();
     int16_t getButtton2LongPressFlag();
+
+    int16_t getLineFlagTime();
+    void setLineFlagTime(int16_t lineFlagTime);
+
+    int16_t getPageFlagTime();
+    void setPageFlagTime(int16_t pageFlagTime);
+
     // Modification methods
     void modifyElement(int16_t pageIndex, int16_t secondaryIndex, int16_t elementGroupIndex, 
                       const MatrixCore& newElement);

@@ -18,6 +18,11 @@ void BrightnessManager::init() {
     _lastSampleTime = 0;
     _lastCalculationTime = 0;
     
+    autoMode = matrixDataManager.getAutoMode();
+    minBrightness = matrixDataManager.getMinBrightness();
+    maxBrightness = matrixDataManager.getMaxBrightness();
+    manBrightness = matrixDataManager.getManBrightness();
+    
     // 获取初始读数
     // Take initial readings
     for (int i = 0; i < 5; i++) {
@@ -46,7 +51,7 @@ void BrightnessManager::handle() {
     
     // 如果在自动模式下并且亮度已更改，则更新显示
     // If in auto mode and brightness has changed, update display
-    if (dma_display && appData.getAutoMode()) {
+    if (dma_display && autoMode){
       handleAutoBrightness();
       updateDisplayBrightness();
     }
@@ -90,12 +95,10 @@ void BrightnessManager::calculateBrightnessValue() {
     // Map brightness value based on threshold
     if (val >= 700) {
         _currentBrightness = map(val, 700, 4095, 
-                               appData.getMinBrightness() + 1,
-                               appData.getMaxBrightness());
-        appData.setDynamicBrightness(_currentBrightness);
+                               minBrightness + 1,
+                               maxBrightness);
     } else {
-        _currentBrightness = appData.getMinBrightness();
-        appData.setDynamicBrightness(_currentBrightness);
+        _currentBrightness = minBrightness;
     }
     
     // 打印调试信息
@@ -121,9 +124,9 @@ void BrightnessManager::updateDisplayBrightness() {
     
     // 根据模式设置获取亮度值
     // Get brightness value based on mode setting
-    uint8_t brightness = appData.getAutoMode() ? 
-                         appData.getDynamicBrightness() : 
-                         appData.getManualBrightness();
+    uint8_t brightness = autoMode ? 
+                         _currentBrightness : 
+                         manBrightness;
     
     // 仅在亮度已更改时更新
     // Only update if brightness has changed
@@ -144,9 +147,9 @@ void BrightnessManager::forceUpdate() {
     if (dma_display) {
         // 强制获取当前亮度值并应用
         // Force get current brightness value and apply it
-        uint8_t brightness = appData.getAutoMode() ? 
-                             appData.getDynamicBrightness() : 
-                             appData.getManualBrightness();
+        uint8_t brightness = autoMode ? 
+                             _currentBrightness : 
+                             manBrightness;
         
         dma_display->setBrightness8(brightness);
         _lastBrightness = brightness;
@@ -154,4 +157,39 @@ void BrightnessManager::forceUpdate() {
         Serial.print("Force updated DMA display brightness to: ");
         Serial.println(brightness);
     }
+}
+
+bool BrightnessManager::getAutoMode() const {
+    return autoMode;
+}
+
+void BrightnessManager::setAutoMode(bool mode) {
+    autoMode = mode;
+}
+
+// Minimum brightness
+int BrightnessManager::getMinBrightness() const {
+    return minBrightness;
+}
+
+void BrightnessManager::setMinBrightness(int brightness) {
+    minBrightness = brightness;
+}
+
+// Maximum brightness
+int BrightnessManager::getMaxBrightness() const {
+    return maxBrightness;
+}
+
+void BrightnessManager::setMaxBrightness(int brightness) {
+    maxBrightness = brightness;
+}
+
+// Manual brightness
+int BrightnessManager::getManBrightness() const {
+    return manBrightness;
+}
+
+void BrightnessManager::setManBrightness(int brightness) {
+    manBrightness = brightness;
 }

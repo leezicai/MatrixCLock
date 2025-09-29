@@ -19,17 +19,27 @@ void MatrixCoreManager::initializeMatrixCores() {
     // Primary Page 0
     PrimaryPage primaryPage0;
     
-    // Primary Page 0 - Secondary Page 0
+    // 24 getHour24_Minute_Second 
     SecondaryPage secondaryPage0_0 = {
-        MatrixCore(0.495f, 0.43f, 0, 0, 0, 0, 0, 6, 0)  // PAGE_0_0_0
+        MatrixCore(0.495f, 0.45f, 1, 0, 1, 0, 0, 1, 1)  // 24 getHour24_Minute_Second
+    };
+    SecondaryPage secondaryPage0_1 = { // 24 getHour24_Minute
+        MatrixCore(0.495f, 0.45f, 0, 0, 1, 0, 0, 4, 2 )  // PAGE_0_1_0
+    };
+    SecondaryPage secondaryPage0_2 = {  // 12 getHour12_MinuteAmpm
+        MatrixCore(0.495f, 0.45f, 2, 0, 0, 0, 0, 6, 0)  // PAGE_0_0_0
+    };
+    SecondaryPage secondaryPage0_3 = {  // 12 getHour12_Minute_Second
+        MatrixCore(0.495f, 0.45f, 1, 0, 0, 0, 0, 2, 0)  // PAGE_0_0_0
+    };
+    SecondaryPage secondaryPage0_4 = { // 12 getHour12_Minute
+        MatrixCore(0.495f, 0.43f, 0, 0, 0, 0, 0, 5, 0)  // PAGE_0_0_0
     };
     primaryPage0.push_back(secondaryPage0_0);
-    
-    // Primary Page 0 - Secondary Page 1
-    SecondaryPage secondaryPage0_1 = {
-        MatrixCore(0.495f, 0.43f, 0, 0, 0, 0, 0, 1, 0)  // PAGE_0_1_0
-    };
     primaryPage0.push_back(secondaryPage0_1);
+    primaryPage0.push_back(secondaryPage0_2);
+    primaryPage0.push_back(secondaryPage0_3);
+    primaryPage0.push_back(secondaryPage0_4);
     
     interface.push_back(primaryPage0);
     
@@ -38,10 +48,59 @@ void MatrixCoreManager::initializeMatrixCores() {
     
     // Primary Page 1 - Secondary Page 0
     SecondaryPage secondaryPage1_0 = {
-        MatrixCore(0.5f, 0.333f, 0, 0, 0, 0, 0, 1, 0),  // PAGE_1_0_0
-        MatrixCore(0.5f, 0.666f, 0, 0, 0, 0, 0, 2, 1)   // PAGE_1_0_1
+        MatrixCore(0.495f, 0.45f, 1, 0, 1, 0, 0, 1, 0),  
+        MatrixCore(0.495f, 0.8f, 3, 0, 1, 0, 0, 0, 0)
     };
+    SecondaryPage secondaryPage1_1 = {
+        MatrixCore(0.495f, 0.45f, 1, 0, 1, 0, 0, 6, 0), 
+        MatrixCore(0.495f, 0.8f, 4, 0, 1, 0, 0, 0, 0)
+    };
+    SecondaryPage secondaryPage1_2 = {
+        MatrixCore(0.495f, 0.45f, 2, 0, 0, 0, 0, 6, 0),  
+        MatrixCore(0.495f, 0.8f, 5, 0, 1, 0, 0, 0, 0)
+    };
+    SecondaryPage secondaryPage1_3 = {
+        MatrixCore(0.5f, 0.3f, 6, 0, 1, 0, 0, 0, 0),
+        MatrixCore(0.5f, 0.6f, 1, 0, 0, 0, 0, 1, 0)
+    };
+    SecondaryPage secondaryPage1_4 = {
+        MatrixCore(0.5f, 0.25f, 10, 40, 1, 0, 0, 0, 0),
+        MatrixCore(0.5f, 0.65f, 1, 0, 0, 0, 0, 1, 0)};
+    SecondaryPage secondaryPage1_5 = {
+        MatrixCore(0.5f, 0.25f, 10, 40, 1, 0, 1, 3, 0),
+        MatrixCore(0.5f, 0.65f, 1, 0, 0, 0, 0, 1, 0)};
+    SecondaryPage secondaryPage1_6 = {
+        MatrixCore(0.5f, 0.25f, 10, 40, 1, 0, 1, 4, 0),
+        MatrixCore(0.5f, 0.65f, 1, 0, 0, 0, 0, 1, 0)};
+    SecondaryPage secondaryPage1_7 = {
+        MatrixCore(0.495f, 0.45f, 10, 40, 0, 0, 1, 5, 0),
+        MatrixCore(0.495f, 0.8f, 10, 0, 1, 0, 0, 0, 0)};
+    SecondaryPage secondaryPage1_8 = {
+        MatrixCore(0.495f, 0.45f, 1, 0, 0, 0, 0, 1, 0),
+        MatrixCore(0.495f, 0.8f, 11, 0, 1, 0, 0, 0, 0)};
+
+    SecondaryPage secondaryPage1_9 = {
+        MatrixCore(0.495f, 0.45f, 1, 0, 0, 0, 0, 1, 0),
+        MatrixCore(0.495f, 0.8f, 12, 0, 1, 0, 0, 0, 0)};
+    SecondaryPage secondaryPage1_10 = {
+        MatrixCore(0.495f, 0.45f, 1, 0, 0, 0, 0, 1, 0),
+        MatrixCore(0.495f, 0.8f, 13, 0, 1, 0, 0, 0, 0)};
+    SecondaryPage secondaryPage1_11 = {
+        MatrixCore(0.495f, 0.45f, 1, 0, 0, 0, 0, 1, 0),
+        MatrixCore(0.495f, 0.8f, 14, 0, 1, 0, 0, 0, 0)};
+    
     primaryPage1.push_back(secondaryPage1_0);
+    primaryPage1.push_back(secondaryPage1_1);
+    primaryPage1.push_back(secondaryPage1_2);
+    primaryPage1.push_back(secondaryPage1_3);
+    primaryPage1.push_back(secondaryPage1_4);
+    primaryPage1.push_back(secondaryPage1_5);
+    primaryPage1.push_back(secondaryPage1_6);
+    primaryPage1.push_back(secondaryPage1_7);
+    primaryPage1.push_back(secondaryPage1_8);
+    primaryPage1.push_back(secondaryPage1_9);
+    primaryPage1.push_back(secondaryPage1_10);
+    primaryPage1.push_back(secondaryPage1_11);
     
     interface.push_back(primaryPage1);
     
@@ -141,6 +200,16 @@ void MatrixCoreManager::resetElementGroup() {
 void MatrixCoreManager::button2LongPressStart() { button2LongPressFlag = 1; }
 void MatrixCoreManager::button2LongPressEnd() { button2LongPressFlag = 0; }
 int16_t MatrixCoreManager::getButtton2LongPressFlag() { return button2LongPressFlag ; }
+
+int16_t MatrixCoreManager::getLineFlagTime() { return lineFlagTime;}
+void MatrixCoreManager::setLineFlagTime(int16_t lineFlagTime) { 
+    this->lineFlagTime = lineFlagTime; 
+}
+
+int16_t MatrixCoreManager::getPageFlagTime() { return pageFlagTime;}
+void MatrixCoreManager::setPageFlagTime(int16_t pageFlagTime) { 
+    this->pageFlagTime = pageFlagTime; 
+}
 
 // Modification methods (removed the first overload as requested)
 void MatrixCoreManager::modifyElement(int16_t pageIndex, int16_t secondaryIndex, 

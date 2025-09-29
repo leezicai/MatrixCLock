@@ -13,7 +13,7 @@
 // Button timing parameters (in milliseconds)
 #define DEBOUNCE_TIME_MS 50      // Time for debounce
 #define CLICK_TIME_MS 600        // Time to detect a single click
-#define DOUBLE_CLICK_TIME_MS 300 // Time between clicks for double click detection
+#define DOUBLE_CLICK_TIME_MS 400 // Time between clicks for double click detection
 #define LONG_PRESS_TIME_MS 1200  // Time to detect a long press
 
 class ButtonManager {

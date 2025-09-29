@@ -1,5 +1,4 @@
 #include "setAP.h"
-#include "data.h"
 
 #define AP_SSID "MatrixClock"  // Access point name
 #define AP_IP IPAddress(10, 0, 0, 1)
@@ -102,10 +101,25 @@ void SetAP::handleSubmit() {
     
     server.send(200, "text/html", response);
     
-    appData.setSSID(selectedSSID.c_str());
-    appData.setPassword(wifiPassword.c_str());
-    appData.setTimezone(timezone);
-    appData.setWifiConfigured(true);
+    // appData.setSSID(selectedSSID.c_str());
+    // appData.setPassword(wifiPassword.c_str());
+    // appData.setTimezone(timezone);
+    // appData.setWifiConfigured(true);
+
+    matrixDataManager.setWifiSSID(selectedSSID.c_str());
+    matrixDataManager.setWifiPassword(wifiPassword.c_str());
+    matrixDataManager.setTimezone(timezone);
+    matrixDataManager.setWifiConfig(true);
+
+    Serial.println("--------------------------------");
+    Serial.println(wifiPassword.c_str());
+    Serial.println(selectedSSID.c_str());
+    Serial.println("--------------------------------");
+    Serial.println(matrixDataManager.getWifiConfig());
+    Serial.println(matrixDataManager.getWifiSSID());
+    Serial.println(matrixDataManager.getWifiPassword());
+    Serial.println(matrixDataManager.getTimezone());
+    Serial.println("--------------------------------");
     // 延迟3秒后重启
     delay(2000);
     restartESP();

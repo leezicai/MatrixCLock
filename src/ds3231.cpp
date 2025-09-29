@@ -1,7 +1,6 @@
 #include "ds3231.h"
 #include <ESP32Time.h>
 #include <WiFiUdp.h>
-#include "data.h"
 
 // Global offset variable (8 hours in seconds)
 const char* ntpServer = "ntp7.aliyun.com";
@@ -64,7 +63,7 @@ bool DS3231::syncTimeToRTC() {
     time_t now;
     time(&now);
     Serial.printf("Current time1: %d\n", now);
-    now -= (appData.getTimezone() * 3600); // Convert to UTC time 
+    now -= (matrixDataManager.getTimezone() * 3600); // Convert to UTC time 
     Serial.printf("Current time2: %d\n", now);
     gmtime_r(&now, &timeinfo);
     
@@ -94,7 +93,7 @@ bool DS3231::syncTimeFromRTC() {
     struct tm localtimeinfo = timeinfo;
     
     // Apply timezone offset manually
-    int hoursToAdd = appData.getTimezone();
+    int hoursToAdd = matrixDataManager.getTimezone();
     
     // Add hours and handle date rollover
     localtimeinfo.tm_hour += hoursToAdd;
@@ -206,7 +205,7 @@ bool DS3231::getRTCDateTime(tm* timeinfo) {
     }
     
     const uint8_t BUFFER_SIZE = 7; // From seconds to year (7 registers)
-    if (wire->requestFrom(DS3231_ADDRESS, BUFFER_SIZE) != BUFFER_SIZE) {
+    if (wire->requestFrom(static_cast<uint8_t>(DS3231_ADDRESS), BUFFER_SIZE) != BUFFER_SIZE) {
         return false;
     }
     
@@ -321,7 +320,7 @@ bool DS3231::syncNtpTime()
             unsigned long epoch = secsSince1900 - seventyYears;
             // 设置 ESP32Time 时间（添加时区偏移）
             // ESP32Time 已经在创建实例时设置了时区，或者可以在setTime时加入偏移
-            esp32Time.setTime(epoch + appData.getTimezone() * 3600);
+            esp32Time.setTime(epoch + matrixDataManager.getTimezone() * 3600);
             // 打印当前时间以验证
             Serial.print("NTP time synchronized: ");
             Serial.println(esp32Time.getTime("%Y-%m-%d %H:%M:%S"));
@@ -331,4 +330,141 @@ bool DS3231::syncNtpTime()
     }
     Serial.println("NTP time synchronization failed - timeout waiting for response.");
     return false;
+}
+
+
+bool DS3231::adjustTime(int years, int months, int days, int hours, int minutes) {
+    // Get current system time
+    struct tm timeinfo;
+    if (!getLocalTime(&timeinfo)) {
+        Serial.println("Failed to get current system time");
+        return false;
+    }
+    
+    // Apply adjustments
+    timeinfo.tm_year += years;
+    timeinfo.tm_mon += months;
+    timeinfo.tm_mday += days;
+    timeinfo.tm_hour += hours;
+    timeinfo.tm_min += minutes;
+    
+    // Normalize the time structure (handle overflows/underflows)
+    timeinfo.tm_isdst = -1; // Let mktime determine DST
+    time_t adjustedTime = mktime(&timeinfo);
+    
+    if (adjustedTime == -1) {
+        Serial.println("Error: Invalid time after adjustment");
+        return false;
+    }
+    
+    // Set the adjusted time to system
+    struct timeval tv;
+    tv.tv_sec = adjustedTime;
+    tv.tv_usec = 0;
+    
+    if (settimeofday(&tv, NULL) != 0) {
+        Serial.println("Error setting adjusted system time");
+        return false;
+    }
+    
+    // Sync the adjusted time to RTC
+    bool syncResult = syncTimeToRTC();
+    
+    if (syncResult) {
+        Serial.printf("Time adjusted successfully: %s", ctime(&adjustedTime));
+    } else {
+        Serial.println("Time adjusted but failed to sync to RTC");
+    }
+    
+    return syncResult;
+}
+
+/**
+ * Add one year to current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::addYear() {
+    Serial.println("Adding 1 year to current time...");
+    return adjustTime(1, 0, 0, 0, 0);
+}
+
+/**
+ * Subtract one year from current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::subtractYear() {
+    Serial.println("Subtracting 1 year from current time...");
+    return adjustTime(-1, 0, 0, 0, 0);
+}
+
+/**
+ * Add one month to current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::addMonth() {
+    Serial.println("Adding 1 month to current time...");
+    return adjustTime(0, 1, 0, 0, 0);
+}
+
+/**
+ * Subtract one month from current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::subtractMonth() {
+    Serial.println("Subtracting 1 month from current time...");
+    return adjustTime(0, -1, 0, 0, 0);
+}
+
+/**
+ * Add one day to current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::addDay() {
+    Serial.println("Adding 1 day to current time...");
+    return adjustTime(0, 0, 1, 0, 0);
+}
+
+/**
+ * Subtract one day from current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::subtractDay() {
+    Serial.println("Subtracting 1 day from current time...");
+    return adjustTime(0, 0, -1, 0, 0);
+}
+
+/**
+ * Add one hour to current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::addHour() {
+    Serial.println("Adding 1 hour to current time...");
+    return adjustTime(0, 0, 0, 1, 0);
+}
+
+/**
+ * Subtract one hour from current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::subtractHour() {
+    Serial.println("Subtracting 1 hour from current time...");
+    return adjustTime(0, 0, 0, -1, 0);
+}
+
+/**
+ * Add one minute to current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::addMinute() {
+    Serial.println("Adding 1 minute to current time...");
+    return adjustTime(0, 0, 0, 0, 1);
+}
+
+/**
+ * Subtract one minute from current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::subtractMinute() {
+    Serial.println("Subtracting 1 minute from current time...");
+    return adjustTime(0, 0, 0, 0, -1);
 }

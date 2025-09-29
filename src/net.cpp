@@ -4,7 +4,6 @@
 #include <time.h>
 #include <Arduino.h>
 #include "ds3231.h"
-#include "data.h"
 // #include <sys/time.h> 
 
 // --- WiFi 和 NTP 配置 (保持不变) ---
@@ -70,7 +69,8 @@ bool attemptWiFiConnectOnce() {
     _currentNetState = NET_CONNECTING_WIFI; // Update state
 
     WiFi.mode(WIFI_STA); // Ensure mode is set before beginning
-    WiFi.begin(appData.getSSID(), appData.getPassword());
+    // WiFi.begin(appData.getSSID(), appData.getPassword());
+    WiFi.begin(matrixDataManager.getWifiSSID(), matrixDataManager.getWifiPassword());
 
     unsigned long startAttemptTime = millis();
     while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < WIFI_CONNECT_TIMEOUT_MS) {

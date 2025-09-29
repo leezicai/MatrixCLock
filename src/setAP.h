@@ -7,6 +7,7 @@
 #include <DNSServer.h>
 #include <vector>
 #include <string>
+#include "matrixData.h"
 
 class SetAP {
 public:
