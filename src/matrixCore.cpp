@@ -299,9 +299,13 @@ void MatrixCoreManager::swapSecondaryPage(int16_t pageIdx, int16_t secondaryIdx,
     // Replace the secondary page
     interface[pageIdx][secondaryIdx] = newSecondaryPage;
     
-    // If we're currently on this page, reset element index to avoid out-of-bounds
+    // If we're currently on this page, check if elementGroupIndex is still valid
     if (pageIndex == pageIdx && secondaryIndex == secondaryIdx) {
-        resetElementGroup();
+        // If current elementGroupIndex exceeds new page size, reset to 0
+        if (elementGroupIndex >= static_cast<int16_t>(newSecondaryPage.size())) {
+            resetElementGroup();
+        }
+        // Otherwise keep the current elementGroupIndex unchanged
     }
 }
 

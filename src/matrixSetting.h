@@ -47,7 +47,7 @@ public:
 
 private:
     // Current language setting
-    Language currentLanguage = LANG_ENGLISH;
+    Language currentLanguage ;
     
     // Common words arrays
     static const char* commonWords_CN[WORD_COUNT];
