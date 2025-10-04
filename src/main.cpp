@@ -140,8 +140,8 @@ void setup() {
   timeNow = display.getTimeStrings(now);
   timeNowNextSec = display.getTimeStrings(now + 1);
   diffTimeStrings = display.compareTimeStrings(timeNow, timeNowNextSec);
-  timeDataNow = matrixTimeUtils.getTimeDataFromTimestamp(now);
-  timeDataNowNextSec = matrixTimeUtils.getTimeDataFromTimestamp(now + 1);
+  timeDataNow = matrixTimeData.getTimeDataFromTimestamp(now);
+  timeDataNowNextSec = matrixTimeData.getTimeDataFromTimestamp(now + 1);
 
   std::vector<const uint8_t *> fontList = {
 u8g2_font_micro_tr,
@@ -244,8 +244,8 @@ void loop() {
     timeNow = display.getTimeStrings(now);
     timeNowNextSec = display.getTimeStrings(now + 1);
     diffTimeStrings = display.compareTimeStrings(timeNow, timeNowNextSec);
-    timeDataNow = matrixTimeUtils.getTimeDataFromTimestamp(now);
-    timeDataNowNextSec = matrixTimeUtils.getTimeDataFromTimestamp(now + 1);
+    timeDataNow = matrixTimeData.getTimeDataFromTimestamp(now);
+    timeDataNowNextSec = matrixTimeData.getTimeDataFromTimestamp(now + 1);
     lastSecond = now;
     if(matrixCoreManager.getLineFlagTime() < 6){
       matrixCoreManager.setLineFlagTime(matrixCoreManager.getLineFlagTime() + 1);

@@ -46,15 +46,18 @@ void BrightnessManager::init() {
 }
 
 void BrightnessManager::handle() {
-    // 处理自动亮度测量
-    // Handle auto brightness measurement
-    
-    // 如果在自动模式下并且亮度已更改，则更新显示
-    // If in auto mode and brightness has changed, update display
-    if (dma_display && autoMode){
-      handleAutoBrightness();
-      updateDisplayBrightness();
+    if (!dma_display) {
+        return;
     }
+    
+    // Handle auto brightness measurement only in auto mode
+    if (autoMode) {
+        handleAutoBrightness();
+    }
+    
+    // Always update display brightness regardless of mode
+    // This ensures manual brightness changes take effect
+    updateDisplayBrightness();
 }
 
 void BrightnessManager::handleAutoBrightness() {
@@ -165,6 +168,7 @@ bool BrightnessManager::getAutoMode() const {
 
 void BrightnessManager::setAutoMode(bool mode) {
     autoMode = mode;
+    forceUpdate();
 }
 
 // Minimum brightness
@@ -176,6 +180,31 @@ void BrightnessManager::setMinBrightness(int brightness) {
     minBrightness = brightness;
 }
 
+// Minimum brightness increment/decrement
+void BrightnessManager::incrementMinBrightness() {
+    // minBrightness + 1 must be less than maxBrightness
+    if (minBrightness + 1 < maxBrightness) {
+        minBrightness++;
+        Serial.print("Min brightness increased to: ");
+        Serial.println(minBrightness);
+    } else {
+        Serial.println("Cannot increase min brightness: would exceed or equal max brightness");
+    }
+}
+
+void BrightnessManager::decrementMinBrightness() {
+    // minBrightness - 1 must be >= 0
+    if (minBrightness > 0) {
+        minBrightness--;
+        Serial.print("Min brightness decreased to: ");
+        Serial.println(minBrightness);
+    } else {
+        Serial.println("Cannot decrease min brightness: already at minimum (0)");
+    }
+}
+
+
+
 // Maximum brightness
 int BrightnessManager::getMaxBrightness() const {
     return maxBrightness;
@@ -185,6 +214,33 @@ void BrightnessManager::setMaxBrightness(int brightness) {
     maxBrightness = brightness;
 }
 
+// Maximum brightness increment/decrement
+void BrightnessManager::incrementMaxBrightness() {
+    // maxBrightness + 1 must be <= 200
+    if (maxBrightness < 200) {
+        maxBrightness++;
+        Serial.print("Max brightness increased to: ");
+        Serial.println(maxBrightness);
+    } else {
+        Serial.println("Cannot increase max brightness: already at maximum (200)");
+    }
+}
+
+void BrightnessManager::decrementMaxBrightness() {
+    // maxBrightness - 1 must be >= minBrightness and >= 5
+    int lowerLimit = max(minBrightness, 5);
+    if (maxBrightness > lowerLimit) {
+        maxBrightness--;
+        Serial.print("Max brightness decreased to: ");
+        Serial.println(maxBrightness);
+    } else {
+        Serial.print("Cannot decrease max brightness: would be less than limit (");
+        Serial.print(lowerLimit);
+        Serial.println(")");
+    }
+}
+
+
 // Manual brightness
 int BrightnessManager::getManBrightness() const {
     return manBrightness;
@@ -192,4 +248,29 @@ int BrightnessManager::getManBrightness() const {
 
 void BrightnessManager::setManBrightness(int brightness) {
     manBrightness = brightness;
+    if (!autoMode) {
+      forceUpdate(); // Update display immediately in manual mode
+    }
+}
+// Manual brightness increment/decrement
+void BrightnessManager::incrementManBrightness() {
+    // manBrightness + 1 must be <= 200
+    if (manBrightness < 200) {
+        manBrightness++;
+        Serial.print("Manual brightness increased to: ");
+        Serial.println(manBrightness);
+    } else {
+        Serial.println("Cannot increase manual brightness: already at maximum (200)");
+    }
+}
+
+void BrightnessManager::decrementManBrightness() {
+    // manBrightness - 1 must be >= 2
+    if (manBrightness > 2) {
+        manBrightness--;
+        Serial.print("Manual brightness decreased to: ");
+        Serial.println(manBrightness);
+    } else {
+        Serial.println("Cannot decrease manual brightness: already at minimum (1)");
+    }
 }

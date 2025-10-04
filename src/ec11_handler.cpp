@@ -53,9 +53,88 @@ void handleButtonLongPress(EC11* encoder) {
 }
 
 void handleButtonPressedRotateCW(EC11* encoder) {
-  MatrixCore matrixCore = matrixCoreManager.getCurrentMatrixCore();
-  matrixCore.fontIndex = matrixFontManager.switchToNextFontIndex(matrixCore.fontGroupIndex, matrixCore.fontIndex);
-  matrixCoreManager.modifyCurrentElement( matrixCore);
+  MatrixCore matrixCore ;
+ 
+  switch (matrixCoreManager.getCurrentPageIndex() ) {
+  case 0:
+  case 1:
+    matrixCore = matrixCoreManager.getCurrentMatrixCore();
+    matrixCore.fontIndex = matrixFontManager.switchToNextFontIndex(
+        matrixCore.fontGroupIndex, matrixCore.fontIndex);
+    matrixCoreManager.modifyCurrentElement(matrixCore);
+    break;
+  case 2:
+    switch (matrixCoreManager.getCurrentSecondaryIndex()) {
+    case 0:
+      switch (matrixCoreManager.getCurrentElementGroupIndex()) {
+      case 0:
+        break;
+      case 1:
+        rtc.addYear();
+        break;
+      case 2:
+        rtc.addMonth();
+        break;
+      case 3:
+        rtc.addDay();
+        break;
+      case 4:
+        rtc.addHour();
+        break;
+      case 5:
+        rtc.addMinute();
+        break;
+      default:
+        break;
+      }
+      break;
+    case 1:
+      switch (matrixCoreManager.getCurrentElementGroupIndex()) {
+      case 0:        
+      case 1:
+        break;
+      case 2:
+        brightnessManager.setAutoMode(!brightnessManager.getAutoMode());
+        if(brightnessManager.getAutoMode()){
+          matrixCoreManager.swapSecondaryPage(2 , 1, matrixCoreManager.getSecondaryPage2_1());
+        } else {
+          matrixCoreManager.swapSecondaryPage(2 , 1, matrixCoreManager.getSecondaryPage2_1_());
+        }
+        break;
+      case 3:
+        if(brightnessManager.getAutoMode()){
+            brightnessManager.incrementMinBrightness();
+        }else {
+          brightnessManager.incrementManBrightness();
+        }
+        break;
+      case 4:
+        if(brightnessManager.getAutoMode()) {
+          brightnessManager.incrementMaxBrightness();
+        }
+        break;
+      default:
+        break;
+      }
+      break;
+    case 2:
+       switch (matrixCoreManager.getCurrentElementGroupIndex()){
+          case 0:
+            break;
+          case 1:
+            matrixSettings.nextLanguage();
+            break;
+          default:
+            break;
+       }
+      break;
+    default:
+      break;
+    }
+    break;
+  default:
+    break;
+  }
 
   matrixCoreManager.setLineFlagTime(0);
   int32_t pos = encoder->getPosition();
@@ -64,10 +143,88 @@ void handleButtonPressedRotateCW(EC11* encoder) {
 }
 
 void handleButtonPressedRotateCCW(EC11* encoder) {
-  MatrixCore matrixCore = matrixCoreManager.getCurrentMatrixCore();
-  matrixCore.fontIndex = matrixFontManager.switchToPreFontIndex(
-      matrixCore.fontGroupIndex, matrixCore.fontIndex);
-  matrixCoreManager.modifyCurrentElement(matrixCore);
+  MatrixCore matrixCore ;
+ 
+  switch (matrixCoreManager.getCurrentPageIndex() ) {
+  case 0:
+  case 1:
+    matrixCore = matrixCoreManager.getCurrentMatrixCore();
+    matrixCore.fontIndex = matrixFontManager.switchToNextFontIndex(
+        matrixCore.fontGroupIndex, matrixCore.fontIndex);
+    matrixCoreManager.modifyCurrentElement(matrixCore);
+    break;
+  case 2:
+    switch (matrixCoreManager.getCurrentSecondaryIndex()) {
+    case 0:
+      switch (matrixCoreManager.getCurrentElementGroupIndex()) {
+      case 0:
+        break;
+      case 1:
+        rtc.subtractYear();
+        break;
+      case 2:
+        rtc.subtractMonth();
+        break;
+      case 3:
+        rtc.subtractDay();
+        break;
+      case 4:
+        rtc.subtractHour();
+        break;
+      case 5:
+        rtc.subtractMinute();
+        break;
+      default:
+        break;
+      }
+      break;
+    case 1:
+      switch (matrixCoreManager.getCurrentElementGroupIndex()) {
+      case 0:        
+      case 1:
+        break;
+      case 2:
+        brightnessManager.setAutoMode(!brightnessManager.getAutoMode());
+        if(brightnessManager.getAutoMode()){
+          matrixCoreManager.swapSecondaryPage(2 , 1, matrixCoreManager.getSecondaryPage2_1());
+        } else {
+          matrixCoreManager.swapSecondaryPage(2 , 1, matrixCoreManager.getSecondaryPage2_1_());
+        }
+        break;
+      case 3:
+        if(brightnessManager.getAutoMode()){
+            brightnessManager.decrementMinBrightness();
+        }else {
+          brightnessManager.decrementManBrightness();
+        }
+        break;
+      case 4:
+        if(brightnessManager.getAutoMode()) {
+          brightnessManager.decrementMaxBrightness();
+        }
+        break;
+      default:
+        break;
+      }
+      break;
+    case 2:
+       switch (matrixCoreManager.getCurrentElementGroupIndex()){
+          case 0:
+            break;
+          case 1:
+            matrixSettings.previousLanguage();
+            break;
+          default:
+            break;
+       }
+      break;
+    default:
+      break;
+    }
+    break;
+  default:
+    break;
+  }
 
   matrixCoreManager.setLineFlagTime(0);
   int32_t pos = encoder->getPosition();

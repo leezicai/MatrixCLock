@@ -12,7 +12,9 @@
 #include "matrixTimeData.h"
 #include "common_define.h"
 #include "animation.h"
-#include "setting.h"
+#include "matrixTimeUtils.h"
+#include "matrixSetting.h"
+#include "matrixSysStatus.h"
 
 extern MatrixPanel_I2S_DMA *dma_display;
 extern U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit_gfx;

@@ -2,6 +2,7 @@
 #define MATRIX_DATA_H
 
 #include "matrixNvs.h"
+#include "matrixCore.h"
 
 // NVS Key Definitions - System Settings
 #define NVS_KEY_SSID "ssid"
@@ -38,6 +39,8 @@
 
 // Default Values
 #define DEFAULT_BRIGHTNESS          50
+#define DEFAULT_MIN_BRIGHTNESS          5
+#define DEFAULT_MAX_BRIGHTNESS          200
 
 
 #define DEFAULT_VOLUME              50
@@ -54,8 +57,6 @@
 
 class MatrixDataManager {
 private:
-    MatrixNvsManager* dataManager;
-    
 public:
     MatrixDataManager();
     ~MatrixDataManager();
@@ -114,10 +115,10 @@ public:
     
     // Page Data Operations
     void savePage(int row, int col, const SecondaryPage& page);
-    SecondaryPage loadPage(int row, int col);
+    SecondaryPage loadPage(int row, int col, SecondaryPage defaultPage);
     
     void savePageByKey(const String& key, const SecondaryPage& page);
-    SecondaryPage loadPageByKey(const String& key);
+    SecondaryPage loadPageByKey(const String& key, SecondaryPage defaultPage);
     
     // Utility Methods
     void clearAllData();

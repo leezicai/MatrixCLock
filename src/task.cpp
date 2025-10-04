@@ -51,18 +51,22 @@ void method1Task(void * parameter) {
     // 执行方法1
     Serial.println("执行方法1");
     attemptWiFiConnectOnce();
-    if (isWiFiConnected())
-    {
-        bool syncNtpFlag = rtc.syncNtpTime();
-        bool rtcFlag = rtc.begin(SDA, SCL);
-        if(!syncNtpFlag){
-          loading.setMessage(LOADING_ERR_MSG_FAIL_NETWORK);
+    if (isWiFiConnected()) {
+      bool syncNtpTimeFlag = rtc.syncNtpTime();
+      bool rtcFlag = rtc.begin(SDA, SCL);
+      if (!syncNtpTimeFlag) {
+        loading.setMessage(LOADING_ERR_MSG_FAIL_NETWORK);
+        rtc.syncTimeFromRTC();
+      } else {
+        if(rtcFlag){
+           bool syncTimeToRTCFlag = rtc.syncTimeToRTC();
+        } else{
+          rtc.syncTimeFromRTC();
         }
-        if(syncNtpFlag && rtcFlag){
-          bool syncTimeToRTCFlag = rtc.syncTimeToRTC();
-        }
+      }
     } else {
       loading.setMessage(LOADING_ERR_MSG_FAIL_WIFI);
+      rtc.syncTimeFromRTC();
     }
     disconnectNet();
     
@@ -83,8 +87,8 @@ void method2Task(void * parameter) {
       rtc.syncTimeToRTC();
     }
     
-    // 休眠12小时
-    vTaskDelay(12 * 60 * 60 * 1000 / portTICK_PERIOD_MS);
+    // 休眠4小时
+    vTaskDelay(4 * 60 * 60 * 1000 / portTICK_PERIOD_MS);
   }
 }
 

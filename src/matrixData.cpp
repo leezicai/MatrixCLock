@@ -50,7 +50,7 @@ void MatrixDataManager::setMinBrightness(int value) {
   matrixNvsManager.commit();
 }
 int MatrixDataManager::getMinBrightness() {
-  return matrixNvsManager.loadInt(NVS_KEY_MIN_BRIGHTNESS, DEFAULT_BRIGHTNESS);
+  return matrixNvsManager.loadInt(NVS_KEY_MIN_BRIGHTNESS, DEFAULT_MIN_BRIGHTNESS);
 }
 
 void MatrixDataManager::setMaxBrightness(int value) {
@@ -58,7 +58,7 @@ void MatrixDataManager::setMaxBrightness(int value) {
   matrixNvsManager.commit();
 }
 int MatrixDataManager::getMaxBrightness() {
-  return matrixNvsManager.loadInt(NVS_KEY_MAX_BRIGHTNESS, DEFAULT_BRIGHTNESS);
+  return matrixNvsManager.loadInt(NVS_KEY_MAX_BRIGHTNESS, DEFAULT_MAX_BRIGHTNESS);
 }
 
 void MatrixDataManager::setManBrightness(int value) {
@@ -138,8 +138,7 @@ void MatrixDataManager::savePage(int row, int col, const SecondaryPage& page) {
 	matrixNvsManager.commit();
 }
 
-SecondaryPage MatrixDataManager::loadPage(int row, int col) {
-    SecondaryPage defaultPage;
+SecondaryPage MatrixDataManager::loadPage(int row, int col, SecondaryPage defaultPage) {
     return matrixNvsManager.loadPage(row, col, defaultPage);
 }
 
@@ -148,8 +147,7 @@ void MatrixDataManager::savePageByKey(const String& key, const SecondaryPage& pa
 	matrixNvsManager.commit();
 }
 
-SecondaryPage MatrixDataManager::loadPageByKey(const String& key) {
-    SecondaryPage defaultPage;
+SecondaryPage MatrixDataManager::loadPageByKey(const String& key, SecondaryPage defaultPage) {
     return matrixNvsManager.loadSecondaryPage(key, defaultPage);
 }
 

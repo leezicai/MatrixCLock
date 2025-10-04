@@ -10,6 +10,9 @@
 #include "matrixColors.h"
 #include "matrixCore.h"
 #include "matrixFonts.h"
+#include "ds3231.h"
+#include "brightnessManager.h"
+#include "matrixSetting.h"
 
 #include "animation.h"
 

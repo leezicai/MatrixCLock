@@ -1,5 +1,6 @@
 #ifndef MATRIXCORE_H
 #define MATRIXCORE_H
+
 #include <vector>
 #include <cstdint>
 
@@ -27,28 +28,37 @@ typedef std::vector<PrimaryPage> Interface;           // Layer 1: Multiple prima
 
 class MatrixCoreManager {
 private:
-    Interface interface;        // The complete 3-layer structure
-    
-    // Current position indices
-    int16_t pageIndex;          // Primary page index
-    int16_t secondaryIndex;     // Secondary page index
-    int16_t elementGroupIndex;  // Element group index (now refers to individual MatrixCore elements)
 
-    int16_t lineFlagTime = 0;
-    int16_t pageFlagTime = 0;
-    int16_t button2LongPressFlag = 0;
-    
-    // History array to remember last secondary page position for each primary page
-    std::vector<int16_t> history;
-    
-    // Initialize all MatrixCore data
-    void initializeMatrixCores();
-    
-    // Update history when secondary page changes
-    void updateHistory();
+  SecondaryPage secondaryPage2_1;
+  SecondaryPage secondaryPage2_1_;
+
+  Interface interface; // The complete 3-layer structure
+
+  // Current position indices
+  int16_t pageIndex;         // Primary page index
+  int16_t secondaryIndex;    // Secondary page index
+  int16_t elementGroupIndex; // Element group index (now refers to individual
+                             // MatrixCore elements)
+
+  int16_t lineFlagTime = 0;
+  int16_t pageFlagTime = 0;
+  int16_t button2LongPressFlag = 0;
+
+  // History array to remember last secondary page position for each primary
+  // page
+  std::vector<int16_t> history;
+
+  // Initialize all MatrixCore data
+  void initializeMatrixCores();
+
+  // Update history when secondary page changes
+  void updateHistory();
 
 public:
     MatrixCoreManager();
+
+    SecondaryPage getSecondaryPage2_1();
+    SecondaryPage getSecondaryPage2_1_();
     
     // Navigation methods for primary pages
     void nextPrimaryPage();
@@ -79,6 +89,10 @@ public:
     void modifyElement(int16_t pageIndex, int16_t secondaryIndex, int16_t elementGroupIndex, 
                       const MatrixCore& newElement);
     void modifyCurrentElement(const MatrixCore &newElement);
+
+
+    void swapSecondaryPage(int16_t pageIdx, int16_t secondaryIdx, const SecondaryPage& newSecondaryPage);
+
 
     // Getter methods
     int16_t getCurrentPageIndex() const { return pageIndex; }

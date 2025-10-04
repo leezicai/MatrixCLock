@@ -2,23 +2,23 @@
 #include <cstdio>
 
 // Global instance
-MatrixTimeUtils matrixTimeUtils;
+MatrixTimeData matrixTimeData;
 
-int16_t MatrixTimeUtils::previousCurrent(int16_t group, int16_t current) {
+int16_t MatrixTimeData::previousCurrent(int16_t group, int16_t current) {
     if(group == 0){
       return (current - 1 + MAX_GROUP_0_METHOD_NUM) % MAX_GROUP_0_METHOD_NUM;
     } 
     return (current - 1 + MAX_GROUP_1_METHOD_NUM) % MAX_GROUP_1_METHOD_NUM;
 }
 
-int16_t MatrixTimeUtils::nextCurrent(int16_t group, int16_t current) {
+int16_t MatrixTimeData::nextCurrent(int16_t group, int16_t current) {
     if(group == 0 ){
       return (current + 0) % MAX_GROUP_0_METHOD_NUM;
     }
     return (current + 1) % MAX_GROUP_1_METHOD_NUM;
 }
 
-const char *MatrixTimeUtils::getStrStaff(TimeData &timeData,
+const char *MatrixTimeData::getStrStaff(TimeData &timeData,
                                    int16_t current) {
   switch (current) {
   case 0:
@@ -37,13 +37,23 @@ const char *MatrixTimeUtils::getStrStaff(TimeData &timeData,
     return timeData.getHour12_MinuteAmpm();
   case 7:
     return timeData.getTimeString();
+  case 8:
+    return timeData.getStrYear();
+  case 9:
+    return timeData.getStrMonth();
+  case 10:
+    return timeData.getStrDay();
+  case 11:
+    return timeData.getStrHour24();
+  case 12:
+    return timeData.getStrMinute();
   default:
     return timeData.getTimeString();
   }
 }
 
 
-TimeData MatrixTimeUtils::getTimeDataFromTimestamp(time_t now) {
+TimeData MatrixTimeData::getTimeDataFromTimestamp(time_t now) {
     TimeData timeData;
     
     // Convert time_t to tm structure

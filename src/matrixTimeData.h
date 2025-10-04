@@ -76,7 +76,7 @@ struct TimeData {
     
     // Get year-month-day format (YYYY-MM-DD)
     const char* getYearMonthDay() const {
-		flag = 1;
+		flag = 0;
         sprintf(temp_buffer, "%04d-%02d-%02d", year, month, day);
         return temp_buffer;
     }
@@ -124,7 +124,7 @@ struct TimeData {
     }
 };
 
-class MatrixTimeUtils {
+class MatrixTimeData {
 private:
     int16_t flag = 0;
 public:
@@ -135,4 +135,4 @@ public:
 
 };
 
-extern MatrixTimeUtils matrixTimeUtils;
+extern MatrixTimeData matrixTimeData;

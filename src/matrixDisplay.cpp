@@ -431,7 +431,7 @@ void Display::display(unsigned long elapsed, const char *nowStr,
       (fontNumMetrics.charWidth + 1) * charCountForCalWidth.countNum +
       (fontABCMetrics.charWidth + 1) * charCountForCalWidth.countABC +
       (fontHyphenMetrics.charWidth + 1) * charCountForCalWidth.countHyphen;
-  int16_t x = PANEL_WIDTH * PANEL_CHAIN * matrixCore.x - strSingleWidth / 2;
+  int16_t x = PANEL_WIDTH * PANEL_CHAIN * matrixCore.x - strSingleWidth / 2 ;
   int16_t y =
       PANEL_HEIGHT * PANEL_CHAIN * matrixCore.y + fontNumMetrics.height / 2;
   uint16_t colorRGB565 = matrixColorManager.getColor(matrixCore.colorIndex1);
@@ -810,19 +810,27 @@ void Display::displayString(unsigned long elapsed, TimeData timeNow,
   std::vector<int8_t> results;
   switch (matrixCore.displayGroup) {
   case 0:
-    nowStr = matrixTimeUtils.getStrStaff(timeNow, matrixCore.displayIndex);
+    nowStr = matrixTimeData.getStrStaff(timeNow, matrixCore.displayIndex);
     nowNextStr =
-        matrixTimeUtils.getStrStaff(timeNowNextSec, matrixCore.displayIndex);
+        matrixTimeData.getStrStaff(timeNowNextSec, matrixCore.displayIndex);
     results = compare_with_vector(nowStr, nowNextStr);
     display(elapsed, nowStr, nowNextStr, results, timeNow.flag, matrixCore);
     break;
   case 1:
-    nowStr = matrixSettings.getStr(timeNow, matrixCore.displayIndex);
-    nowNextStr = matrixSettings.getStr(timeNowNextSec, matrixCore.displayIndex);
+    nowStr = matrixTimeUtils.getStr(timeNow, matrixCore.displayIndex);
+    nowNextStr = matrixTimeUtils.getStr(timeNowNextSec, matrixCore.displayIndex);
     results = compare_with_vector(nowStr, nowNextStr);
     Serial.println(nowStr);
     Serial.println(nowNextStr);
     display(elapsed, nowStr, nowNextStr, results, false, matrixCore);
+    break;
+  case 2:
+    nowStr = matrixSettings.getCommonWord(static_cast<CommonWordIndex>(matrixCore.displayIndex));
+    display(elapsed, nowStr, nowStr, results, false, matrixCore);
+    break;
+  case 3:
+    nowStr = matrixStatusManager.getSysStatus(matrixCore.displayIndex);
+    display(elapsed, nowStr, nowStr, results, false, matrixCore);
     break;
   default:
     break;

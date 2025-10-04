@@ -19,85 +19,94 @@ extern MatrixPanel_I2S_DMA *dma_display;
  */
 class BrightnessManager {
 public:
-    /**
-     * @brief BrightnessManager 的构造函数
-     * Constructor for BrightnessManager
-     */
-    BrightnessManager();
-    
-    /**
-     * @brief 初始化亮度管理器
-     * Initialize the brightness manager
-     */
-    void init();
-    
-    /**
-     * @brief 处理亮度管理的主函数，应在主循环中调用
-     * Main function for brightness management, should be called in the main loop
-     */
-    void handle();
-    
-    /**
-     * @brief 根据当前 AppData 设置更新显示亮度
-     * Updates the display brightness based on current AppData settings
-     */
-    void updateDisplayBrightness();
-    
-    /**
-     * @brief 获取最后应用的亮度值
-     * Gets the last applied brightness value
-     * 
-     * @return uint8_t 最后应用的亮度
-     *         Last applied brightness
-     */
-    uint8_t getLastAppliedBrightness() const;
-    
-    /**
-     * @brief 强制更新亮度（忽略上次更新时间）
-     * Force brightness update (ignoring last update time)
-     */
-    void forceUpdate();
 
-    // Auto mode
-    bool getAutoMode() const;
-    void setAutoMode(bool mode);
-    // Minimum brightness
-    int getMinBrightness() const;
-    void setMinBrightness(int brightness);
-    // Maximum brightness
-    int getMaxBrightness() const;
-    void setMaxBrightness(int brightness);
-    // Manual brightness
-    int getManBrightness() const;
-    void setManBrightness(int brightness);
+  /**
+   * @brief BrightnessManager 的构造函数
+   * Constructor for BrightnessManager
+   */
+  BrightnessManager();
 
-  private:
-    uint8_t _lastBrightness;        // 最后应用的亮度 Last applied brightness
-    
-    bool autoMode;
-    int minBrightness;
-    int maxBrightness;
-    int manBrightness;
+  /**
+   * @brief 初始化亮度管理器
+   * Initialize the brightness manager
+   */
+  void init();
 
-    // 自动亮度检测相关成员
-    // Auto brightness detection related members
-    int _brightSamplingTime;        // 亮度样本数量 Number of brightness samples
-    int _brightSamplingValue;       // 累积样本值 Accumulated sample value
-    int _currentBrightness;         // 当前亮度值 Current brightness value
-    unsigned long _lastSampleTime;      // 上次采样时间 Last sample time
-    unsigned long _lastCalculationTime; // 上次计算时间 Last calculation time
-    
-    /**
-     * @brief 从累积样本计算亮度值
-     * Calculate brightness value from accumulated samples
-     */
-    void calculateBrightnessValue();
-    
-    /**
-     * @brief 处理自动亮度功能
-     * Handle auto brightness functionality
-     */
-    void handleAutoBrightness();
+  /**
+   * @brief 处理亮度管理的主函数，应在主循环中调用
+   * Main function for brightness management, should be called in the main loop
+   */
+  void handle();
+
+  /**
+   * @brief 根据当前 AppData 设置更新显示亮度
+   * Updates the display brightness based on current AppData settings
+   */
+  void updateDisplayBrightness();
+
+  /**
+   * @brief 获取最后应用的亮度值
+   * Gets the last applied brightness value
+   *
+   * @return uint8_t 最后应用的亮度
+   *         Last applied brightness
+   */
+  uint8_t getLastAppliedBrightness() const;
+
+  /**
+   * @brief 强制更新亮度（忽略上次更新时间）
+   * Force brightness update (ignoring last update time)
+   */
+  void forceUpdate();
+
+  // Auto mode
+  bool getAutoMode() const;
+  void setAutoMode(bool mode);
+  // Minimum brightness
+  int getMinBrightness() const;
+  void setMinBrightness(int brightness);
+  void incrementMinBrightness(); // Add this
+  void decrementMinBrightness(); // Add this
+
+  // Maximum brightness
+  int getMaxBrightness() const;
+  void setMaxBrightness(int brightness);
+  void incrementMaxBrightness(); // Add this
+  void decrementMaxBrightness(); // Add this
+
+  // Manual brightness
+  int getManBrightness() const;
+  void setManBrightness(int brightness);
+  void incrementManBrightness(); // Add this
+  void decrementManBrightness(); // Add this
+
+private:
+  uint8_t _lastBrightness; // 最后应用的亮度 Last applied brightness
+
+  bool autoMode;
+  int minBrightness;
+  int maxBrightness;
+  int manBrightness;
+
+  // 自动亮度检测相关成员
+  // Auto brightness detection related members
+  int _brightSamplingTime;       // 亮度样本数量 Number of brightness samples
+  int _brightSamplingValue;      // 累积样本值 Accumulated sample value
+  int _currentBrightness;        // 当前亮度值 Current brightness value
+  unsigned long _lastSampleTime; // 上次采样时间 Last sample time
+  unsigned long _lastCalculationTime; // 上次计算时间 Last calculation time
+
+  /**
+   * @brief 从累积样本计算亮度值
+   * Calculate brightness value from accumulated samples
+   */
+  void calculateBrightnessValue();
+
+  /**
+   * @brief 处理自动亮度功能
+   * Handle auto brightness functionality
+   */
+  void handleAutoBrightness();
 };
 
 extern BrightnessManager brightnessManager;
