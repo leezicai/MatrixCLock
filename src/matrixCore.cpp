@@ -11,9 +11,8 @@ MatrixCore::MatrixCore(float x, float y, int16_t fontGroupIndex, int16_t fontInd
       colorIndex1(colorIndex1), colorIndex2(colorIndex2), displayGroup(displayGroup),
       displayIndex(displayIndex), animationType(animationType) {}
 
-MatrixCoreManager::MatrixCoreManager() 
-    : pageIndex(0), secondaryIndex(0), elementGroupIndex(0) {
-    initializeMatrixCores();
+MatrixCoreManager::MatrixCoreManager() {
+    // initializeMatrixCores();
 }
 
 SecondaryPage MatrixCoreManager::getSecondaryPage2_1(){
@@ -141,30 +140,39 @@ void MatrixCoreManager::initializeMatrixCores() {
         MatrixCore(0.45f, 0.46f, 10, 40, 2, 0, 3, 4, 1),
     };
     
+    secondaryPage2_0 = matrixDataManager.loadPage(2, 0, secondaryPage2_0);
+
     primaryPage2.push_back(secondaryPage2_0);
+
     if(brightnessManager.getAutoMode()){
       primaryPage2.push_back(secondaryPage2_1);
     } else {
       primaryPage2.push_back(secondaryPage2_1_);
     }
-    primaryPage2.push_back(secondaryPage2_2);
 
+    primaryPage2.push_back(secondaryPage2_2);
     interface.push_back(primaryPage2);
     
 
-
-
-    
     // Initialize history array with same size as primary pages, all starting at 0
     history.resize(interface.size(), 0);
+    for (size_t i = 0; i < history.size(); i++) {
+      history[i] = matrixDataManager.loadPageIndex(i);
+    }
+
+    pageIndex = matrixDataManager.loadPrimaryPage();
+    secondaryIndex = history[pageIndex];
+
 }
 
 // Update history when secondary page changes
 void MatrixCoreManager::updateHistory() {
     if (pageIndex < static_cast<int16_t>(history.size())) {
+        matrixDataManager.savePageIndex(pageIndex, secondaryIndex);
         history[pageIndex] = secondaryIndex;
     }
 }
+void MatrixCoreManager::updatePage() { matrixDataManager.savePrimaryPage(pageIndex); }
 
 // Primary page navigation - Circular switching
 void MatrixCoreManager::nextPrimaryPage() {
@@ -177,6 +185,9 @@ void MatrixCoreManager::nextPrimaryPage() {
             secondaryIndex = history[pageIndex];
         }
     }
+
+    updatePage();
+
     resetElementGroup();  // Reset to first element when switching primary page
 }
 
@@ -190,6 +201,7 @@ void MatrixCoreManager::prevPrimaryPage() {
             secondaryIndex = history[pageIndex];
         }
     }
+    updatePage();
     resetElementGroup();  // Reset to first element when switching primary page
 }
 
@@ -199,6 +211,7 @@ void MatrixCoreManager::resetPrimaryPage() {
     if (!history.empty()) {
         secondaryIndex = history[0];
     }
+    updatePage();
     resetElementGroup();
 }
 
@@ -209,6 +222,7 @@ void MatrixCoreManager::nextSecondaryPage() {
         secondaryIndex = (secondaryIndex + 1) % static_cast<int16_t>(interface[pageIndex].size());
         updateHistory();  // Update history when secondary page changes
     }
+    updatePage();
     resetElementGroup();  // Reset to first element when switching secondary page
 }
 
@@ -218,12 +232,14 @@ void MatrixCoreManager::prevSecondaryPage() {
         secondaryIndex = (secondaryIndex - 1 + static_cast<int16_t>(interface[pageIndex].size())) % static_cast<int16_t>(interface[pageIndex].size());
         updateHistory();  // Update history when secondary page changes
     }
+    updatePage();
     resetElementGroup();  // Reset to first element when switching secondary page
 }
 
 void MatrixCoreManager::resetSecondaryPage() {
     secondaryIndex = 0;
     updateHistory();  // Update history when secondary page changes
+    updatePage();
     resetElementGroup();
 }
 
@@ -281,6 +297,8 @@ void MatrixCoreManager::modifyCurrentElement(const MatrixCore& newElement) {
         
         interface[pageIndex][secondaryIndex][elementGroupIndex] = newElement;
     }
+
+    matrixDataManager.savePage(getCurrentPageIndex(), getCurrentSecondaryIndex(), interface[pageIndex][secondaryIndex]);
 }
 
 // Swap/Replace a secondary page with a new one

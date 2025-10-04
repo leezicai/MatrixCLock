@@ -49,13 +49,15 @@ private:
   std::vector<int16_t> history;
 
   // Initialize all MatrixCore data
-  void initializeMatrixCores();
 
   // Update history when secondary page changes
   void updateHistory();
+  void updatePage();
 
 public:
     MatrixCoreManager();
+
+    void initializeMatrixCores();
 
     SecondaryPage getSecondaryPage2_1();
     SecondaryPage getSecondaryPage2_1_();

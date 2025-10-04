@@ -15,6 +15,9 @@
 #define NVS_KEY_MANUAL_BRIGHTNESS "manbright"
 #define NVS_KEY_LANGUAGE "language"
 
+#define NVS_KEY_PAGE_INDEX "page_index"
+
+
 // NVS Key Definitions - Display Settings
 #define NVS_KEY_CONTRAST            "contrast"
 #define NVS_KEY_ANIMATION_SPEED     "anim_speed"
@@ -66,6 +69,9 @@ public:
     
 	 void setAutoMode(bool value);
     bool getAutoMode();
+
+    void savePrimaryPage(int value);
+    int loadPrimaryPage();
 
     // System Settings
     void setBrightness(int value);
@@ -119,7 +125,10 @@ public:
     
     void savePageByKey(const String& key, const SecondaryPage& page);
     SecondaryPage loadPageByKey(const String& key, SecondaryPage defaultPage);
-    
+
+    void savePageIndex(int row, int index);
+    int loadPageIndex(int row);
+
     // Utility Methods
     void clearAllData();
     bool hasKey(const String& key);

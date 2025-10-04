@@ -93,14 +93,8 @@ void ButtonManager::handleButton1LongPressStop() {
 
 // Button 2 callbacks
 void ButtonManager::handleButton2Click() {
-    Serial.println("Button 2 clicked");
     matrixCoreManager.nextSecondaryPage();
     matrixCoreManager.setPageFlagTime(0);
-    Serial.println(matrixCoreManager.getCurrentPageIndex());
-    Serial.println(matrixCoreManager.getCurrentSecondaryIndex());
-    Serial.println(matrixCoreManager.getCurrentElementGroupIndex());
-    Serial.println("----------------s23");
-    Serial.println("Button 2 clicked End!");
     // Your code for button 2 click here
 }
 

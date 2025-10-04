@@ -48,6 +48,12 @@ void setup() {
   // Nvs同一空间只能初始化一次
   matrixNvsManager.initializeDefaults();
 
+  brightnessManager.init();
+
+  matrixCoreManager.initializeMatrixCores();
+
+  matrixSettings.init();
+
   // 温度传感器初始化
   if (sht30.begin()) {
     Serial.println("SHT30 sensor initialized successfully!");
@@ -90,17 +96,10 @@ void setup() {
       delay(1000);
     }
   }
-  brightnessManager.init();
 
   // 初始化 u8g2
   u8g2_for_adafruit_gfx.begin(*dma_display);
 
-  Serial.println("--------------------------------");
-  Serial.println(matrixDataManager.getWifiConfig());
-  Serial.println(matrixDataManager.getWifiSSID());
-  Serial.println(matrixDataManager.getWifiPassword());
-  Serial.println(matrixDataManager.getTimezone());
-  
   int count = 0;
   while (!matrixDataManager.getWifiConfig()) {
     if (count == 0) {
@@ -142,94 +141,6 @@ void setup() {
   diffTimeStrings = display.compareTimeStrings(timeNow, timeNowNextSec);
   timeDataNow = matrixTimeData.getTimeDataFromTimestamp(now);
   timeDataNowNextSec = matrixTimeData.getTimeDataFromTimestamp(now + 1);
-
-  std::vector<const uint8_t *> fontList = {
-u8g2_font_micro_tr,
-u8g2_font_micro_mr,
-u8g2_font_4x6_tr,
-u8g2_font_4x6_mr,
-u8g2_font_tom_thumb_4x6_tr,
-u8g2_font_tom_thumb_4x6_mr,
-u8g2_font_tinytim_tr,
-u8g2_font_baby_tr,
-u8g2_font_blipfest_07_tr,
-u8g2_font_chikita_tr,
-u8g2_font_pixelle_micro_tr,
-u8g2_font_trixel_square_tr
-  };
-  // 对应的字体名称数组（用于显示）
-  std::vector<String> fontNames = {
-    "u8g2_font_10x20_tr",
-    "u8g2_font_10x20_mr",
-    "u8g2_font_10x20_t_cyrillic",
-    "u8g2_font_t0_22_tr",
-    "u8g2_font_t0_22_mr",
-    "u8g2_font_t0_22b_tr",
-    "u8g2_font_t0_22b_mr",
-    "u8g2_font_crox4tb_tr",
-    "u8g2_font_gb24st_t_2",
-    "u8g2_font_timB14_tr",
-    "u8g2_font_timR14_tr",
-    "u8g2_font_lubB12_tr",
-    "u8g2_font_lubBI12_tr",
-    "u8g2_font_lubI12_tr",
-    "u8g2_font_lubR12_tr",
-
-    // --- 14 ---
-    "u8g2_font_profont22_tr",
-    "u8g2_font_profont22_mr",
-    "u8g2_font_calibration_gothic_nbp_tr",
-    "u8g2_font_crox4hb_tr",
-    "u8g2_font_unifont_t_72_73",
-    "u8g2_font_courR18_tr",
-    "u8g2_font_helvB14_tr",
-    "u8g2_font_helvR14_tr",
-    "u8g2_font_ncenB14_tr",
-    "u8g2_font_ncenR14_tr",
-    "u8g2_font_luBIS14_tr",
-    "u8g2_font_luBS14_tr",
-    "u8g2_font_luIS14_tr",
-    "u8g2_font_fub14_tr",
-    "u8g2_font_fur14_tr",
-
-    // --- 15 ---
-    "u8g2_font_VCR_OSD_tr",
-    "u8g2_font_VCR_OSD_mr",
-    "u8g2_font_VCR_OSD_mu",
-    "u8g2_font_courB18_tr",
-    "u8g2_font_lubB14_tr",
-    "u8g2_font_lubBI14_tr",
-    "u8g2_font_lubI14_tr",
-    "u8g2_font_lubR14_tr",
-
-    // --- 16 ---
-    "u8g2_font_crox5tb_tr",
-    "u8g2_font_crox5t_tr",
-    "u8g2_font_inr16_mr",
-    "u8g2_font_inb16_mr",
-    "u8g2_font_logisoso16_tr"
-    };
-
-  Serial.println("=== U8g2 Font Information ===\n");
-
-  // 遍历字体列表
-  for (size_t i = 0; i < fontList.size(); i++) {
-    // 设置当前字体
-    u8g2_for_adafruit_gfx.setFont(fontList[i]);
-    FontMetrics fontABCMetrics = display.getFontMetrics(fontList[i], "W");
-    FontMetrics fontNumMetrics = display.getFontMetrics(fontList[i], "0");
-    FontMetrics fontSpaceMetrics = display.getFontMetrics(fontList[i], ":");
-
-    // 打印字体信息
-    Serial.println("Font: " + fontNames[i]);
-    Serial.println("  '0' - Width: " + String(fontNumMetrics.charWidth) +
-                   "px, Height: " + String(fontNumMetrics.charWidth) + "px");
-    Serial.println("  'W' - Width: " + String(fontABCMetrics.charWidth) +
-                   "px, Height: " + String(fontABCMetrics.height) + "px");
-    Serial.println("  ':' - Width: " + String(fontSpaceMetrics.charWidth) +
-                   "px, Height: " + String(fontSpaceMetrics.charWidth) + "px");
-    Serial.println("------------------------");
-  }
 }
 
 void loop() {

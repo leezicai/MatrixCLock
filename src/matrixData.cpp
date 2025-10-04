@@ -21,11 +21,19 @@ void MatrixDataManager::init() {
 
 void MatrixDataManager::setAutoMode(bool value) {
 	matrixNvsManager.saveBool(NVS_KEY_AUTO_MODE, value);
+    matrixNvsManager.commit();
 }
 bool MatrixDataManager::getAutoMode() {
 	return matrixNvsManager.loadBool(NVS_KEY_AUTO_MODE, false);
 }
 
+void MatrixDataManager::savePrimaryPage(int value) {
+    matrixNvsManager.saveInt(NVS_KEY_PAGE_INDEX, value);
+    matrixNvsManager.commit();
+}
+int MatrixDataManager::loadPrimaryPage() {
+    return matrixNvsManager.loadInt(NVS_KEY_PAGE_INDEX, 0);
+}
 
 
 // System Settings Implementation
@@ -63,6 +71,7 @@ int MatrixDataManager::getMaxBrightness() {
 
 void MatrixDataManager::setManBrightness(int value) {
   matrixNvsManager.saveInt(NVS_KEY_MANUAL_BRIGHTNESS, value);
+  matrixNvsManager.commit();
 }
 int MatrixDataManager::getManBrightness() {
   return matrixNvsManager.loadInt(NVS_KEY_MANUAL_BRIGHTNESS, DEFAULT_BRIGHTNESS);
@@ -151,7 +160,14 @@ SecondaryPage MatrixDataManager::loadPageByKey(const String& key, SecondaryPage 
     return matrixNvsManager.loadSecondaryPage(key, defaultPage);
 }
 
+void MatrixDataManager::savePageIndex(int row, int index) {
+    matrixNvsManager.savePageIndex(row, index);
+    matrixNvsManager.commit();
+}
 
+int MatrixDataManager::loadPageIndex(int row) {
+    return matrixNvsManager.loadPageIndex(row);
+}
 
 // Utility Methods Implementation
 void MatrixDataManager::clearAllData() {

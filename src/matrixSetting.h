@@ -2,6 +2,7 @@
 #define MATRIX_SETTING_H
 
 #include <stdint.h>
+#include "matrixData.h"
 
 // Language enum
 typedef enum {
@@ -32,7 +33,7 @@ class MatrixSettings {
 public:
     // Constructor
     MatrixSettings();
-    
+    void init();
     // Language management
     void setLanguage(Language lang);
     Language getCurrentLanguage() const;

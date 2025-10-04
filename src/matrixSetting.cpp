@@ -33,9 +33,13 @@ const char* MatrixSettings::commonWords_EN[WORD_COUNT] = {
 };
 
 // Constructor
-MatrixSettings::MatrixSettings() : currentLanguage(LANG_CHINESE) {
+MatrixSettings::MatrixSettings() {
+    init();
 }
 
+void MatrixSettings::init(){
+    setLanguage(static_cast<Language>(matrixDataManager.getLanguage()) );
+}
 // Language management methods
 void MatrixSettings::setLanguage(Language lang) {
     if (lang >= 0 && lang < MAX_LANG) {
@@ -49,10 +53,12 @@ Language MatrixSettings::getCurrentLanguage() const {
 
 void MatrixSettings::nextLanguage() {
     currentLanguage = (Language)((currentLanguage + 1) % MAX_LANG);
+    matrixDataManager.setLanguage(currentLanguage);
 }
 
 void MatrixSettings::previousLanguage() {
     currentLanguage = (Language)((currentLanguage - 1 + MAX_LANG) % MAX_LANG);
+    matrixDataManager.setLanguage(currentLanguage);
 }
 
 // Common word methods

@@ -39,11 +39,13 @@ void handleButtonPress(EC11* encoder) {
 }
 
 void handleButtonClick(EC11* encoder) {
+  matrixCoreManager.setLineFlagTime(0);
   matrixCoreManager.nextElementGroup();
   Serial.println("按钮被点击（短按）");
 }
 
 void handleButtonDoubleClick(EC11* encoder) {
+  matrixCoreManager.setLineFlagTime(0);
   matrixCoreManager.prevElementGroup();
   Serial.println("按钮被双击");
 }

@@ -160,14 +160,15 @@ SecondaryPage MatrixNvsManager::loadPage(int row, int col, const SecondaryPage& 
 }
 
 // Page index operations
-void MatrixNvsManager::savePageIndex(int row, int16_t index) {
+void MatrixNvsManager::savePageIndex(int row, int index) {
     String key = "page_" + String(row);
-    preferences.putShort(key.c_str(), index);
+    preferences.putInt(key.c_str(), index);
 }
 
-int16_t MatrixNvsManager::loadPageIndex(int row) {
-    String key = "page_" + String(row);
-    return preferences.getShort(key.c_str(), 0);
+int MatrixNvsManager::loadPageIndex(int row) {
+   char key[16];
+   snprintf(key, sizeof(key), "page_%d", row);
+   return preferences.getInt(key, 0);
 }
 
 // Clear all data

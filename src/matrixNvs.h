@@ -50,8 +50,8 @@ public:
     SecondaryPage loadPage(int row, int col, const SecondaryPage& defaultValue);
     
     // Page index operations
-    void savePageIndex(int row, int16_t index);
-    int16_t loadPageIndex(int row);
+    void savePageIndex(int row, int index);
+    int loadPageIndex(int row);
     
     // Clear all data
     void clearAll();
