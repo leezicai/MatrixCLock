@@ -135,7 +135,7 @@ String SetAP::generateHTML() {
     String html = "<!DOCTYPE html><html><head>";
     html += "<meta charset='UTF-8'>";
     html += "<meta name='viewport' content='width=device-width, initial-scale=1'>";
-    html += "<title>WiFi Setup</title>";
+    html += "<title>Setup</title>";
     html += "<style>";
     html += "body{font-family:Arial,sans-serif;margin:20px;max-width:600px;margin:0 auto;padding:15px;}";
     html += "h1{text-align:center;color:#333;}";
@@ -144,7 +144,7 @@ String SetAP::generateHTML() {
     html += "button{background:#4CAF50;color:white;padding:10px 15px;border:none;border-radius:4px;cursor:pointer;width:100%;font-size:16px;}";
     html += "button:hover{background:#45a049;}";
     html += "</style></head><body>";
-    html += "<h1>WiFi Setup</h1>";
+    html += "<h1>Setup</h1>";
     html += "<form action='/submit' method='post'>";
     
     html += "<label for='ssid'>Select WiFi Network:</label>";

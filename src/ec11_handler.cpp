@@ -151,7 +151,7 @@ void handleButtonPressedRotateCCW(EC11* encoder) {
   case 0:
   case 1:
     matrixCore = matrixCoreManager.getCurrentMatrixCore();
-    matrixCore.fontIndex = matrixFontManager.switchToNextFontIndex(
+    matrixCore.fontIndex = matrixFontManager.switchToPreFontIndex(
         matrixCore.fontGroupIndex, matrixCore.fontIndex);
     matrixCoreManager.modifyCurrentElement(matrixCore);
     break;

@@ -6,6 +6,7 @@
 // 包含 MatrixPanel 类型定义所需的库头文件
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 #include "common_define.h"
+#include "matrixData.h"
 
 // Define HUB75E pin connections to ESP32-S3
 // 定义 HUB75E 引脚到 ESP32-S3 的连接

@@ -163,7 +163,7 @@ class Display {
       // 显示文字（RGB565）
       void displayText(uint16_t colorRGB565, int x, int y,
                        const uint8_t *fontName, const char *text);
-                       void displayText(uint16_t colorRGB565, int x, int y,
+      void displayText(uint16_t colorRGB565, int x, int y,
                        const uint8_t *fontName, int16_t intP);
       // 显示文字（RGB888）
       void displayTextRGB(uint8_t red, uint8_t green, uint8_t blue, int x,

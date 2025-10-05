@@ -3,6 +3,7 @@
 
 #include "matrixNvs.h"
 #include "matrixCore.h"
+#include "common_define.h"
 
 // NVS Key Definitions - System Settings
 #define NVS_KEY_SSID "ssid"
@@ -16,6 +17,10 @@
 #define NVS_KEY_LANGUAGE "language"
 
 #define NVS_KEY_PAGE_INDEX "page_index"
+
+#define NVS_KEY_PANEL_WIDTH "panel_width"
+#define NVS_KEY_PANEL_HEIGHT "panel_height"
+#define NVS_KEY_PANEL_CHAIN "panel_chain"
 
 
 // NVS Key Definitions - Display Settings
@@ -66,8 +71,17 @@ public:
     
     // Initialize all NVS data with defaults (call in setup)
     void init();
-    
-	 void setAutoMode(bool value);
+
+    void setPanelWidth(int value);
+    int16_t getPanelWidth();
+
+    void setPanelHeight(int value);
+    int16_t getPanelHeight();
+
+    void setPanelChain(int value);
+    int16_t getPanelChain();
+
+    void setAutoMode(bool value);
     bool getAutoMode();
 
     void savePrimaryPage(int value);

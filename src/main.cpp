@@ -2,6 +2,7 @@
 #include "brightnessManager.h"
 #include "btn.h"
 #include "dma.h"    // <--- 包含 DMA 设置头文件 (Include DMA setup header)
+#include "matrixDma.h"
 #include "ds3231.h" // 添加DS3231头文件
 #include "ec11.h"
 #include "ec11_handler.h" // 引入我们的编码器事件处理模块
@@ -89,7 +90,10 @@ void setup() {
 
 
   // 初始化 DMA 显示
-  dma_display = setupDMA(50);
+  // dma_display = setupDMA(50);
+  if(matrixDmaManager.setupDMA()){
+    dma_display = matrixDmaManager.getDisplay();
+  }
   if (!dma_display) {
     Serial.println("DMA Display setup failed, halting execution.");
     while (1) {

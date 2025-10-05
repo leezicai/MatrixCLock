@@ -22,6 +22,8 @@ void BrightnessManager::init() {
     minBrightness = matrixDataManager.getMinBrightness();
     maxBrightness = matrixDataManager.getMaxBrightness();
     manBrightness = matrixDataManager.getManBrightness();
+
+    setAutoMode(matrixDataManager.getAutoMode());
     
     // 获取初始读数
     // Take initial readings
@@ -168,6 +170,7 @@ bool BrightnessManager::getAutoMode() const {
 
 void BrightnessManager::setAutoMode(bool mode) {
     autoMode = mode;
+    matrixDataManager.setAutoMode(autoMode);
     forceUpdate();
 }
 
@@ -190,6 +193,7 @@ void BrightnessManager::incrementMinBrightness() {
     } else {
         Serial.println("Cannot increase min brightness: would exceed or equal max brightness");
     }
+    matrixDataManager.setMinBrightness(minBrightness);
 }
 
 void BrightnessManager::decrementMinBrightness() {
@@ -201,6 +205,7 @@ void BrightnessManager::decrementMinBrightness() {
     } else {
         Serial.println("Cannot decrease min brightness: already at minimum (0)");
     }
+    matrixDataManager.setMinBrightness(minBrightness);
 }
 
 
@@ -224,6 +229,7 @@ void BrightnessManager::incrementMaxBrightness() {
     } else {
         Serial.println("Cannot increase max brightness: already at maximum (200)");
     }
+    matrixDataManager.setMaxBrightness(maxBrightness);
 }
 
 void BrightnessManager::decrementMaxBrightness() {
@@ -238,6 +244,7 @@ void BrightnessManager::decrementMaxBrightness() {
         Serial.print(lowerLimit);
         Serial.println(")");
     }
+    matrixDataManager.setMaxBrightness(maxBrightness);
 }
 
 
@@ -262,6 +269,7 @@ void BrightnessManager::incrementManBrightness() {
     } else {
         Serial.println("Cannot increase manual brightness: already at maximum (200)");
     }
+    matrixDataManager.setManBrightness(manBrightness);
 }
 
 void BrightnessManager::decrementManBrightness() {
@@ -273,4 +281,5 @@ void BrightnessManager::decrementManBrightness() {
     } else {
         Serial.println("Cannot decrease manual brightness: already at minimum (1)");
     }
+    matrixDataManager.setManBrightness(manBrightness);
 }
