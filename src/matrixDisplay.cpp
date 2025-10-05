@@ -852,6 +852,6 @@ void Display::displayUnderline(MatrixCore matrixCore){
 void Display::showPageInfo(){
   char buffer[16];
   sprintf(buffer, "%d-%d", matrixCoreManager.getCurrentPageIndex()+1, matrixCoreManager.getCurrentSecondaryIndex()+1);
-  displayTextRGB(200,200,200, 0, g_panelWidthChain, u8g2_font_blipfest_07_tr, buffer);
+  displayTextRGB(200,200,200, 0, g_panelHeightChain, u8g2_font_blipfest_07_tr, buffer);
 }
       
