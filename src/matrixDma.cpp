@@ -1,6 +1,12 @@
 #include "matrixDma.h"
 #include <Arduino.h> // Required for Serial communication 用于串行通信
 
+uint16_t g_panelWidth = 0;
+uint16_t g_panelWidthChain = 0;
+uint16_t g_panelHeight = 0;
+uint16_t g_panelHeightChain = 0;
+uint8_t g_panelChain = 0;
+
 // Global instance definition
 // 全局实例定义
 MatrixDmaManager matrixDmaManager;
@@ -25,9 +31,15 @@ bool MatrixDmaManager::setupDMA() {
     // Initialize member variables from matrixDataManager
     // 从 matrixDataManager 初始化成员变量
     display_ptr = nullptr;
-    panelWidth = matrixDataManager.getPanelWidth();
-    panelHeight = matrixDataManager.getPanelHeight();
-    panelChain = matrixDataManager.getPanelChain();
+    panelWidth = matrixDataManager.loadPanelWidth();
+    panelHeight = matrixDataManager.loadPanelHeight();
+    panelChain = matrixDataManager.loadPanelChain();
+
+	g_panelWidth = panelWidth;
+	g_panelWidthChain = panelWidth * panelChain;
+    g_panelHeight = panelHeight;
+    g_panelHeightChain = panelHeight * panelChain;
+    g_panelChain = panelChain;
     
     // Configure HUB75 pins using definitions from common_define.h
     // 使用 common_define.h 中的定义配置 HUB75 引脚

@@ -9,7 +9,8 @@ SetAP wifiManager;
 
 SetAP::SetAP() : 
     server(80),
-    timezone(0) {
+    timezone(0),
+    screenOption("128X64X1") {
 }
 
 void SetAP::beginSetup() {
@@ -73,6 +74,10 @@ int SetAP::getTimezone() const {
     return timezone;
 }
 
+String SetAP::getScreenOption() const {
+    return screenOption;
+}
+
 void SetAP::restartESP() {
     Serial.println("Restarting ESP32S3...");
     delay(500);
@@ -87,6 +92,19 @@ void SetAP::handleSubmit() {
     selectedSSID = server.arg("ssid");
     wifiPassword = server.arg("password");
     timezone = server.arg("timezone").toInt();
+    screenOption = server.arg("screen");
+    
+    // Determine panel dimensions based on screen option
+    int panelWidth, panelHeight, panelChain;
+    if (screenOption == "128X64X1") {
+        panelWidth = 128;
+        panelHeight = 64;
+        panelChain = 1;
+    } else { // 64X64X2
+        panelWidth = 64;
+        panelHeight = 64;
+        panelChain = 2;
+    }
     
     String response = "<html><head>";
     response += "<meta name='viewport' content='width=device-width, initial-scale=1'>";
@@ -96,31 +114,27 @@ void SetAP::handleSubmit() {
     response += "<p>SSID: " + selectedSSID + "</p>";
     response += "<p>Password: " + wifiPassword + "</p>";
     response += "<p>Timezone: " + String(timezone) + "</p>";
+    response += "<p>Screen: " + screenOption + "</p>";
+    response += "<p>Panel Width: " + String(panelWidth) + "</p>";
+    response += "<p>Panel Height: " + String(panelHeight) + "</p>";
+    response += "<p>Panel Chain: " + String(panelChain) + "</p>";
     response += "<p>Device will restart in 2 seconds...</p>";
     response += "</body></html>";
     
     server.send(200, "text/html", response);
     
-    // appData.setSSID(selectedSSID.c_str());
-    // appData.setPassword(wifiPassword.c_str());
-    // appData.setTimezone(timezone);
-    // appData.setWifiConfigured(true);
-
+    // Save WiFi configuration
     matrixDataManager.setWifiSSID(selectedSSID.c_str());
     matrixDataManager.setWifiPassword(wifiPassword.c_str());
     matrixDataManager.setTimezone(timezone);
     matrixDataManager.setWifiConfig(true);
+    
+    // Save panel configuration
+    matrixDataManager.savePanelWidth(panelWidth);
+    matrixDataManager.savePanelHeight(panelHeight);
+    matrixDataManager.savePanelChain(panelChain);
 
-    Serial.println("--------------------------------");
-    Serial.println(wifiPassword.c_str());
-    Serial.println(selectedSSID.c_str());
-    Serial.println("--------------------------------");
-    Serial.println(matrixDataManager.getWifiConfig());
-    Serial.println(matrixDataManager.getWifiSSID());
-    Serial.println(matrixDataManager.getWifiPassword());
-    Serial.println(matrixDataManager.getTimezone());
-    Serial.println("--------------------------------");
-    // 延迟3秒后重启
+    // Restart after 2 seconds
     delay(2000);
     restartESP();
 }
@@ -143,7 +157,23 @@ String SetAP::generateHTML() {
     html += "select,input{width:100%;padding:8px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box;}";
     html += "button{background:#4CAF50;color:white;padding:10px 15px;border:none;border-radius:4px;cursor:pointer;width:100%;font-size:16px;}";
     html += "button:hover{background:#45a049;}";
-    html += "</style></head><body>";
+    html += ".screen-info{background:#f0f0f0;padding:10px;margin:10px 0;border-radius:4px;font-size:14px;}";
+    html += "</style>";
+    
+    // Add JavaScript for dynamic screen info display
+    html += "<script>";
+    html += "function updateScreenInfo() {";
+    html += "  var screen = document.getElementById('screen').value;";
+    html += "  var info = document.getElementById('screenInfo');";
+    html += "  if (screen === '128X64X1') {";
+    html += "    info.innerHTML = 'PANEL_WIDTH: 128<br>PANEL_HEIGHT: 64<br>PANEL_CHAIN: 1';";
+    html += "  } else {";
+    html += "    info.innerHTML = 'PANEL_WIDTH: 64<br>PANEL_HEIGHT: 64<br>PANEL_CHAIN: 2';";
+    html += "  }";
+    html += "}";
+    html += "</script>";
+    
+    html += "</head><body>";
     html += "<h1>Setup</h1>";
     html += "<form action='/submit' method='post'>";
     
@@ -163,6 +193,16 @@ String SetAP::generateHTML() {
         html += "<option value='" + String(i) + "'>" + String(i) + "</option>";
     }
     html += "</select>";
+    
+    html += "<label for='screen'>Screen Option:</label>";
+    html += "<select name='screen' id='screen' onchange='updateScreenInfo()' required>";
+    html += "<option value='128X64X1' selected>128X64X1</option>";
+    html += "<option value='64X64X2'>64X64X2</option>";
+    html += "</select>";
+    
+    html += "<div class='screen-info' id='screenInfo'>";
+    html += "PANEL_WIDTH: 128<br>PANEL_HEIGHT: 64<br>PANEL_CHAIN: 1";
+    html += "</div>";
     
     html += "<button type='submit'>Submit</button>";
     html += "</form></body></html>";

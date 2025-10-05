@@ -19,24 +19,24 @@ void MatrixDataManager::init() {
     // when keys don't exist. This saves NVS space and flash write cycles.
 }
 
-void MatrixDataManager::setPanelWidth(int value) {
+void MatrixDataManager::savePanelWidth(int value) {
     matrixNvsManager.saveInt(NVS_KEY_PANEL_WIDTH, value);
 }
-int16_t MatrixDataManager::getPanelWidth() {
+int16_t MatrixDataManager::loadPanelWidth() {
     return matrixNvsManager.loadInt(NVS_KEY_PANEL_WIDTH, PANEL_WIDTH);
 }
 
-void MatrixDataManager::setPanelHeight(int value) {
+void MatrixDataManager::savePanelHeight(int value) {
      matrixNvsManager.saveInt(NVS_KEY_PANEL_HEIGHT, value);
 }
-int16_t MatrixDataManager::getPanelHeight() {
+int16_t MatrixDataManager::loadPanelHeight() {
     return  matrixNvsManager.loadInt(NVS_KEY_PANEL_HEIGHT, PANEL_HEIGHT);
 }
 
-void MatrixDataManager::setPanelChain(int value) {
+void MatrixDataManager::savePanelChain(int value) {
     matrixNvsManager.saveInt(NVS_KEY_PANEL_CHAIN, value);
 }
-int16_t MatrixDataManager::getPanelChain() {
+int16_t MatrixDataManager::loadPanelChain() {
      return  matrixNvsManager.loadInt(NVS_KEY_PANEL_CHAIN, PANEL_CHAIN);
 }
 

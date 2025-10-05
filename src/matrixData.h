@@ -72,14 +72,14 @@ public:
     // Initialize all NVS data with defaults (call in setup)
     void init();
 
-    void setPanelWidth(int value);
-    int16_t getPanelWidth();
+    void savePanelWidth(int value);
+    int16_t loadPanelWidth();
 
-    void setPanelHeight(int value);
-    int16_t getPanelHeight();
+    void savePanelHeight(int value);
+    int16_t loadPanelHeight();
 
-    void setPanelChain(int value);
-    int16_t getPanelChain();
+    void savePanelChain(int value);
+    int16_t loadPanelChain();
 
     void setAutoMode(bool value);
     bool getAutoMode();

@@ -1,6 +1,5 @@
 #ifndef SET_AP_H
 #define SET_AP_H
-
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
@@ -13,26 +12,27 @@ class SetAP {
 public:
     SetAP();
     
-    // 启动配置流程
+    // Start setup process
     void beginSetup();
     
-    // 扫描周围的WiFi网络
+    // Scan nearby WiFi networks
     void scanWifiNetworks();
     
-    // 创建热点
+    // Create access point
     void createAccessPoint();
     
-    // 处理Web服务器请求
+    // Handle web server requests
     void handleClient();
     
-    // 获取提交的信息
+    // Get submitted information
     String getSSID() const;
     String getPassword() const;
     int getTimezone() const;
+    String getScreenOption() const;
     
-    // 重启ESP32S3
+    // Restart ESP32S3
     void restartESP();
-
+    
 private:
     WebServer server;
     DNSServer dnsServer;
@@ -42,16 +42,16 @@ private:
     String selectedSSID;
     String wifiPassword;
     int timezone;
+    String screenOption;
     
-    // Web页面处理函数
+    // Web page handler functions
     void handleRoot();
     void handleSubmit();
     void handleNotFound();
     
-    // 生成HTML页面
+    // Generate HTML page
     String generateHTML();
 };
 
 extern SetAP wifiManager;
-
 #endif // SET_AP_H

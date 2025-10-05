@@ -7,6 +7,13 @@
 #include "common_define.h"
 #include "matrixData.h"
 
+extern uint16_t g_panelWidth;
+extern uint16_t g_panelWidthChain;
+extern uint16_t g_panelHeight;
+extern uint16_t g_panelHeightChain;
+extern uint8_t g_panelChain;
+
+
 /**
  * @brief Matrix DMA Manager class for HUB75 LED panel control
  * 用于 HUB75 LED 面板控制的矩阵 DMA 管理类

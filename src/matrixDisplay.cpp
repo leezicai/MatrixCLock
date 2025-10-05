@@ -431,9 +431,9 @@ void Display::display(unsigned long elapsed, const char *nowStr,
       (fontNumMetrics.charWidth + 1) * charCountForCalWidth.countNum +
       (fontABCMetrics.charWidth + 1) * charCountForCalWidth.countABC +
       (fontHyphenMetrics.charWidth + 1) * charCountForCalWidth.countHyphen;
-  int16_t x = PANEL_WIDTH * PANEL_CHAIN * matrixCore.x - strSingleWidth / 2 ;
+  int16_t x = g_panelWidthChain * matrixCore.x - strSingleWidth / 2 ;
   int16_t y =
-      PANEL_HEIGHT * PANEL_CHAIN * matrixCore.y + fontNumMetrics.height / 2;
+      g_panelHeightChain * matrixCore.y + fontNumMetrics.height / 2;
   uint16_t colorRGB565 = matrixColorManager.getColor(matrixCore.colorIndex1);
   int16_t offsetSpaceX = fontInfo->offsetSepX * spaceMetrics.charWidth;
   int16_t offsetSpaceY = fontInfo->offsetSepY * spaceMetrics.height;
@@ -843,8 +843,8 @@ void Display::displayUnderline(MatrixCore matrixCore){
   uint16_t colorRGB565 = matrixColorManager.getColor(matrixCore.colorIndex1);
   FontMetrics fontABCMetrics = getFontMetrics(fontInfo->fontName, "5");
   FontMetrics fontSpaceMetrics = getFontMetrics(fontInfo->fontName, " ");
-  int16_t x = PANEL_WIDTH * PANEL_CHAIN * matrixCore.x - 2;
-  int16_t y = PANEL_HEIGHT * PANEL_CHAIN * matrixCore.y + fontABCMetrics.height/2 + 1;
+  int16_t x = g_panelWidthChain * matrixCore.x - 2;
+  int16_t y = g_panelHeightChain * matrixCore.y + fontABCMetrics.height/2 + 1;
 
   dma_display->drawFastHLine(x, y, 3, colorRGB565);
 }
@@ -852,6 +852,6 @@ void Display::displayUnderline(MatrixCore matrixCore){
 void Display::showPageInfo(){
   char buffer[16];
   sprintf(buffer, "%d-%d", matrixCoreManager.getCurrentPageIndex()+1, matrixCoreManager.getCurrentSecondaryIndex()+1);
-  displayTextRGB(200,200,200, 0,PANEL_HEIGHT * PANEL_CHAIN, u8g2_font_blipfest_07_tr, buffer);
+  displayTextRGB(200,200,200, 0, g_panelWidthChain, u8g2_font_blipfest_07_tr, buffer);
 }
       

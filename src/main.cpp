@@ -1,7 +1,6 @@
 // #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h> // 不再需要，已包含在 dma.h 中
 #include "brightnessManager.h"
 #include "btn.h"
-#include "dma.h"    // <--- 包含 DMA 设置头文件 (Include DMA setup header)
 #include "matrixDma.h"
 #include "ds3231.h" // 添加DS3231头文件
 #include "ec11.h"
@@ -100,6 +99,8 @@ void setup() {
       delay(1000);
     }
   }
+
+  
 
   // 初始化 u8g2
   u8g2_for_adafruit_gfx.begin(*dma_display);
