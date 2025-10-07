@@ -92,25 +92,20 @@ void setup() {
   // dma_display = setupDMA(50);
   if(matrixDmaManager.setupDMA()){
     dma_display = matrixDmaManager.getDisplay();
-  }
-  if (!dma_display) {
+  } else {
     Serial.println("DMA Display setup failed, halting execution.");
-    while (1) {
-      delay(1000);
-    }
   }
-
-  
 
   // 初始化 u8g2
   u8g2_for_adafruit_gfx.begin(*dma_display);
 
   int count = 0;
   while (!matrixDataManager.getWifiConfig()) {
+   
     if (count == 0) {
       Serial.println("Starting WiFi setup mode");
       loading.showSetupMsg();
-      loading.flipDMABuffer();
+      display.flipDMABuffer();
       wifiManager.beginSetup();
       count = 2;
     }
@@ -118,23 +113,29 @@ void setup() {
     buttonManager.tick();
   }
  
-  lastMillisTime = millis();
-  loading.drawFrame();
-  loading.drawTitle();
-  loading.flipDMABuffer();
+  // lastMillisTime = millis();
+  // loading.drawFrame();
+  // loading.drawTitle();
+  // loading.flipDMABuffer();
+  // while (matrixDataManager.getWifiConfig()) {
+  //   unsigned long elapsed = millis() - lastMillisTime;
+  //   float percent = (float)elapsed / duration;
+  //   if (percent > 1.0f) {
+  //     percent = 1.0f; // 限制最大100%
+  //   }
+  //   loading.drawErrMsg();
+  //   if (loading.getFlag() && elapsed < duration) {
+  //     loading.updateProgress(percent);
+  //     loading.flipDMABuffer();
+  //   } else {
+  //     loading.clearScreen();
+  //     loading.flipDMABuffer();
+  //     break;
+  //   }
+  // }
+  loading.setLastMillsTime();
   while (matrixDataManager.getWifiConfig()) {
-    unsigned long elapsed = millis() - lastMillisTime;
-    float percent = (float)elapsed / duration;
-    if (percent > 1.0f) {
-      percent = 1.0f; // 限制最大100%
-    }
-    loading.drawErrMsg();
-    if (loading.getFlag() && elapsed < duration) {
-      loading.updateProgress(percent);
-      loading.flipDMABuffer();
-    } else {
-      loading.clearScreen();
-      loading.flipDMABuffer();
+    if(loading.loadingAnimation()){
       break;
     }
   }

@@ -3,6 +3,7 @@
 #include <U8g2_for_Adafruit_GFX.h>
 #include "common_define.h"
 #include "matrixDisplay.h"
+#include "matrixDma.h"
 
 // 外部全局对象
 extern MatrixPanel_I2S_DMA *dma_display;
@@ -29,12 +30,23 @@ public:
 
     void setDuration(unsigned long duration);
     unsigned long getDuration();
+    void setLastMillsTime();
+    boolean loadingAnimation();
+    boolean isCount();
+    void switchWiFiErr();
+    void switchNetWorkErr();
 
   private:
     int barX, barY, midPaneEhight, titleX, errMsgX, barWidth, barHeight, radius;
-    unsigned long duration;
+    SecondaryPage setupPage;
+    SecondaryPage loadingPage;
+    MatrixCore errorWiFiMsg;
+    MatrixCore errorNetWorkMsg;
+    unsigned long duration = DURATION;
+    unsigned long lastMillisTime = 0;
     String message;
     bool flag; // true = 正常加载，false = 暂停
+    int16_t count;
 };
 
 // ✅ 全局对象声明

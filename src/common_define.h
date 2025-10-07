@@ -86,10 +86,10 @@
 #define PANEL_NAME_TC7528 "TC7528D"
 
 // loading
-#define DURATION 3000;
+#define DURATION 3600;
 // loading error message
 #define LOADING_ERR_MSG_FAIL_WIFI "WiFi Connect Failed"
-#define LOADING_ERR_MSG_FAIL_NETWORK "Net Sync Time Failed"
+#define LOADING_ERR_MSG_FAIL_NETWORK "Net SyncTime Failed"
 
 // Setup Msg
 #define SETUP_WIFI_MSG "WiFi Setup:"

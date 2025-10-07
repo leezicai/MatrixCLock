@@ -817,20 +817,31 @@ void Display::displayString(unsigned long elapsed, TimeData timeNow,
     display(elapsed, nowStr, nowNextStr, results, timeNow.flag, matrixCore);
     break;
   case 1:
+    if(matrixSettings.getCurrentLanguage() == LANG_CHINESE){
+      matrixCore.fontGroupIndex = 10;
+      matrixCore.fontIndex = 40;
+    }
     nowStr = matrixTimeUtils.getStr(timeNow, matrixCore.displayIndex);
     nowNextStr = matrixTimeUtils.getStr(timeNowNextSec, matrixCore.displayIndex);
     results = compare_with_vector(nowStr, nowNextStr);
     Serial.println(nowStr);
     Serial.println(nowNextStr);
     display(elapsed, nowStr, nowNextStr, results, false, matrixCore);
+    // displayString(nowStr, matrixCore);
     break;
   case 2:
     nowStr = matrixSettings.getCommonWord(static_cast<CommonWordIndex>(matrixCore.displayIndex));
-    display(elapsed, nowStr, nowStr, results, false, matrixCore);
+    // display(elapsed, nowStr, nowStr, results, false, matrixCore);
+    displayString(nowStr, matrixCore);
     break;
   case 3:
     nowStr = matrixStatusManager.getSysStatus(matrixCore.displayIndex);
-    display(elapsed, nowStr, nowStr, results, false, matrixCore);
+    // display(elapsed, nowStr, nowStr, results, false, matrixCore);
+    displayString(nowStr, matrixCore);
+    break;
+  case 4:
+    nowStr = matrixTimeData.getStrStaff(timeNow, 8 + matrixCore.displayIndex);
+    displayString(nowStr, matrixCore);
     break;
   default:
     break;
@@ -854,4 +865,15 @@ void Display::showPageInfo(){
   sprintf(buffer, "%d-%d", matrixCoreManager.getCurrentPageIndex()+1, matrixCoreManager.getCurrentSecondaryIndex()+1);
   displayTextRGB(200,200,200, 0, g_panelHeightChain, u8g2_font_blipfest_07_tr, buffer);
 }
-      
+void Display::displayString(const char* text, MatrixCore matrixCore){
+  
+  const FontInfo *fontInfo = matrixFontManager.getCurrentFont(
+      matrixCore.fontGroupIndex, matrixCore.fontIndex);
+  FontMetrics fontABCMetrics = getFontMetrics(fontInfo->fontName, "A");
+  int x = g_panelWidthChain * matrixCore.x;
+  int y = g_panelHeightChain * matrixCore.y + fontABCMetrics.height/2 ;
+  uint16_t colorRGB565 = matrixColorManager.getColor(matrixCore.colorIndex1);
+
+  displayText(colorRGB565, x , y, fontInfo->fontName, text);
+  
+}

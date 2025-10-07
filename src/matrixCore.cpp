@@ -104,40 +104,40 @@ void MatrixCoreManager::initializeMatrixCores() {
     PrimaryPage primaryPage2;
 
     SecondaryPage secondaryPage2_0 = {
-        MatrixCore(0.45f, 0.15f, 10, 40, 4, 0, 2, 0, 1),
+        MatrixCore(0.03f, 0.16f, 10, 40, 4, 0, 2, 0, 1),
 
-        MatrixCore(0.2f, 0.46f, 8, 1, 2, 0, 0, 8, 1),
-        MatrixCore(0.5f, 0.46f, 8, 1, 2, 0, 0, 9, 1),
-        MatrixCore(0.75f, 0.46f, 8, 1, 2, 0, 0, 10, 1),
+        MatrixCore(0.03f, 0.47f, 8, 1, 2, 0, 4, 0, 1),
+        MatrixCore(0.38f, 0.47f, 8, 1, 2, 0, 4, 1, 1),
+        MatrixCore(0.58f, 0.47f, 8, 1, 2, 0, 4, 2, 1),
 
-        MatrixCore(0.2f, 0.78f, 8, 1, 4, 0, 0, 11, 1),
-        MatrixCore(0.5f, 0.78f, 8, 1, 4, 0, 0, 12, 1)
+        MatrixCore(0.03f, 0.79f, 8, 1, 2, 0, 4, 3, 1),
+        MatrixCore(0.38f, 0.79f, 8, 1, 2, 0, 4, 4, 1)
     };
 
     secondaryPage2_1 = {
-        MatrixCore(0.45f, 0.15f, 10, 40, 4, 0, 2, 1, 1),
+        MatrixCore(0.03f, 0.16f, 10, 40, 4, 0, 2, 1, 1),
 
-        MatrixCore(0.2f, 0.46f, 10, 40, 2, 0, 2, 2, 1),
-        MatrixCore(0.5f, 0.46f, 10, 40, 2, 0, 3, 0, 1),
+        MatrixCore(0.03f, 0.47f, 10, 40, 4, 0, 2, 2, 1),
+        MatrixCore(0.3f, 0.47f, 10, 40, 2, 0, 3, 0, 1),
 
-        MatrixCore(0.2f, 0.78f, 8, 1, 4, 0, 3, 2, 1),
-        MatrixCore(0.5f, 0.78f, 8, 1, 4, 0, 3, 3, 1)
+        MatrixCore(0.03f, 0.79f, 8, 1, 2, 0, 3, 2, 1),
+        MatrixCore(0.3f, 0.79f, 8, 1, 2, 0, 3, 3, 1)
     };
 
     secondaryPage2_1_ = {
 
-        MatrixCore(0.45f, 0.15f, 10, 40, 4, 0, 2, 1, 1),
+        MatrixCore(0.03f, 0.16f, 10, 40, 4, 0, 2, 1, 1),
 
-        MatrixCore(0.2f, 0.46f, 10, 40, 2, 0, 2, 2, 1),
-        MatrixCore(0.5f, 0.46f, 10, 40, 2, 0, 3, 0, 1),
+        MatrixCore(0.03f, 0.47f, 10, 40, 4, 0, 2, 2, 1),
+        MatrixCore(0.3f, 0.47f, 10, 40, 2, 0, 3, 0, 1),
 
-        MatrixCore(0.5f, 0.78f, 7, 3, 2, 0, 3, 1, 1)
+        MatrixCore(0.3f, 0.79f, 8, 1, 2, 0, 3, 1, 1)
     };
 
      SecondaryPage secondaryPage2_2 = {
-        MatrixCore(0.45f, 0.15f, 10, 40, 4, 0, 2, 5, 1),
+        MatrixCore(0.03f, 0.16f, 10, 40, 4, 0, 2, 5, 1),
 
-        MatrixCore(0.45f, 0.46f, 10, 40, 2, 0, 3, 4, 1),
+        MatrixCore(0.03f, 0.47f, 10, 40, 2, 0, 3, 4, 1),
     };
     
     secondaryPage2_0 = matrixDataManager.loadPage(2, 0, secondaryPage2_0);

@@ -80,7 +80,7 @@ String SetAP::getScreenOption() const {
 
 void SetAP::restartESP() {
     Serial.println("Restarting ESP32S3...");
-    delay(500);
+    delay(200);
     ESP.restart();
 }
 

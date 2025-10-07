@@ -55,7 +55,8 @@ void method1Task(void * parameter) {
       bool syncNtpTimeFlag = rtc.syncNtpTime();
       bool rtcFlag = rtc.begin(SDA, SCL);
       if (!syncNtpTimeFlag) {
-        loading.setMessage(LOADING_ERR_MSG_FAIL_NETWORK);
+        // loading.setMessage(LOADING_ERR_MSG_FAIL_NETWORK);
+        loading.switchNetWorkErr();
         rtc.syncTimeFromRTC();
       } else {
         if(rtcFlag){
@@ -65,7 +66,8 @@ void method1Task(void * parameter) {
         }
       }
     } else {
-      loading.setMessage(LOADING_ERR_MSG_FAIL_WIFI);
+      // loading.setMessage(LOADING_ERR_MSG_FAIL_WIFI);
+      loading.switchWiFiErr();
       rtc.syncTimeFromRTC();
     }
     disconnectNet();

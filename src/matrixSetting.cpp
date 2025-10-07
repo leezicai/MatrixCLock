@@ -12,11 +12,15 @@ const char* MatrixSettings::commonWords_CN[WORD_COUNT] = {
     "自动",      // WORD_TIME
     "开",      // WORD_TEMPERATURE
     "关",      // WORD_HUMIDITY
-    "语言",      // WORD_WEATHER
+    "设置-语言",      // WORD_WEATHER
     "中文",      // WORD_ALARM
-    "定时器",    // WORD_TIMER
-    "亮度",      // WORD_BRIGHTNESS
-    "音量"       // WORD_VOLUME
+    "连接WiFi并访问",    // WORD_TIMER
+    "MatrixClock",      // WORD_BRIGHTNESS
+    "http://10.0.0.1",       // WORD_VOLUME
+    "连接WiFi错误",       // WORD_VOLUME
+    "同步时间网络错误",       // WORD_VOLUME
+    "MatrixClock",       // WORD_VOLUME
+    ""
 };
 
 const char* MatrixSettings::commonWords_EN[WORD_COUNT] = {
@@ -25,12 +29,18 @@ const char* MatrixSettings::commonWords_EN[WORD_COUNT] = {
     "Auto",          // WORD_TIME
     "On",   // WORD_TEMPERATURE
     "Off",      // WORD_HUMIDITY
-    "Languge",       // WORD_WEATHER
+    "Set-Languge",       // WORD_WEATHER
     "En",         // WORD_ALARM
-    "Timer",         // WORD_TIMER
-    "Brightness",    // WORD_BRIGHTNESS
-    "Volume"         // WORD_VOLUME
+    "ConnWiFi&Access",         // WORD_TIMER
+    "MatrixClock",    // WORD_BRIGHTNESS
+    "http://10.0.0.1",         // WORD_VOLUME
+    "WiFi Connect Failed",       // WORD_VOLUME
+    "SyncTime Net Failed",       // WORD_VOLUME
+    "MatrixClock",       // WORD_VOLUME
+    ""       // WORD_VOLUME
 };
+// #define LOADING_ERR_MSG_FAIL_WIFI "WiFi Connect Failed"
+// #define LOADING_ERR_MSG_FAIL_NETWORK "Net SyncTime Failed"
 
 // Constructor
 MatrixSettings::MatrixSettings() {

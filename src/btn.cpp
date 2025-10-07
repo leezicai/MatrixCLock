@@ -107,6 +107,8 @@ void ButtonManager::handleButton2DoubleClick() {
 
 void ButtonManager::handleButton2LongPressStart() {
   matrixCoreManager.button2LongPressStart();
+  matrixDataManager.clearAllData();
+  ESP.restart();
   Serial.println("Button 2 long press started");
   // Your code for button 2 long press start here
 }

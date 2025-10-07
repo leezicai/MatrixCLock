@@ -241,6 +241,7 @@ class Display {
       void displayUnderline(MatrixCore matrixCore);
 
       void showPageInfo();
+      void displayString(const char* text, MatrixCore marixCore);
 };
 
 // 全局实例声明

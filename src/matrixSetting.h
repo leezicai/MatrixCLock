@@ -23,10 +23,14 @@ typedef enum {
     WORD_BRIGHTNESS_OFF = 4,
     WORD_LANGUGE = 5,
     WORD_CURRENT_LANGUGE = 6,
-    WORD_TIMER = 7,
-    WORD_DATE = 8,
-    WORD_VOLUME = 9,
-    WORD_COUNT = 10
+    WORD_SETUP = 7,
+    WORD_SETUP_WIFI_TITLE = 8,
+    WORD_SETUP_WIFI_ADDRESS = 9,
+    WORD_SETUP_WIFI_FAILD = 10,
+    WORD_SETUP_WIFI_NETWORK_FAILD = 11,
+    WORD_START_TITLE = 12,
+    WORD_BLANK = 13,
+    WORD_COUNT = 14
 } CommonWordIndex;
 
 class MatrixSettings {
