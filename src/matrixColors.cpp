@@ -35,7 +35,7 @@ int16_t MatrixColorManager::previousIndex(int16_t index) {
     }
     
     // Use modular arithmetic for wrapping: (index - 1 + size) % size
-    return (index - 1 + COLOR_COUNT % COLOR_COUNT);
+    return (index - 1 + COLOR_COUNT) % COLOR_COUNT;
 }
 
 int16_t MatrixColorManager::nextIndex(int16_t index) {
