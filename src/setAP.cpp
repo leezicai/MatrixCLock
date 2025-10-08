@@ -10,7 +10,8 @@ SetAP wifiManager;
 SetAP::SetAP() : 
     server(80),
     timezone(0),
-    screenOption("128X64X1") {
+    screenOption("128x64x1"),
+    language("en") {
 }
 
 void SetAP::beginSetup() {
@@ -78,6 +79,10 @@ String SetAP::getScreenOption() const {
     return screenOption;
 }
 
+String SetAP::getLanguage() const {
+    return language;
+}
+
 void SetAP::restartESP() {
     Serial.println("Restarting ESP32S3...");
     delay(200);
@@ -93,21 +98,42 @@ void SetAP::handleSubmit() {
     wifiPassword = server.arg("password");
     timezone = server.arg("timezone").toInt();
     screenOption = server.arg("screen");
+    language = server.arg("language");
     
     // Determine panel dimensions based on screen option
     int panelWidth, panelHeight, panelChain;
-    if (screenOption == "128X64X1") {
+    if (screenOption == "128x64x1") {
         panelWidth = 128;
         panelHeight = 64;
         panelChain = 1;
-    } else { // 64X64X2
+    } else if (screenOption == "64x64x2") {
         panelWidth = 64;
         panelHeight = 64;
         panelChain = 2;
+    } else if (screenOption == "64x64x1") {
+        panelWidth = 64;
+        panelHeight = 64;
+        panelChain = 1;
+    } else {
+        // Default fallback
+        panelWidth = 128;
+        panelHeight = 64;
+        panelChain = 1;
+    }
+    
+    // Set language based on detected browser language
+    if (language == "zh") {
+        matrixDataManager.setLanguage(Language::LANG_CHINESE);
+    } else if (language == "en") {
+        matrixDataManager.setLanguage(Language::LANG_ENGLISH);
+    } else {
+        // Default to English for all other languages
+        matrixDataManager.setLanguage(Language::LANG_ENGLISH);
     }
     
     String response = "<html><head>";
     response += "<meta name='viewport' content='width=device-width, initial-scale=1'>";
+    response += "<meta charset='UTF-8'>";
     response += "<style>body{font-family:Arial,sans-serif;margin:20px;text-align:center;}</style>";
     response += "</head><body>";
     response += "<h1>WiFi Setup Successful!</h1>";
@@ -118,6 +144,7 @@ void SetAP::handleSubmit() {
     response += "<p>Panel Width: " + String(panelWidth) + "</p>";
     response += "<p>Panel Height: " + String(panelHeight) + "</p>";
     response += "<p>Panel Chain: " + String(panelChain) + "</p>";
+    response += "<p>Language: " + language + "</p>";
     response += "<p>Device will restart in 2 seconds...</p>";
     response += "</body></html>";
     
@@ -160,15 +187,31 @@ String SetAP::generateHTML() {
     html += ".screen-info{background:#f0f0f0;padding:10px;margin:10px 0;border-radius:4px;font-size:14px;}";
     html += "</style>";
     
-    // Add JavaScript for dynamic screen info display
+    // Add JavaScript for dynamic screen info display and language detection
     html += "<script>";
+    
+    // Detect browser language on page load and auto-select
+    html += "window.onload = function() {";
+    html += "  var userLang = navigator.language || navigator.userLanguage;";
+    html += "  var langSelect = document.getElementById('language');";
+    html += "  if (userLang.startsWith('zh')) {";
+    html += "    langSelect.value = 'zh';";
+    html += "  } else {";
+    html += "    langSelect.value = 'en';";
+    html += "  }";
+    html += "  updateScreenInfo();";
+    html += "};";
+    
+    // Update screen info based on selection
     html += "function updateScreenInfo() {";
     html += "  var screen = document.getElementById('screen').value;";
     html += "  var info = document.getElementById('screenInfo');";
-    html += "  if (screen === '128X64X1') {";
+    html += "  if (screen === '128x64x1') {";
     html += "    info.innerHTML = 'PANEL_WIDTH: 128<br>PANEL_HEIGHT: 64<br>PANEL_CHAIN: 1';";
-    html += "  } else {";
+    html += "  } else if (screen === '64x64x2') {";
     html += "    info.innerHTML = 'PANEL_WIDTH: 64<br>PANEL_HEIGHT: 64<br>PANEL_CHAIN: 2';";
+    html += "  } else if (screen === '64x64x1') {";
+    html += "    info.innerHTML = 'PANEL_WIDTH: 64<br>PANEL_HEIGHT: 64<br>PANEL_CHAIN: 1';";
     html += "  }";
     html += "}";
     html += "</script>";
@@ -196,13 +239,20 @@ String SetAP::generateHTML() {
     
     html += "<label for='screen'>Screen Option:</label>";
     html += "<select name='screen' id='screen' onchange='updateScreenInfo()' required>";
-    html += "<option value='128X64X1' selected>128X64X1</option>";
-    html += "<option value='64X64X2'>64X64X2</option>";
+    html += "<option value='128x64x1' selected>128x64x1</option>";
+    html += "<option value='64x64x2'>64x64x2</option>";
+    html += "<option value='64x64x1'>64x64x1</option>";
     html += "</select>";
     
     html += "<div class='screen-info' id='screenInfo'>";
     html += "PANEL_WIDTH: 128<br>PANEL_HEIGHT: 64<br>PANEL_CHAIN: 1";
     html += "</div>";
+    
+    html += "<label for='language'>Language:</label>";
+    html += "<select name='language' id='language' required>";
+    html += "<option value='zh'>中文</option>";
+    html += "<option value='en'>English</option>";
+    html += "</select>";
     
     html += "<button type='submit'>Submit</button>";
     html += "</form></body></html>";

@@ -29,6 +29,7 @@ public:
     String getPassword() const;
     int getTimezone() const;
     String getScreenOption() const;
+    String getLanguage() const;
     
     // Restart ESP32S3
     void restartESP();
@@ -43,6 +44,7 @@ private:
     String wifiPassword;
     int timezone;
     String screenOption;
+    String language;
     
     // Web page handler functions
     void handleRoot();

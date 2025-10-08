@@ -4,6 +4,7 @@
 #include "matrixNvs.h"
 #include "matrixCore.h"
 #include "common_define.h"
+#include "matrixSetting.h"
 
 // NVS Key Definitions - System Settings
 #define NVS_KEY_SSID "ssid"

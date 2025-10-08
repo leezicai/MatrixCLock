@@ -141,7 +141,7 @@ void MatrixDataManager::setLanguage(int16_t lang) {
 }
 
 int16_t MatrixDataManager::getLanguage() {
-    return matrixNvsManager.loadInt(NVS_KEY_LANGUAGE, 0);
+    return matrixNvsManager.loadInt(NVS_KEY_LANGUAGE, Language::LANG_ENGLISH);
 }
 
 // Display Settings Implementation
