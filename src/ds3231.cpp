@@ -333,7 +333,8 @@ bool DS3231::syncNtpTime()
 }
 
 
-bool DS3231::adjustTime(int years, int months, int days, int hours, int minutes) {
+// Update the adjustTime method signature to include seconds parameter
+bool DS3231::adjustTime(int years, int months, int days, int hours, int minutes, int seconds) {
     // Get current system time
     struct tm timeinfo;
     if (!getLocalTime(&timeinfo)) {
@@ -347,6 +348,7 @@ bool DS3231::adjustTime(int years, int months, int days, int hours, int minutes)
     timeinfo.tm_mday += days;
     timeinfo.tm_hour += hours;
     timeinfo.tm_min += minutes;
+    timeinfo.tm_sec += seconds;
     
     // Normalize the time structure (handle overflows/underflows)
     timeinfo.tm_isdst = -1; // Let mktime determine DST
@@ -385,7 +387,7 @@ bool DS3231::adjustTime(int years, int months, int days, int hours, int minutes)
  */
 bool DS3231::addYear() {
     Serial.println("Adding 1 year to current time...");
-    return adjustTime(1, 0, 0, 0, 0);
+    return adjustTime(1, 0, 0, 0, 0, 0);
 }
 
 /**
@@ -394,7 +396,7 @@ bool DS3231::addYear() {
  */
 bool DS3231::subtractYear() {
     Serial.println("Subtracting 1 year from current time...");
-    return adjustTime(-1, 0, 0, 0, 0);
+    return adjustTime(-1, 0, 0, 0, 0, 0);
 }
 
 /**
@@ -403,7 +405,7 @@ bool DS3231::subtractYear() {
  */
 bool DS3231::addMonth() {
     Serial.println("Adding 1 month to current time...");
-    return adjustTime(0, 1, 0, 0, 0);
+    return adjustTime(0, 1, 0, 0, 0, 0);
 }
 
 /**
@@ -412,7 +414,7 @@ bool DS3231::addMonth() {
  */
 bool DS3231::subtractMonth() {
     Serial.println("Subtracting 1 month from current time...");
-    return adjustTime(0, -1, 0, 0, 0);
+    return adjustTime(0, -1, 0, 0, 0, 0);
 }
 
 /**
@@ -421,7 +423,7 @@ bool DS3231::subtractMonth() {
  */
 bool DS3231::addDay() {
     Serial.println("Adding 1 day to current time...");
-    return adjustTime(0, 0, 1, 0, 0);
+    return adjustTime(0, 0, 1, 0, 0, 0);
 }
 
 /**
@@ -430,7 +432,7 @@ bool DS3231::addDay() {
  */
 bool DS3231::subtractDay() {
     Serial.println("Subtracting 1 day from current time...");
-    return adjustTime(0, 0, -1, 0, 0);
+    return adjustTime(0, 0, -1, 0, 0, 0);
 }
 
 /**
@@ -439,7 +441,7 @@ bool DS3231::subtractDay() {
  */
 bool DS3231::addHour() {
     Serial.println("Adding 1 hour to current time...");
-    return adjustTime(0, 0, 0, 1, 0);
+    return adjustTime(0, 0, 0, 1, 0, 0);
 }
 
 /**
@@ -448,7 +450,7 @@ bool DS3231::addHour() {
  */
 bool DS3231::subtractHour() {
     Serial.println("Subtracting 1 hour from current time...");
-    return adjustTime(0, 0, 0, -1, 0);
+    return adjustTime(0, 0, 0, -1, 0, 0);
 }
 
 /**
@@ -457,7 +459,7 @@ bool DS3231::subtractHour() {
  */
 bool DS3231::addMinute() {
     Serial.println("Adding 1 minute to current time...");
-    return adjustTime(0, 0, 0, 0, 1);
+    return adjustTime(0, 0, 0, 0, 1, 0);
 }
 
 /**
@@ -466,5 +468,23 @@ bool DS3231::addMinute() {
  */
 bool DS3231::subtractMinute() {
     Serial.println("Subtracting 1 minute from current time...");
-    return adjustTime(0, 0, 0, 0, -1);
+    return adjustTime(0, 0, 0, 0, -1, 0);
+}
+
+/**
+ * Add one second to current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::addSecond() {
+    Serial.println("Adding 1 second to current time...");
+    return adjustTime(0, 0, 0, 0, 0, 1);
+}
+
+/**
+ * Subtract one second from current time and sync to RTC
+ * @return bool - true if successful
+ */
+bool DS3231::subtractSecond() {
+    Serial.println("Subtracting 1 second from current time...");
+    return adjustTime(0, 0, 0, 0, 0, -1);
 }

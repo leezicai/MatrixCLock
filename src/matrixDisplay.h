@@ -241,7 +241,8 @@ class Display {
       void displayUnderline(MatrixCore matrixCore);
 
       void showPageInfo();
-      void displayString(const char* text, MatrixCore marixCore);
+      void displayString(const char* text, MatrixCore matrixCore);
+      void displayString(const char* text, boolean isStartLeft, MatrixCore matrixCore);
 };
 
 // 全局实例声明

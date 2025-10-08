@@ -824,24 +824,22 @@ void Display::displayString(unsigned long elapsed, TimeData timeNow,
     nowStr = matrixTimeUtils.getStr(timeNow, matrixCore.displayIndex);
     nowNextStr = matrixTimeUtils.getStr(timeNowNextSec, matrixCore.displayIndex);
     results = compare_with_vector(nowStr, nowNextStr);
-    Serial.println(nowStr);
-    Serial.println(nowNextStr);
     display(elapsed, nowStr, nowNextStr, results, false, matrixCore);
     // displayString(nowStr, matrixCore);
     break;
   case 2:
     nowStr = matrixSettings.getCommonWord(static_cast<CommonWordIndex>(matrixCore.displayIndex));
     // display(elapsed, nowStr, nowStr, results, false, matrixCore);
-    displayString(nowStr, matrixCore);
+    displayString(nowStr, true, matrixCore);
     break;
   case 3:
     nowStr = matrixStatusManager.getSysStatus(matrixCore.displayIndex);
     // display(elapsed, nowStr, nowStr, results, false, matrixCore);
-    displayString(nowStr, matrixCore);
+    displayString(nowStr, true, matrixCore);
     break;
   case 4:
-    nowStr = matrixTimeData.getStrStaff(timeNow, 8 + matrixCore.displayIndex);
-    displayString(nowStr, matrixCore);
+    nowStr = matrixTimeData.getStrStaff(timeNow, matrixCore.displayIndex);
+    displayString(nowStr, true, matrixCore);
     break;
   default:
     break;
@@ -874,6 +872,42 @@ void Display::displayString(const char* text, MatrixCore matrixCore){
   int y = g_panelHeightChain * matrixCore.y + fontABCMetrics.height/2 ;
   uint16_t colorRGB565 = matrixColorManager.getColor(matrixCore.colorIndex1);
 
+  displayText(colorRGB565, x , y, fontInfo->fontName, text);
+  
+}
+
+void Display::displayString(const char* text, boolean isStartLeft, MatrixCore matrixCore){
+  int16_t x;
+  const FontInfo *fontInfo = matrixFontManager.getCurrentFont(
+      matrixCore.fontGroupIndex, matrixCore.fontIndex);
+
+  charCountForCalWidth = analyzeCharInStr(text);
+
+  FontMetrics fontABCMetrics; // = getFontMetrics(fontInfo->fontName, "M");
+  if(matrixCore.fontGroupIndex == 10 && matrixCore.fontIndex == 40){
+    fontABCMetrics.charWidth = 13;
+    fontABCMetrics.height = 13;
+    charCountForCalWidth.reset();
+    charCountForCalWidth.countABC =  strlen(text) / 3;
+  } else {
+    fontABCMetrics = getFontMetrics(fontInfo->fontName, "M");
+  }
+  FontMetrics fontNumMetrics = getFontMetrics(fontInfo->fontName, "5");
+  FontMetrics fontHyphenMetrics = getFontMetrics(fontInfo->fontName, "-");
+  FontMetrics spaceMetrics = getFontMetrics(fontInfo->fontName, ":");
+  if(isStartLeft){
+    x = g_panelWidthChain * matrixCore.x;
+  } else {
+    int16_t strSingleWidth =
+        (spaceMetrics.charWidth) * charCountForCalWidth.countSpace +
+        (fontNumMetrics.charWidth) * charCountForCalWidth.countNum +
+        (fontABCMetrics.charWidth) * charCountForCalWidth.countABC +
+        (fontHyphenMetrics.charWidth) * charCountForCalWidth.countHyphen;
+    x = g_panelWidthChain * matrixCore.x - strSingleWidth / 2;
+  }
+  int y = g_panelHeightChain * matrixCore.y + fontABCMetrics.height/2 ;
+
+  uint16_t colorRGB565 = matrixColorManager.getColor(matrixCore.colorIndex1);
   displayText(colorRGB565, x , y, fontInfo->fontName, text);
   
 }

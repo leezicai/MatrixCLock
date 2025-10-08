@@ -47,6 +47,8 @@ const char *MatrixTimeData::getStrStaff(TimeData &timeData,
     return timeData.getStrHour24();
   case 12:
     return timeData.getStrMinute();
+  case 13:
+    return timeData.getStrSecond();
   default:
     return timeData.getTimeString();
   }

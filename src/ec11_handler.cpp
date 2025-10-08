@@ -86,6 +86,9 @@ void handleButtonPressedRotateCW(EC11* encoder) {
       case 5:
         rtc.addMinute();
         break;
+      case 6:
+        rtc.addSecond();
+        break;
       default:
         break;
       }
@@ -175,6 +178,9 @@ void handleButtonPressedRotateCCW(EC11* encoder) {
         break;
       case 5:
         rtc.subtractMinute();
+        break;
+      case 6:
+        rtc.subtractSecond();
         break;
       default:
         break;

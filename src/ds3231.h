@@ -1,6 +1,5 @@
 #ifndef DS3231_H
 #define DS3231_H
-
 #include <Arduino.h>
 #include <Wire.h>
 #include "time.h"
@@ -8,8 +7,6 @@
 #include "matrixData.h"
 
 // DS3231 I2C address
-// #define SDA 1
-// #define SCL 2
 #define DS3231_ADDRESS 0x68
 
 // DS3231 register addresses
@@ -26,16 +23,14 @@
 #define DS3231_TEMP_MSB_REG 0x11
 #define DS3231_TEMP_LSB_REG 0x12
 
-// NTP 请求相关常量
-const int NTP_PACKET_SIZE = 48;  // NTP 时间戳在消息的前 48 字节
-const int NTP_PORT = 123;        // NTP 使用的端口号
-
+// NTP constants
+const int NTP_PACKET_SIZE = 48;
+const int NTP_PORT = 123;
 
 class DS3231 {
 private:
     TwoWire *wire;
     bool _isConnected;
-    // int gmtOffset_sec;
     
     // Utility functions
     uint8_t bcdToDec(uint8_t val);
@@ -63,29 +58,33 @@ public:
     float getTemperature();
     void sendNTPpacket(const char *address);
     bool syncNtpTime();
-
+    
     // Time adjustment methods for ESP32-S3 with RTC sync
-    bool adjustTime(int years, int months, int days, int hours, int minutes);
-
+    bool adjustTime(int years, int months, int days, int hours, int minutes, int seconds);
+    
     // Year adjustment methods
     bool addYear();
     bool subtractYear();
-
+    
     // Month adjustment methods
     bool addMonth();
     bool subtractMonth();
-
+    
     // Day adjustment methods
     bool addDay();
     bool subtractDay();
-
+    
     // Hour adjustment methods
     bool addHour();
     bool subtractHour();
-
+    
     // Minute adjustment methods
     bool addMinute();
     bool subtractMinute();
+    
+    // Second adjustment methods
+    bool addSecond();
+    bool subtractSecond();
 };
 
 extern DS3231 rtc;
