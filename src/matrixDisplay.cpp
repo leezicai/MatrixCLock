@@ -789,7 +789,7 @@ void Display::display(unsigned long elapsed, const char *nowStr,
   }
 }
 void Display::displayString(unsigned long elapsed, TimeData timeNow,
-                            TimeData timeNowNextSec, MatrixCore matrixCore) {
+                            TimeData timeNowNextSec, MatrixCore matrixCore, boolean isUnderLine) {
   const char *nowStr;
   const char *nowNextStr;
   std::vector<int8_t> results;
@@ -800,6 +800,7 @@ void Display::displayString(unsigned long elapsed, TimeData timeNow,
         matrixTimeData.getStrStaff(timeNowNextSec, matrixCore.displayIndex);
     results = compare_with_vector(nowStr, nowNextStr);
     display(elapsed, nowStr, nowNextStr, results, matrixCore);
+    if(isUnderLine){displayUnderline(false, nowStr, matrixCore);}
     break;
   case 1:
     if(matrixSettings.getCurrentLanguage() == LANG_CHINESE){
@@ -809,36 +810,75 @@ void Display::displayString(unsigned long elapsed, TimeData timeNow,
     nowStr = matrixTimeUtils.getStr(timeNow, matrixCore.displayIndex);
     nowNextStr = matrixTimeUtils.getStr(timeNowNextSec, matrixCore.displayIndex);
     results = compare_with_vector(nowStr, nowNextStr);
-    display(elapsed, nowStr, nowNextStr, results, matrixCore);
+    // display(elapsed, nowStr, nowNextStr, results, matrixCore);
+    displayString(elapsed, nowStr, nowStr, false, matrixCore);
+    if(isUnderLine){displayUnderline(false, nowStr, matrixCore);}
     // displayString(nowStr, matrixCore);
     break;
   case 2:
     nowStr = matrixSettings.getCommonWord(static_cast<CommonWordIndex>(matrixCore.displayIndex));
     // display(elapsed, nowStr, nowStr, results, false, matrixCore);
-    displayString(nowStr, true, matrixCore);
+    // displayString(nowStr, true, matrixCore);
+    displayString(elapsed, nowStr, nowStr, true, matrixCore);
+    if(isUnderLine){displayUnderline(true, nowStr, matrixCore);}
     break;
   case 3:
     nowStr = matrixStatusManager.getSysStatus(matrixCore.displayIndex);
     // display(elapsed, nowStr, nowStr, results, false, matrixCore);
-    displayString(nowStr, true, matrixCore);
+    displayString(elapsed, nowStr, nowStr, true, matrixCore);
+    if(isUnderLine){displayUnderline(true, nowStr, matrixCore);}
     break;
   case 4:
     nowStr = matrixTimeData.getStrStaff(timeNow, matrixCore.displayIndex);
-    displayString(nowStr, true, matrixCore);
+    nowNextStr = matrixTimeData.getStrStaff(timeNowNextSec, matrixCore.displayIndex);
+    displayString(elapsed, nowStr, nowNextStr, true, matrixCore);
+    if(isUnderLine){displayUnderline(true, nowStr, matrixCore);}
     break;
   default:
     break;
   }
 }
 
-void Display::displayUnderline(MatrixCore matrixCore){
+void Display::displayUnderline(boolean isStartLeft,const char* nowStr,MatrixCore matrixCore){
+
+  int16_t x;
+  int16_t leftX;
+  int16_t centerX;
+
   const FontInfo *fontInfo = matrixFontManager.getCurrentFont(
       matrixCore.fontGroupIndex, matrixCore.fontIndex);
+
+  charCountForCalWidth.reset();
+  charCountForCalWidth = analyzeCharInStr(nowStr);
+
+  FontMetrics fontABCMetrics; // = getFontMetrics(fontInfo->fontName, "M");
+  if(matrixCore.fontGroupIndex == 10 && matrixCore.fontIndex == 40){
+    if (matrixSettings.getCurrentLanguage() == Language::LANG_CHINESE) {
+      fontABCMetrics.charWidth = 13;
+      fontABCMetrics.height = 13;
+      charCountForCalWidth.countABC = strlen(nowStr) / 3;
+    }else {
+      fontABCMetrics = getFontMetrics(fontInfo->fontName, "S");
+    } 
+  } else {
+    fontABCMetrics = getFontMetrics(fontInfo->fontName, "S");
+  }
+  FontMetrics fontNumMetrics = getFontMetrics(fontInfo->fontName, "5");
+  FontMetrics fontHyphenMetrics = getFontMetrics(fontInfo->fontName, "-");
+  FontMetrics spaceMetrics = getFontMetrics(fontInfo->fontName, ":");
+  if(isStartLeft){
+    int16_t strSingleWidth =
+        (spaceMetrics.charWidth) * charCountForCalWidth.countSpace +
+        (fontNumMetrics.charWidth) * charCountForCalWidth.countNum +
+        (fontABCMetrics.charWidth) * charCountForCalWidth.countABC +
+        (fontHyphenMetrics.charWidth) * charCountForCalWidth.countHyphen;
+    x = g_panelWidthChain * matrixCore.x + strSingleWidth / 2;
+  } else {
+    x = g_panelWidthChain * matrixCore.x - 2;
+  }
+  int y = g_panelHeightChain * matrixCore.y + fontABCMetrics.height/2 + 1 ;
+
   uint16_t colorRGB565 = matrixColorManager.getColor(matrixCore.colorIndex1);
-  FontMetrics fontABCMetrics = getFontMetrics(fontInfo->fontName, "5");
-  FontMetrics fontSpaceMetrics = getFontMetrics(fontInfo->fontName, " ");
-  int16_t x = g_panelWidthChain * matrixCore.x - 2;
-  int16_t y = g_panelHeightChain * matrixCore.y + fontABCMetrics.height/2 + 1;
 
   dma_display->drawFastHLine(x, y, 3, colorRGB565);
 }
@@ -861,19 +901,24 @@ void Display::displayString(const char* text, MatrixCore matrixCore){
   
 }
 
-void Display::displayString(const char* text, boolean isStartLeft, MatrixCore matrixCore){
+void Display::displayString(unsigned long elapsed, const char* nowStr, const char* nowNextStr, boolean isStartLeft, MatrixCore matrixCore){
   int16_t x;
+  int16_t leftX;
+  int16_t centerX;
+
   const FontInfo *fontInfo = matrixFontManager.getCurrentFont(
       matrixCore.fontGroupIndex, matrixCore.fontIndex);
 
-  charCountForCalWidth = analyzeCharInStr(text);
+  charCountForCalWidth = analyzeCharInStr(nowStr);
+
+  boolean flag = compareStringsFast(nowStr, nowNextStr);
 
   FontMetrics fontABCMetrics; // = getFontMetrics(fontInfo->fontName, "M");
   if(matrixCore.fontGroupIndex == 10 && matrixCore.fontIndex == 40){
     fontABCMetrics.charWidth = 13;
     fontABCMetrics.height = 13;
     charCountForCalWidth.reset();
-    charCountForCalWidth.countABC =  strlen(text) / 3;
+    charCountForCalWidth.countABC =  strlen(nowStr) / 3;
   } else {
     fontABCMetrics = getFontMetrics(fontInfo->fontName, "M");
   }
@@ -881,18 +926,102 @@ void Display::displayString(const char* text, boolean isStartLeft, MatrixCore ma
   FontMetrics fontHyphenMetrics = getFontMetrics(fontInfo->fontName, "-");
   FontMetrics spaceMetrics = getFontMetrics(fontInfo->fontName, ":");
   if(isStartLeft){
-    x = g_panelWidthChain * matrixCore.x;
+    leftX = g_panelWidthChain * matrixCore.x;
+    x = leftX;
   } else {
     int16_t strSingleWidth =
         (spaceMetrics.charWidth) * charCountForCalWidth.countSpace +
         (fontNumMetrics.charWidth) * charCountForCalWidth.countNum +
         (fontABCMetrics.charWidth) * charCountForCalWidth.countABC +
         (fontHyphenMetrics.charWidth) * charCountForCalWidth.countHyphen;
-    x = g_panelWidthChain * matrixCore.x - strSingleWidth / 2;
+    centerX = g_panelWidthChain * matrixCore.x - strSingleWidth / 2;
+    x = centerX;
   }
   int y = g_panelHeightChain * matrixCore.y + fontABCMetrics.height/2 ;
 
   uint16_t colorRGB565 = matrixColorManager.getColor(matrixCore.colorIndex1);
-  displayText(colorRGB565, x , y, fontInfo->fontName, text);
-  
+  switch (matrixCore.animationType) {
+  case ANIMATION_0:
+    displayText(colorRGB565, x, y, fontInfo->fontName, nowStr);
+    break;
+  case ANIMATION_1:
+    if (elapsed < 699 || elapsed > 999) {
+      displayText(colorRGB565, x, y, fontInfo->fontName, nowStr);
+    } else {
+      animationSpeed = (elapsed - 699) / 300.0;
+      displayText(scaleColorRGB565Custom(colorRGB565, animationSpeed, flag), x, y - animationSpeed * fontNumMetrics.height * flag, fontInfo->fontName, nowStr);
+      displayText(scaleColorRGB565Forward(colorRGB565, animationSpeed, flag), x, y + (1 - animationSpeed) * fontNumMetrics.height * flag, fontInfo->fontName, nowNextStr);
+    }
+    break;
+  case ANIMATION_2:
+    if (elapsed < 350 || elapsed > 1000) {
+      displayText(colorRGB565, x, y, fontInfo->fontName, nowStr);
+    } else if (elapsed < 650) {
+      animationSpeed = (elapsed - 350) / (650.0 - 350.0);
+      displayText(scaleColorRGB565Custom(colorRGB565, animationSpeed, flag), x, y, fontInfo->fontName, nowStr);
+    } else {
+      animationSpeed = (elapsed - 650) / (1000.0 - 650.0);
+      displayText(scaleColorRGB565Forward(colorRGB565, animationSpeed, flag), x, y , fontInfo->fontName, nowNextStr);
+    }
+    break;
+  default:
+    displayText(colorRGB565, x, y, fontInfo->fontName, nowStr);
+    break;
+  }
+}
+
+bool Display::compareStringsFast(const char* nowStr, const char* nowNextStr) {
+     // Handle null pointer cases
+    if (nowStr == nowNextStr) return false;  // Same pointer or both NULL - equal
+    if (!nowStr || !nowNextStr) return true;  // One is NULL - different
+    
+    // Compare word by word for better performance
+    const size_t word_size = sizeof(size_t);
+    
+    // Align pointers if possible and compare byte by byte until aligned
+    while (((uintptr_t)nowStr % word_size) != 0) {
+        if (*nowStr != *nowNextStr || *nowStr == '\0') {
+            return (*nowStr != *nowNextStr);  // Return true if different
+        }
+        nowStr++;
+        nowNextStr++;
+    }
+    
+    // Compare word by word
+    const size_t* word1 = (const size_t*)nowStr;
+    const size_t* word2 = (const size_t*)nowNextStr;
+    
+    // Check if second pointer is also aligned
+    if (((uintptr_t)nowNextStr % word_size) == 0) {
+        while (1) {
+            size_t w1 = *word1;
+            size_t w2 = *word2;
+            
+            if (w1 != w2) break;
+            
+            // Check for null terminator in the word
+            // This uses a bit trick to detect zero bytes
+            size_t has_zero = (w1 - 0x0101010101010101ULL) & ~w1 & 0x8080808080808080ULL;
+            if (has_zero) return false;  // Strings are equal
+            
+            word1++;
+            word2++;
+        }
+    }
+    
+    // Fall back to byte comparison
+    nowStr = (const char*)word1;
+    nowNextStr = (const char*)word2;
+    
+    while (*nowStr && (*nowStr == *nowNextStr)) {
+        nowStr++;
+        nowNextStr++;
+    }
+    
+    return (*nowStr != *nowNextStr);
+}
+
+int16_t Display::getPageFlagTime() { return lineFlagTime; }
+void Display::setPageFlagTime(int16_t pageFlagTime) {
+  this->lineFlagTime = lineFlagTime;
 }

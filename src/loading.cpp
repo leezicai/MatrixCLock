@@ -127,14 +127,6 @@ boolean Loading::loadingAnimation(){
     dma_display->fillRect(bX, bY, fillWidth, barHeight - 2,
                           dma_display->color565(0, 200, 0));
   }
-    Serial.println("-----------------");
-    Serial.println(percent);
-    Serial.println(x);
-    Serial.println(y);
-    Serial.println(bX);
-    Serial.println(bY);
-    Serial.println(barWidth);
-    Serial.println(fillWidth);
     dma_display->flipDMABuffer();
     return false;
 }

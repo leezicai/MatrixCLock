@@ -180,22 +180,29 @@ void loop() {
     
     for (size_t i = 0; i < secondaryPage->size(); ++i) {
       const auto &matrixCore = (*secondaryPage)[i];
-           display.displayString(elapsed, timeDataNow, timeDataNowNextSec,
-                            matrixCore);
+      if (matrixCoreManager.getLineFlagTime() > 4 || i != matrixCoreManager.getCurrentElementGroupIndex()) {
+        display.displayString(elapsed, timeDataNow, timeDataNowNextSec,
+                              matrixCore, false);
+      }else {
+        display.displayString(elapsed, timeDataNow, timeDataNowNextSec,
+                              matrixCore, true);
+      }
+          //  display.displayString(elapsed, timeDataNow, timeDataNowNextSec,
+          //                   matrixCore);
           //  display.displayTextRGB(255, 0, 0, 15+10*i, PANEL_HEIGHT * PANEL_CHAIN,
           //                         u8g2_font_blipfest_07_tr,
           //                         matrixCore.fontIndex + 1);
-           if (matrixCoreManager.getLineFlagTime() < 4 &&
-               i == matrixCoreManager.getCurrentElementGroupIndex()) {
-             display.displayUnderline(matrixCore);
-           }
-           if (matrixCoreManager.getPageFlagTime() < 5) {
-             display.showPageInfo();
-           }
+          //  if (matrixCoreManager.getLineFlagTime() < 4 &&
+          //      i == matrixCoreManager.getCurrentElementGroupIndex()) {
+          //    display.displayUnderline(matrixCore);
+          //  }
+           
+    }
+    if (matrixCoreManager.getPageFlagTime() < 5) {
+      display.showPageInfo();
     }
     display.flipDMABuffer();
   }
-
 
   buttonManager.tick();
 

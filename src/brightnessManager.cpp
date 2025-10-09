@@ -139,7 +139,6 @@ void BrightnessManager::updateDisplayBrightness() {
         dma_display->setBrightness8(brightness);
         _lastBrightness = brightness;
         
-        Serial.print("Updated DMA display brightness to: ");
         Serial.println(brightness);
     }
 }

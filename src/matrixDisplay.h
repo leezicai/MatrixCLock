@@ -140,6 +140,7 @@ struct FontMetrics {
 class Display {
     private:
       float animationSpeed;
+      int16_t lineFlagTime = 0;
       static int charType[256];
       static bool tableInitialized;
       static void initializeTable();
@@ -237,12 +238,15 @@ class Display {
                    const char *nextStr, std::vector<int8_t> results,
                    MatrixCore matrixCore);
       void displayString(unsigned long elapsed, TimeData timeNow,
-                                   TimeData timeNowNextSec,MatrixCore matrixCore);
-      void displayUnderline(MatrixCore matrixCore);
+                                   TimeData timeNowNextSec,MatrixCore matrixCore, boolean isUnderLine);
+      void displayUnderline(boolean isStartLeft,const char* nowStr,MatrixCore matrixCore);
 
       void showPageInfo();
       void displayString(const char* text, MatrixCore matrixCore);
-      void displayString(const char* text, boolean isStartLeft, MatrixCore matrixCore);
+      void displayString(unsigned long elapsed, const char* nowStr, const char* nowNextStr, boolean isStartLeft, MatrixCore matrixCore);
+      bool compareStringsFast(const char* nowStr, const char* nowNextStr);
+      int16_t getPageFlagTime();
+      void setPageFlagTime(int16_t pageFlagTime);
 };
 
 // 全局实例声明
