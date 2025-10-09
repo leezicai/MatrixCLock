@@ -901,7 +901,9 @@ void Display::displayString(const char* text, MatrixCore matrixCore){
   
 }
 
-void Display::displayString(unsigned long elapsed, const char* nowStr, const char* nowNextStr, boolean isStartLeft, MatrixCore matrixCore){
+void Display::displayString(unsigned long elapsed, const char *nowStr,
+                            const char *nowNextStr, boolean isStartLeft,
+                            MatrixCore matrixCore) {
   int16_t x;
   int16_t leftX;
   int16_t centerX;
@@ -949,8 +951,12 @@ void Display::displayString(unsigned long elapsed, const char* nowStr, const cha
       displayText(colorRGB565, x, y, fontInfo->fontName, nowStr);
     } else {
       animationSpeed = (elapsed - 699) / 300.0;
-      displayText(scaleColorRGB565Custom(colorRGB565, animationSpeed, flag), x, y - animationSpeed * fontNumMetrics.height * flag, fontInfo->fontName, nowStr);
-      displayText(scaleColorRGB565Forward(colorRGB565, animationSpeed, flag), x, y + (1 - animationSpeed) * fontNumMetrics.height * flag, fontInfo->fontName, nowNextStr);
+      displayText(scaleColorRGB565Custom(colorRGB565, animationSpeed, flag), x,
+                  y - animationSpeed * fontNumMetrics.height * flag,
+                  fontInfo->fontName, nowStr);
+      displayText(scaleColorRGB565Forward(colorRGB565, animationSpeed, flag), x,
+                  y + (1 - animationSpeed) * fontNumMetrics.height * flag,
+                  fontInfo->fontName, nowNextStr);
     }
     break;
   case ANIMATION_2:
