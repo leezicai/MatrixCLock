@@ -407,7 +407,7 @@ std::vector<int8_t> Display::compare_with_vector(const char *str1,
 
 void Display::display(unsigned long elapsed, const char *nowStr,
                       const char *nextStr, std::vector<int8_t> results,
-                      boolean sigleCharAnimation, MatrixCore matrixCore) {
+                      MatrixCore matrixCore) {
   const FontInfo *fontInfo = matrixFontManager.getCurrentFont(
       matrixCore.fontGroupIndex, matrixCore.fontIndex);
 
@@ -438,12 +438,61 @@ void Display::display(unsigned long elapsed, const char *nowStr,
   int16_t offsetSpaceX = fontInfo->offsetSepX * spaceMetrics.charWidth;
   int16_t offsetSpaceY = fontInfo->offsetSepY * spaceMetrics.height;
 
-  if (sigleCharAnimation) {
-    switch (matrixCore.animationType) {
-    case ANIMATION_0:
+  switch (matrixCore.animationType) {
+  case ANIMATION_0:
+    charCountForString.reset();
+    char chNow;
+    char chNowNext;
+    for (int i = 0; nowStr[i] != '\0'; i++) {
+      chNow = nowStr[i];
+      switch (charType[(unsigned char)chNow]) {
+      case 0:
+        displayStaticOneTemplate(
+            chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
+            fontABCMetrics.height, fontNumMetrics.charWidth,
+            spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+            charCountForString.countABC, charCountForString.countNum,
+            charCountForString.countSpace, charCountForString.countHyphen, 1, 0,
+            0, fontInfo->fontName);
+        charCountForString.countNum++;
+        break;
+      case 1:
+        displayStaticOneTemplate(
+            chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
+            fontABCMetrics.height, fontNumMetrics.charWidth,
+            spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+            charCountForString.countABC, charCountForString.countNum,
+            charCountForString.countSpace, charCountForString.countHyphen, 1, 0,
+            0, fontInfo->fontName);
+        charCountForString.countHyphen++;
+        break;
+      case 2:
+        displayStaticOneTemplate(
+            chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
+            fontABCMetrics.height, fontNumMetrics.charWidth,
+            spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+            charCountForString.countABC, charCountForString.countNum,
+            charCountForString.countSpace, charCountForString.countHyphen, 1,
+            offsetSpaceX, offsetSpaceY, fontInfo->fontName);
+        charCountForString.countSpace++;
+        break;
+      case 3:
+        displayStaticOneTemplate(
+            chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
+            fontABCMetrics.height, fontNumMetrics.charWidth,
+            spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+            charCountForString.countABC, charCountForString.countNum,
+            charCountForString.countSpace, charCountForString.countHyphen, 1, 0,
+            0, fontInfo->fontName);
+        charCountForString.countABC++;
+        break;
+      }
+    }
+
+    break;
+  case ANIMATION_1:
+    if (elapsed < 699 || elapsed > 999) {
       charCountForString.reset();
-      char chNow;
-      char chNowNext;
       for (int i = 0; nowStr[i] != '\0'; i++) {
         chNow = nowStr[i];
         switch (charType[(unsigned char)chNow]) {
@@ -489,318 +538,254 @@ void Display::display(unsigned long elapsed, const char *nowStr,
           break;
         }
       }
+    } else {
+      charCountForString.reset();
+      animationSpeed = (elapsed - 699) / 300.0;
+      for (int i = 0; nowStr[i] != '\0'; i++) {
+        chNow = nowStr[i];
+        chNowNext = nextStr[i];
+        switch (charType[(unsigned char)chNow]) {
+        case 0:
+          displayStaticOneTemplate(
+              chNow,
+              scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
+              x, y - animationSpeed * fontNumMetrics.height * results[i],
+              fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
 
-      break;
-    case ANIMATION_1:
-      if (elapsed < 699 || elapsed > 999) {
-        charCountForString.reset();
-        for (int i = 0; nowStr[i] != '\0'; i++) {
-          chNow = nowStr[i];
-          switch (charType[(unsigned char)chNow]) {
-          case 0:
-            displayStaticOneTemplate(
-                chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
-                fontABCMetrics.height, fontNumMetrics.charWidth,
-                spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
-                charCountForString.countABC, charCountForString.countNum,
-                charCountForString.countSpace, charCountForString.countHyphen,
-                1, 0, 0, fontInfo->fontName);
-            charCountForString.countNum++;
-            break;
-          case 1:
-            displayStaticOneTemplate(
-                chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
-                fontABCMetrics.height, fontNumMetrics.charWidth,
-                spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
-                charCountForString.countABC, charCountForString.countNum,
-                charCountForString.countSpace, charCountForString.countHyphen,
-                1, 0, 0, fontInfo->fontName);
-            charCountForString.countHyphen++;
-            break;
-          case 2:
-            displayStaticOneTemplate(
-                chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
-                fontABCMetrics.height, fontNumMetrics.charWidth,
-                spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
-                charCountForString.countABC, charCountForString.countNum,
-                charCountForString.countSpace, charCountForString.countHyphen,
-                1, offsetSpaceX, offsetSpaceY, fontInfo->fontName);
-            charCountForString.countSpace++;
-            break;
-          case 3:
-            displayStaticOneTemplate(
-                chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
-                fontABCMetrics.height, fontNumMetrics.charWidth,
-                spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
-                charCountForString.countABC, charCountForString.countNum,
-                charCountForString.countSpace, charCountForString.countHyphen,
-                1, 0, 0, fontInfo->fontName);
-            charCountForString.countABC++;
-            break;
-          }
-        }
-      } else {
-        charCountForString.reset();
-        animationSpeed = (elapsed - 699) / 300.0;
-        for (int i = 0; nowStr[i] != '\0'; i++) {
-          chNow = nowStr[i];
-          chNowNext = nextStr[i];
-          switch (charType[(unsigned char)chNow]) {
-          case 0:
-            displayStaticOneTemplate(
-                chNow,
-                scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
-                x, y - animationSpeed * fontNumMetrics.height * results[i],
-                fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
+          displayStaticOneTemplate(
+              chNowNext,
+              scaleColorRGB565Forward(colorRGB565, animationSpeed, results[i]),
+              x, y + (1 - animationSpeed) * fontNumMetrics.height * results[i],
+              fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
+          charCountForString.countNum++;
+          break;
+        case 1:
+          displayStaticOneTemplate(
+              chNow,
+              scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
+              x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
 
-            displayStaticOneTemplate(
-                chNowNext,
-                scaleColorRGB565Forward(colorRGB565, animationSpeed,
-                                        results[i]),
-                x,
-                y + (1 - animationSpeed) * fontNumMetrics.height * results[i],
-                fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
-            charCountForString.countNum++;
-            break;
-          case 1:
-            displayStaticOneTemplate(
-                chNow,
-                scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
-                x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
+          charCountForString.countHyphen++;
+          break;
+        case 2:
+          displayStaticOneTemplate(
+              chNow,
+              scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
+              x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, offsetSpaceX, offsetSpaceY,
+              fontInfo->fontName);
 
-            charCountForString.countHyphen++;
-            break;
-          case 2:
-            displayStaticOneTemplate(
-                chNow,
-                scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
-                x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, offsetSpaceX, offsetSpaceY,
-                fontInfo->fontName);
+          charCountForString.countSpace++;
+          break;
+        case 3:
+          displayStaticOneTemplate(
+              chNow,
+              scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
+              x, y - animationSpeed * fontABCMetrics.height * results[i],
+              fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
 
-            charCountForString.countSpace++;
-            break;
-          case 3:
-            displayStaticOneTemplate(
-                chNow,
-                scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
-                x, y - animationSpeed * fontABCMetrics.height * results[i],
-                fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
+          displayStaticOneTemplate(
+              chNowNext,
+              scaleColorRGB565Forward(colorRGB565, animationSpeed, results[i]),
+              x, y + (1 - animationSpeed) * fontABCMetrics.height * results[i],
+              fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
 
-            displayStaticOneTemplate(
-                chNowNext,
-                scaleColorRGB565Forward(colorRGB565, animationSpeed,
-                                        results[i]),
-                x,
-                y + (1 - animationSpeed) * fontABCMetrics.height * results[i],
-                fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
-
-            charCountForString.countNum++;
-            break;
-          }
+          charCountForString.countNum++;
+          break;
         }
       }
-
-      break;
-    case ANIMATION_2:
-      if (elapsed < 350 || elapsed > 1000) {
-        // 如果 1->2 时  <350是当前时间 1 , >1000 就是下一个元素2, >1000ms时
-        // 但是nowStr就已经切换2
-        charCountForString.reset();
-        for (int i = 0; nowStr[i] != '\0'; i++) {
-          chNow = nowStr[i];
-          switch (charType[(unsigned char)chNow]) {
-          case 0:
-            displayStaticOneTemplate(
-                chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
-                fontABCMetrics.height, fontNumMetrics.charWidth,
-                spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
-                charCountForString.countABC, charCountForString.countNum,
-                charCountForString.countSpace, charCountForString.countHyphen,
-                1, 0, 0, fontInfo->fontName);
-            charCountForString.countNum++;
-            break;
-          case 1:
-            displayStaticOneTemplate(
-                chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
-                fontABCMetrics.height, fontNumMetrics.charWidth,
-                spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
-                charCountForString.countABC, charCountForString.countNum,
-                charCountForString.countSpace, charCountForString.countHyphen,
-                1, 0, 0, fontInfo->fontName);
-            charCountForString.countHyphen++;
-            break;
-          case 2:
-            displayStaticOneTemplate(
-                chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
-                fontABCMetrics.height, fontNumMetrics.charWidth,
-                spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
-                charCountForString.countABC, charCountForString.countNum,
-                charCountForString.countSpace, charCountForString.countHyphen,
-                1, offsetSpaceX, offsetSpaceY, fontInfo->fontName);
-            charCountForString.countSpace++;
-            break;
-          case 3:
-            displayStaticOneTemplate(
-                chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
-                fontABCMetrics.height, fontNumMetrics.charWidth,
-                spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
-                charCountForString.countABC, charCountForString.countNum,
-                charCountForString.countSpace, charCountForString.countHyphen,
-                1, 0, 0, fontInfo->fontName);
-            charCountForString.countABC++;
-            break;
-          }
-        }
-      } else if (elapsed < 650) {
-        charCountForString.reset();
-        animationSpeed = (elapsed - 350) / (650.0 - 350.0);
-        for (int i = 0; nowStr[i] != '\0'; i++) {
-          chNow = nowStr[i];
-          chNowNext = nextStr[i];
-          switch (charType[(unsigned char)chNow]) {
-          case 0:
-            displayStaticOneTemplate(
-                chNow,
-                scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
-                x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
-
-            charCountForString.countNum++;
-            break;
-          case 1:
-            displayStaticOneTemplate(
-                chNow,
-                scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
-                x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
-
-            charCountForString.countHyphen++;
-            break;
-          case 2:
-            displayStaticOneTemplate(
-                chNow,
-                scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
-                x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, offsetSpaceX, offsetSpaceY,
-                fontInfo->fontName);
-
-            charCountForString.countSpace++;
-            break;
-          case 3:
-            displayStaticOneTemplate(
-                chNow,
-                scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
-                x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
-
-            charCountForString.countNum++;
-            break;
-          }
-        }
-      } else {
-        animationSpeed = (elapsed - 650) / (1000.0 - 650.0);
-        charCountForString.reset();
-        for (int i = 0; nowStr[i] != '\0'; i++) {
-          chNow = nowStr[i];
-          chNowNext = nextStr[i];
-          switch (charType[(unsigned char)chNow]) {
-          case 0:
-            displayStaticOneTemplate(
-                chNowNext,
-                scaleColorRGB565Forward(colorRGB565, animationSpeed,
-                                        results[i]),
-                x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
-            charCountForString.countNum++;
-            break;
-          case 1:
-            displayStaticOneTemplate(
-                chNowNext,
-                scaleColorRGB565Forward(colorRGB565, animationSpeed,
-                                        results[i]),
-                x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
-            charCountForString.countHyphen++;
-            break;
-          case 2:
-            displayStaticOneTemplate(
-                chNowNext,
-                scaleColorRGB565Forward(colorRGB565, animationSpeed,
-                                        results[i]),
-                x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, offsetSpaceX, offsetSpaceY,
-                fontInfo->fontName);
-            charCountForString.countSpace++;
-            break;
-          case 3:
-            displayStaticOneTemplate(
-                chNowNext,
-                scaleColorRGB565Forward(colorRGB565, animationSpeed,
-                                        results[i]),
-                x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
-                fontNumMetrics.charWidth, spaceMetrics.charWidth,
-                fontHyphenMetrics.charWidth, charCountForString.countABC,
-                charCountForString.countNum, charCountForString.countSpace,
-                charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
-            charCountForString.countABC++;
-            break;
-          }
-        }
-      }
-      break;
-    default:
-      break;
     }
-  } else {
-    displayStaticOneTemplate(nowStr, colorRGB565, x, y,
-                             fontNumMetrics.charWidth, fontNumMetrics.height,
-                             spaceMetrics.charWidth, 0, 0, 1, 0, 0,
-                             fontInfo->fontName);
+
+    break;
+  case ANIMATION_2:
+    if (elapsed < 350 || elapsed > 1000) {
+      // 如果 1->2 时  <350是当前时间 1 , >1000 就是下一个元素2, >1000ms时
+      // 但是nowStr就已经切换2
+      charCountForString.reset();
+      for (int i = 0; nowStr[i] != '\0'; i++) {
+        chNow = nowStr[i];
+        switch (charType[(unsigned char)chNow]) {
+        case 0:
+          displayStaticOneTemplate(
+              chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
+              fontABCMetrics.height, fontNumMetrics.charWidth,
+              spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+              charCountForString.countABC, charCountForString.countNum,
+              charCountForString.countSpace, charCountForString.countHyphen, 1,
+              0, 0, fontInfo->fontName);
+          charCountForString.countNum++;
+          break;
+        case 1:
+          displayStaticOneTemplate(
+              chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
+              fontABCMetrics.height, fontNumMetrics.charWidth,
+              spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+              charCountForString.countABC, charCountForString.countNum,
+              charCountForString.countSpace, charCountForString.countHyphen, 1,
+              0, 0, fontInfo->fontName);
+          charCountForString.countHyphen++;
+          break;
+        case 2:
+          displayStaticOneTemplate(
+              chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
+              fontABCMetrics.height, fontNumMetrics.charWidth,
+              spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+              charCountForString.countABC, charCountForString.countNum,
+              charCountForString.countSpace, charCountForString.countHyphen, 1,
+              offsetSpaceX, offsetSpaceY, fontInfo->fontName);
+          charCountForString.countSpace++;
+          break;
+        case 3:
+          displayStaticOneTemplate(
+              chNow, colorRGB565, x, y, fontABCMetrics.charWidth,
+              fontABCMetrics.height, fontNumMetrics.charWidth,
+              spaceMetrics.charWidth, fontHyphenMetrics.charWidth,
+              charCountForString.countABC, charCountForString.countNum,
+              charCountForString.countSpace, charCountForString.countHyphen, 1,
+              0, 0, fontInfo->fontName);
+          charCountForString.countABC++;
+          break;
+        }
+      }
+    } else if (elapsed < 650) {
+      charCountForString.reset();
+      animationSpeed = (elapsed - 350) / (650.0 - 350.0);
+      for (int i = 0; nowStr[i] != '\0'; i++) {
+        chNow = nowStr[i];
+        chNowNext = nextStr[i];
+        switch (charType[(unsigned char)chNow]) {
+        case 0:
+          displayStaticOneTemplate(
+              chNow,
+              scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
+              x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
+
+          charCountForString.countNum++;
+          break;
+        case 1:
+          displayStaticOneTemplate(
+              chNow,
+              scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
+              x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
+
+          charCountForString.countHyphen++;
+          break;
+        case 2:
+          displayStaticOneTemplate(
+              chNow,
+              scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
+              x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, offsetSpaceX, offsetSpaceY,
+              fontInfo->fontName);
+
+          charCountForString.countSpace++;
+          break;
+        case 3:
+          displayStaticOneTemplate(
+              chNow,
+              scaleColorRGB565Custom(colorRGB565, animationSpeed, results[i]),
+              x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
+
+          charCountForString.countNum++;
+          break;
+        }
+      }
+    } else {
+      animationSpeed = (elapsed - 650) / (1000.0 - 650.0);
+      charCountForString.reset();
+      for (int i = 0; nowStr[i] != '\0'; i++) {
+        chNow = nowStr[i];
+        chNowNext = nextStr[i];
+        switch (charType[(unsigned char)chNow]) {
+        case 0:
+          displayStaticOneTemplate(
+              chNowNext,
+              scaleColorRGB565Forward(colorRGB565, animationSpeed, results[i]),
+              x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
+          charCountForString.countNum++;
+          break;
+        case 1:
+          displayStaticOneTemplate(
+              chNowNext,
+              scaleColorRGB565Forward(colorRGB565, animationSpeed, results[i]),
+              x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
+          charCountForString.countHyphen++;
+          break;
+        case 2:
+          displayStaticOneTemplate(
+              chNowNext,
+              scaleColorRGB565Forward(colorRGB565, animationSpeed, results[i]),
+              x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, offsetSpaceX, offsetSpaceY,
+              fontInfo->fontName);
+          charCountForString.countSpace++;
+          break;
+        case 3:
+          displayStaticOneTemplate(
+              chNowNext,
+              scaleColorRGB565Forward(colorRGB565, animationSpeed, results[i]),
+              x, y, fontABCMetrics.charWidth, fontABCMetrics.height,
+              fontNumMetrics.charWidth, spaceMetrics.charWidth,
+              fontHyphenMetrics.charWidth, charCountForString.countABC,
+              charCountForString.countNum, charCountForString.countSpace,
+              charCountForString.countHyphen, 1, 0, 0, fontInfo->fontName);
+          charCountForString.countABC++;
+          break;
+        }
+      }
+    }
+    break;
+  default:
+    break;
   }
 }
 void Display::displayString(unsigned long elapsed, TimeData timeNow,
@@ -814,7 +799,7 @@ void Display::displayString(unsigned long elapsed, TimeData timeNow,
     nowNextStr =
         matrixTimeData.getStrStaff(timeNowNextSec, matrixCore.displayIndex);
     results = compare_with_vector(nowStr, nowNextStr);
-    display(elapsed, nowStr, nowNextStr, results, timeNow.flag, matrixCore);
+    display(elapsed, nowStr, nowNextStr, results, matrixCore);
     break;
   case 1:
     if(matrixSettings.getCurrentLanguage() == LANG_CHINESE){
@@ -824,7 +809,7 @@ void Display::displayString(unsigned long elapsed, TimeData timeNow,
     nowStr = matrixTimeUtils.getStr(timeNow, matrixCore.displayIndex);
     nowNextStr = matrixTimeUtils.getStr(timeNowNextSec, matrixCore.displayIndex);
     results = compare_with_vector(nowStr, nowNextStr);
-    display(elapsed, nowStr, nowNextStr, results, false, matrixCore);
+    display(elapsed, nowStr, nowNextStr, results, matrixCore);
     // displayString(nowStr, matrixCore);
     break;
   case 2:

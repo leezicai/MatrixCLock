@@ -235,7 +235,7 @@ class Display {
       std::vector<int8_t> compare_with_vector(const char* str1, const char* str2);
       void display(unsigned long elapsed, const char *nowStr,
                    const char *nextStr, std::vector<int8_t> results,
-                   boolean flag, MatrixCore matrixCore);
+                   MatrixCore matrixCore);
       void displayString(unsigned long elapsed, TimeData timeNow,
                                    TimeData timeNowNextSec,MatrixCore matrixCore);
       void displayUnderline(MatrixCore matrixCore);
