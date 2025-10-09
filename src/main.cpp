@@ -101,7 +101,7 @@ void setup() {
 
   int count = 0;
   while (!matrixDataManager.getWifiConfig()) {
-   
+    buttonManager.tick();
     if (count == 0) {
       Serial.println("Starting WiFi setup mode");
       loading.showSetupMsg();
@@ -110,31 +110,11 @@ void setup() {
       count = 2;
     }
     wifiManager.handleClient();
-    buttonManager.tick();
   }
  
-  // lastMillisTime = millis();
-  // loading.drawFrame();
-  // loading.drawTitle();
-  // loading.flipDMABuffer();
-  // while (matrixDataManager.getWifiConfig()) {
-  //   unsigned long elapsed = millis() - lastMillisTime;
-  //   float percent = (float)elapsed / duration;
-  //   if (percent > 1.0f) {
-  //     percent = 1.0f; // 限制最大100%
-  //   }
-  //   loading.drawErrMsg();
-  //   if (loading.getFlag() && elapsed < duration) {
-  //     loading.updateProgress(percent);
-  //     loading.flipDMABuffer();
-  //   } else {
-  //     loading.clearScreen();
-  //     loading.flipDMABuffer();
-  //     break;
-  //   }
-  // }
   loading.setLastMillsTime();
   while (matrixDataManager.getWifiConfig()) {
+    buttonManager.tick();
     if(loading.loadingAnimation()){
       break;
     }

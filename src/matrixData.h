@@ -48,7 +48,7 @@
 
 // Default Values
 #define DEFAULT_BRIGHTNESS          50
-#define DEFAULT_MIN_BRIGHTNESS          5
+#define DEFAULT_MIN_BRIGHTNESS          3
 #define DEFAULT_MAX_BRIGHTNESS          200
 
 
