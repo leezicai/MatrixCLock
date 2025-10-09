@@ -34,12 +34,14 @@ bool MatrixDmaManager::setupDMA() {
     panelWidth = matrixDataManager.loadPanelWidth();
     panelHeight = matrixDataManager.loadPanelHeight();
     panelChain = matrixDataManager.loadPanelChain();
+    panelType = matrixDataManager.loadPanelType();
 
 	g_panelWidth = panelWidth;
 	g_panelWidthChain = panelWidth * panelChain;
     g_panelHeight = panelHeight;
     g_panelHeightChain = panelHeight * panelChain;
     g_panelChain = panelChain;
+    g_panelType = panelType;
     
     // Configure HUB75 pins using definitions from common_define.h
     // 使用 common_define.h 中的定义配置 HUB75 引脚
@@ -119,24 +121,27 @@ MatrixPanel_I2S_DMA* MatrixDmaManager::getDisplay() {
 uint16_t MatrixDmaManager::getPanelWidth() const {
     return panelWidth;
 }
+void MatrixDmaManager::setPanelWidth(uint16_t width) {
+    panelWidth = width;
+}
 
 uint16_t MatrixDmaManager::getPanelHeight() const {
     return panelHeight;
+}
+void MatrixDmaManager::setPanelHeight(uint16_t height) {
+    panelHeight = height;
 }
 
 uint8_t MatrixDmaManager::getPanelChain() const {
     return panelChain;
 }
-
-// Setter implementations 设置方法实现
-void MatrixDmaManager::setPanelWidth(uint16_t width) {
-    panelWidth = width;
-}
-
-void MatrixDmaManager::setPanelHeight(uint16_t height) {
-    panelHeight = height;
-}
-
 void MatrixDmaManager::setPanelChain(uint8_t chain) {
     panelChain = chain;
+}
+
+uint8_t MatrixDmaManager::getPanelType() const {
+    return panelType;
+}
+void MatrixDmaManager::setPanelType(uint8_t type) {
+    panelType = type;
 }

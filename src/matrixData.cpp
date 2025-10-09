@@ -40,6 +40,13 @@ int16_t MatrixDataManager::loadPanelChain() {
      return  matrixNvsManager.loadInt(NVS_KEY_PANEL_CHAIN, PANEL_CHAIN);
 }
 
+void MatrixDataManager::savePanelType(int value) {
+    matrixNvsManager.saveInt(NVS_KEY_PANEL_TYPE, value);
+}
+int16_t MatrixDataManager::loadPanelType() {
+     return  matrixNvsManager.loadInt(NVS_KEY_PANEL_TYPE, PANEL_TYPE);
+}
+
 void MatrixDataManager::setAutoMode(bool value) {
   matrixNvsManager.saveBool(NVS_KEY_AUTO_MODE, value);
   matrixNvsManager.commit();

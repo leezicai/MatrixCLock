@@ -22,6 +22,7 @@
 #define NVS_KEY_PANEL_WIDTH "panel_width"
 #define NVS_KEY_PANEL_HEIGHT "panel_height"
 #define NVS_KEY_PANEL_CHAIN "panel_chain"
+#define NVS_KEY_PANEL_TYPE "panel_type"
 
 
 // NVS Key Definitions - Display Settings
@@ -81,6 +82,9 @@ public:
 
     void savePanelChain(int value);
     int16_t loadPanelChain();
+
+    void savePanelType(int value);
+    int16_t loadPanelType();
 
     void setAutoMode(bool value);
     bool getAutoMode();

@@ -12,6 +12,7 @@ extern uint16_t g_panelWidthChain;
 extern uint16_t g_panelHeight;
 extern uint16_t g_panelHeightChain;
 extern uint8_t g_panelChain;
+extern uint8_t g_panelType;
 
 
 /**
@@ -24,6 +25,7 @@ private:
     uint16_t panelWidth;
     uint16_t panelHeight;
     uint8_t panelChain;
+    uint8_t panelType;
 
 public:
     /**
@@ -58,13 +60,16 @@ public:
 
     // Getter methods 获取方法
     uint16_t getPanelWidth() const;
-    uint16_t getPanelHeight() const;
-    uint8_t getPanelChain() const;
-
-    // Setter methods 设置方法
     void setPanelWidth(uint16_t width);
+
+    uint16_t getPanelHeight() const;
     void setPanelHeight(uint16_t height);
+
+    uint8_t getPanelChain() const;
     void setPanelChain(uint8_t chain);
+
+    uint8_t getPanelType() const;
+    void setPanelType(uint8_t type);
 };
 
 // Global instance declaration for easy access across the project

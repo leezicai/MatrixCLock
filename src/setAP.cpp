@@ -100,25 +100,29 @@ void SetAP::handleSubmit() {
     screenOption = server.arg("screen");
     language = server.arg("language");
     
-    // Determine panel dimensions based on screen option
-    int panelWidth, panelHeight, panelChain;
+    // Determine panel dimensions and type based on screen option
+    int panelWidth, panelHeight, panelChain, panelType;
     if (screenOption == "128x64x1") {
         panelWidth = 128;
         panelHeight = 64;
         panelChain = 1;
+        panelType = 0;  // Index for 128x64x1
     } else if (screenOption == "64x64x2") {
         panelWidth = 64;
         panelHeight = 64;
         panelChain = 2;
+        panelType = 1;  // Index for 64x64x2
     } else if (screenOption == "64x64x1") {
         panelWidth = 64;
         panelHeight = 64;
         panelChain = 1;
+        panelType = 2;  // Index for 64x64x1
     } else {
         // Default fallback
         panelWidth = 128;
         panelHeight = 64;
         panelChain = 1;
+        panelType = 0;  // Default to type 0
     }
     
     // Set language based on detected browser language
@@ -144,6 +148,7 @@ void SetAP::handleSubmit() {
     response += "<p>Panel Width: " + String(panelWidth) + "</p>";
     response += "<p>Panel Height: " + String(panelHeight) + "</p>";
     response += "<p>Panel Chain: " + String(panelChain) + "</p>";
+    response += "<p>Panel Type: " + String(panelType) + "</p>";
     response += "<p>Language: " + language + "</p>";
     response += "<p>Device will restart in 2 seconds...</p>";
     response += "</body></html>";
@@ -160,7 +165,8 @@ void SetAP::handleSubmit() {
     matrixDataManager.savePanelWidth(panelWidth);
     matrixDataManager.savePanelHeight(panelHeight);
     matrixDataManager.savePanelChain(panelChain);
-
+    matrixDataManager.savePanelType(panelType);  // Save panel type (0, 1, or 2)
+   
     // Restart after 2 seconds
     delay(2000);
     restartESP();
