@@ -6,6 +6,7 @@ uint16_t g_panelWidthChain = 0;
 uint16_t g_panelHeight = 0;
 uint16_t g_panelHeightChain = 0;
 uint8_t g_panelChain = 0;
+uint8_t g_panelType = 0;
 
 // Global instance definition
 // 全局实例定义
@@ -42,7 +43,7 @@ bool MatrixDmaManager::setupDMA() {
     g_panelHeightChain = panelHeight * panelChain;
     g_panelChain = panelChain;
     g_panelType = panelType;
-    
+
     // Configure HUB75 pins using definitions from common_define.h
     // 使用 common_define.h 中的定义配置 HUB75 引脚
     HUB75_I2S_CFG::i2s_pins pins;

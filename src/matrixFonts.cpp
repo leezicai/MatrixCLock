@@ -10,7 +10,7 @@ FontInfo::FontInfo(const uint8_t* fontName, float offsetSepX, float offsetSepY, 
 // Constructor implementation
 MatrixFontManager::MatrixFontManager() {
     // Constructor can be empty since initialization is done in init()
-    init();
+    // init();
 }
 
 // Global SimpleFontManager object instance

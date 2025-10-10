@@ -48,6 +48,15 @@ void setup() {
   // Nvs同一空间只能初始化一次
   matrixNvsManager.initializeDefaults();
 
+  // 初始化 DMA 显示
+  // dma_display = setupDMA(50);
+  if(matrixDmaManager.setupDMA()){
+    dma_display = matrixDmaManager.getDisplay();
+  } else {
+    Serial.println("DMA Display setup failed, halting execution.");
+  }
+  matrixFontManager.init();
+
   brightnessManager.init();
 
   matrixCoreManager.initializeMatrixCores();
@@ -88,13 +97,7 @@ void setup() {
   }
 
 
-  // 初始化 DMA 显示
-  // dma_display = setupDMA(50);
-  if(matrixDmaManager.setupDMA()){
-    dma_display = matrixDmaManager.getDisplay();
-  } else {
-    Serial.println("DMA Display setup failed, halting execution.");
-  }
+  
 
   // 初始化 u8g2
   u8g2_for_adafruit_gfx.begin(*dma_display);
