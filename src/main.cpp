@@ -55,9 +55,10 @@ void setup() {
   } else {
     Serial.println("DMA Display setup failed, halting execution.");
   }
-  matrixFontManager.init();
+  brightnessManager.init(); // 在 nvs之后
 
-  brightnessManager.init();
+  matrixFontManager.init();  // 在 nvs DMA brightnessManager  之后 
+
 
   matrixCoreManager.initializeMatrixCores();
 
@@ -107,10 +108,17 @@ void setup() {
     buttonManager.tick();
     if (count == 0) {
       Serial.println("Starting WiFi setup mode");
+      loading.setLastMillsTime();
       loading.showSetupMsg();
       display.flipDMABuffer();
       wifiManager.beginSetup();
       count = 2;
+      loading.setLastMillsTime();
+    } else {
+      loading.clearScreen();
+      loading.switchSetupReady();
+      loading.showSetupMsg();
+      display.flipDMABuffer();
     }
     wifiManager.handleClient();
   }

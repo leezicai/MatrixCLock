@@ -33,6 +33,7 @@ public:
     void setLastMillsTime();
     boolean loadingAnimation();
     boolean isCount();
+    void switchSetupReady();
     void switchWiFiErr();
     void switchNetWorkErr();
 
@@ -40,10 +41,16 @@ public:
     int barX, barY, midPaneEhight, titleX, errMsgX, barWidth, barHeight, radius;
     SecondaryPage setupPage;
     SecondaryPage loadingPage;
+    MatrixCore setupReady0;
+    MatrixCore setupReady1;
+    MatrixCore setupReady2;
     MatrixCore errorWiFiMsg;
     MatrixCore errorNetWorkMsg;
-    unsigned long duration = DURATION;
+    unsigned long durationLoading = DURATION_LOADING;
+    unsigned long durationSetup = DURATION_SETUP;
     unsigned long lastMillisTime = 0;
+    int8_t setupFlag = 1;
+    int8_t countSetup = 0;
     String message;
     bool flag; // true = 正常加载，false = 暂停
     int16_t count;

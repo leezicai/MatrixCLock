@@ -1,4 +1,7 @@
 #include "loading.h"
+#include "matrixDma.h"
+
+extern uint8_t g_panelType;
 
 Loading loading;
 
@@ -15,22 +18,48 @@ Loading::Loading(){
 //   duration = DURATION;
   count = 0;
 
-  
-  setupPage = {MatrixCore(0.03f, 0.16f, 10, 40, 3, 0, 2, 7, 0),
+  switch (g_panelType) {
+  case 0: 
+  case 1: {
+    setupPage = {MatrixCore(0.03f, 0.16f, 10, 40, 3, 0, 2, 14, 0)};
 
-               MatrixCore(0.03f, 0.44f, 10, 40, 3, 0, 2, 8, 0),
+    loadingPage = {MatrixCore(0.5f, 0.3f, 10, 4, 3, 0, 2, 12, 0),
 
-               MatrixCore(0.03f, 0.72f, 10, 40, 3, 0, 3, 9, 0)};
+                   MatrixCore(0.1f, 0.56f, 10, 40, 0, 0, 2, 13, 0),
 
-  loadingPage = {MatrixCore(0.5f, 0.3f, 10, 4, 3, 0, 2, 12, 0),
+                   MatrixCore(0.1f, 0.72f, 0, 0, 3, 0, 3, 9, 0)};
 
-                 MatrixCore(0.1f, 0.56f, 10, 40, 0, 0, 2, 13, 0),
+    setupReady0 = MatrixCore(0.03f, 0.16f, 10, 40, 3, 0, 2, 7, 0);
+    setupReady1 =  MatrixCore(0.03f, 0.44f, 10, 40, 3, 0, 2, 8, 0);
+    setupReady2 = MatrixCore(0.03f, 0.72f, 10, 40, 3, 0, 3, 9, 0);
 
-                 MatrixCore(0.1f, 0.72f, 0, 0, 3, 0, 3, 9, 0)};
+    errorWiFiMsg = MatrixCore(0.1f, 0.56f, 10, 40, 0, 0, 2, 10, 0);
 
-  errorWiFiMsg = MatrixCore(0.1f, 0.56f, 10, 40, 0, 0, 2, 10, 0);
+    errorNetWorkMsg = MatrixCore(0.1f, 0.56f, 10, 40, 0, 0, 2, 11, 0);
+    break;
+  }
+  case 2: {
+    setupPage = {MatrixCore(0.03f, 0.16f, 10, 40, 3, 0, 2, 14, 0)};
 
-  errorNetWorkMsg = MatrixCore(0.1f, 0.56f, 10, 40, 0, 0, 2, 11, 0);
+    loadingPage = {MatrixCore(0.5f, 0.3f, 10, 4, 3, 0, 2, 12, 0),
+
+                   MatrixCore(0.1f, 0.56f, 10, 40, 0, 0, 2, 13, 0),
+
+                   MatrixCore(0.1f, 0.72f, 0, 0, 3, 0, 3, 9, 0)};
+
+    setupReady0 = MatrixCore(0.03f, 0.16f, 10, 40, 3, 0, 2, 7, 0);
+    setupReady1 =  MatrixCore(0.03f, 0.44f, 10, 40, 3, 0, 2, 8, 0);
+    setupReady2 = MatrixCore(0.03f, 0.72f, 10, 40, 3, 0, 3, 9, 0);
+
+    errorWiFiMsg = MatrixCore(0.1f, 0.56f, 10, 40, 0, 0, 2, 10, 0);
+
+    errorNetWorkMsg = MatrixCore(0.1f, 0.56f, 10, 40, 0, 0, 2, 11, 0);
+    break;
+  }
+  default: {
+    break;
+  }
+  }
 }
 
 void Loading::drawFrame() {
@@ -49,25 +78,40 @@ void Loading::updateProgress(float percent) {
     }
 }
 
-void Loading::showSetupMsg(){
-    const char *text;
-    for (MatrixCore &matrixCore : setupPage) {
+void Loading::showSetupMsg() {
+  const char *text;
+  unsigned long elapsed = millis() - lastMillisTime;
+  float percent;
+  if (elapsed <= durationSetup) {
+    percent = (float)elapsed / durationSetup;
+  } else {
+    setupFlag = -setupFlag;
+    lastMillisTime = elapsed + lastMillisTime;
+    percent = 0;
+  }
+  for (MatrixCore &matrixCore : setupPage) {
       text = matrixSettings.getCommonWord(
           static_cast<CommonWordIndex>(matrixCore.displayIndex));
       const FontInfo *fontInfo = matrixFontManager.getCurrentFont(
           matrixCore.fontGroupIndex, matrixCore.fontIndex);
       FontMetrics fontABCMetrics =
           display.getFontMetrics(fontInfo->fontName, "A");
-      int x = g_panelWidthChain * matrixCore.x;
+      int x1;
+      int x2;
+      if (setupFlag >= 0) {
+        x1 = g_panelWidthChain * matrixCore.x - percent * 128;
+        x2 = x1 + 128;
+      } else {
+        x1 = g_panelWidthChain * matrixCore.x + (1 - percent) * 128;
+        x2 = x1 - 128;
+      }
       int y = g_panelHeightChain * matrixCore.y + fontABCMetrics.height / 2;
       uint16_t colorRGB565 =
           matrixColorManager.getColor(matrixCore.colorIndex1);
-   
-      display.displayText(colorRGB565, x, y, fontInfo->fontName, text);
-    } 
-    // display.displayTextRGB(0, 255, 0, 0, 15, u8g2_font_wqy13_t_gb2312, SETUP_WIFI_MSG);
-    // display.displayTextRGB(0, 255, 0, 0, 30, u8g2_font_6x10_tf, SETUP_WIFI_NAME);
-    // display.displayTextRGB(0, 255, 0, 0, 45, u8g2_font_wqy13_t_gb2312, SETUP_WIFI_ADDRESS);
+      display.displayText(colorRGB565, x1, y, fontInfo->fontName, text);
+
+      display.displayText(colorRGB565, x2, y, fontInfo->fontName, text);
+    }
 }
 
 boolean Loading::loadingAnimation(){
@@ -75,7 +119,7 @@ boolean Loading::loadingAnimation(){
   const char *text;
   CharCount charCount;
   unsigned long elapsed = millis() - lastMillisTime;
-  float percent = (float)elapsed / duration;
+  float percent = (float)elapsed / durationLoading;
   if (percent > 1.0f) {
     percent = 1.0f; // 限制最大100%
     return true;
@@ -138,6 +182,12 @@ boolean Loading::isCount(){
     count++;
     return false;
 }
+void Loading::switchSetupReady() {
+  setupPage.resize(3);
+  setupPage[0] = setupReady0;
+  setupPage[1] = setupReady1;
+  setupPage[2] = setupReady2;
+}
 void Loading::switchWiFiErr() {
     loadingPage[1] = errorWiFiMsg;
 }
@@ -178,11 +228,11 @@ String Loading::getMessage(){
 }
 
 void Loading::setDuration(unsigned long dur){
-    duration = dur;
+    durationLoading = dur;
 }
 
 unsigned long Loading::getDuration(){
-    return duration;
+    return durationLoading;
 }
 
 void Loading::setLastMillsTime(){
