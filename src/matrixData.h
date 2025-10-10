@@ -48,7 +48,7 @@
 #define NVS_KEY_LAST_UPDATE_TIME    "last_update"
 
 // Default Values
-#define DEFAULT_BRIGHTNESS          50
+#define DEFAULT_BRIGHTNESS          60
 #define DEFAULT_MIN_BRIGHTNESS          3
 #define DEFAULT_MAX_BRIGHTNESS          200
 
