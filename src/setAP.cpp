@@ -135,22 +135,35 @@ void SetAP::handleSubmit() {
         matrixDataManager.setLanguage(Language::LANG_ENGLISH);
     }
     
+    // Generate response based on selected language
+    String successTitle = (language == "zh") ? "WiFi设置成功!" : "WiFi Setup Successful!";
+    String ssidLabel = (language == "zh") ? "网络名称" : "SSID";
+    String passwordLabel = (language == "zh") ? "密码" : "Password";
+    String timezoneLabel = (language == "zh") ? "时区" : "Timezone";
+    String screenLabel = (language == "zh") ? "屏幕" : "Screen";
+    String panelWidthLabel = (language == "zh") ? "面板宽度" : "Panel Width";
+    String panelHeightLabel = (language == "zh") ? "面板高度" : "Panel Height";
+    String panelChainLabel = (language == "zh") ? "面板链" : "Panel Chain";
+    String panelTypeLabel = (language == "zh") ? "面板类型" : "Panel Type";
+    String languageLabel = (language == "zh") ? "语言" : "Language";
+    String restartMsg = (language == "zh") ? "设备将在2秒后重启..." : "Device will restart in 2 seconds...";
+    
     String response = "<html><head>";
     response += "<meta name='viewport' content='width=device-width, initial-scale=1'>";
     response += "<meta charset='UTF-8'>";
     response += "<style>body{font-family:Arial,sans-serif;margin:20px;text-align:center;}</style>";
     response += "</head><body>";
-    response += "<h1>WiFi Setup Successful!</h1>";
-    response += "<p>SSID: " + selectedSSID + "</p>";
-    response += "<p>Password: " + wifiPassword + "</p>";
-    response += "<p>Timezone: " + String(timezone) + "</p>";
-    response += "<p>Screen: " + screenOption + "</p>";
-    response += "<p>Panel Width: " + String(panelWidth) + "</p>";
-    response += "<p>Panel Height: " + String(panelHeight) + "</p>";
-    response += "<p>Panel Chain: " + String(panelChain) + "</p>";
-    response += "<p>Panel Type: " + String(panelType) + "</p>";
-    response += "<p>Language: " + language + "</p>";
-    response += "<p>Device will restart in 2 seconds...</p>";
+    response += "<h1>" + successTitle + "</h1>";
+    response += "<p>" + ssidLabel + ": " + selectedSSID + "</p>";
+    response += "<p>" + passwordLabel + ": " + wifiPassword + "</p>";
+    response += "<p>" + timezoneLabel + ": " + String(timezone) + "</p>";
+    response += "<p>" + screenLabel + ": " + screenOption + "</p>";
+    response += "<p>" + panelWidthLabel + ": " + String(panelWidth) + "</p>";
+    response += "<p>" + panelHeightLabel + ": " + String(panelHeight) + "</p>";
+    response += "<p>" + panelChainLabel + ": " + String(panelChain) + "</p>";
+    response += "<p>" + panelTypeLabel + ": " + String(panelType) + "</p>";
+    response += "<p>" + languageLabel + ": " + language + "</p>";
+    response += "<p>" + restartMsg + "</p>";
     response += "</body></html>";
     
     server.send(200, "text/html", response);
@@ -193,8 +206,43 @@ String SetAP::generateHTML() {
     html += ".screen-info{background:#f0f0f0;padding:10px;margin:10px 0;border-radius:4px;font-size:14px;}";
     html += "</style>";
     
-    // Add JavaScript for dynamic screen info display and language detection
+    // Add JavaScript for multilingual support and dynamic updates
     html += "<script>";
+    
+    // Language text definitions
+    html += "var translations = {";
+    html += "  'zh': {";
+    html += "    'title': '设置',";
+    html += "    'selectWifi': '选择WiFi网络:',";
+    html += "    'password': 'WiFi密码:',";
+    html += "    'timezone': '选择时区 (-12 到 14):',";
+    html += "    'screenOption': '屏幕选项:',";
+    html += "    'language': '语言:',";
+    html += "    'submit': '提交'";
+    html += "  },";
+    html += "  'en': {";
+    html += "    'title': 'Setup',";
+    html += "    'selectWifi': 'Select WiFi Network:',";
+    html += "    'password': 'WiFi Password:',";
+    html += "    'timezone': 'Select Timezone (-12 to 14):',";
+    html += "    'screenOption': 'Screen Option:',";
+    html += "    'language': 'Language:',";
+    html += "    'submit': 'Submit'";
+    html += "  }";
+    html += "};";
+    
+    // Update page language function
+    html += "function updatePageLanguage() {";
+    html += "  var lang = document.getElementById('language').value;";
+    html += "  var t = translations[lang];";
+    html += "  document.getElementById('pageTitle').textContent = t.title;";
+    html += "  document.getElementById('labelWifi').textContent = t.selectWifi;";
+    html += "  document.getElementById('labelPassword').textContent = t.password;";
+    html += "  document.getElementById('labelTimezone').textContent = t.timezone;";
+    html += "  document.getElementById('labelScreen').textContent = t.screenOption;";
+    html += "  document.getElementById('labelLanguage').textContent = t.language;";
+    html += "  document.getElementById('submitBtn').textContent = t.submit;";
+    html += "}";
     
     // Detect browser language on page load and auto-select
     html += "window.onload = function() {";
@@ -205,6 +253,7 @@ String SetAP::generateHTML() {
     html += "  } else {";
     html += "    langSelect.value = 'en';";
     html += "  }";
+    html += "  updatePageLanguage();";
     html += "  updateScreenInfo();";
     html += "};";
     
@@ -223,27 +272,31 @@ String SetAP::generateHTML() {
     html += "</script>";
     
     html += "</head><body>";
-    html += "<h1>Setup</h1>";
+    html += "<h1 id='pageTitle'>Setup</h1>";
     html += "<form action='/submit' method='post'>";
     
-    html += "<label for='ssid'>Select WiFi Network:</label>";
+    html += "<label for='ssid' id='labelWifi'>Select WiFi Network:</label>";
     html += "<select name='ssid' id='ssid' required>";
     for (const auto& network : wifiNetworks) {
         html += "<option value='" + network + "'>" + network + "</option>";
     }
     html += "</select>";
     
-    html += "<label for='password'>WiFi Password:</label>";
+    html += "<label for='password' id='labelPassword'>WiFi Password:</label>";
     html += "<input type='text' id='password' name='password' required>";
     
-    html += "<label for='timezone'>Select Timezone (-12 to 14):</label>";
+    html += "<label for='timezone' id='labelTimezone'>Select Timezone (-12 to 14):</label>";
     html += "<select name='timezone' id='timezone'>";
     for (int i = -12; i <= 14; i++) {
-        html += "<option value='" + String(i) + "'>" + String(i) + "</option>";
+        if (i == 0) {
+            html += "<option value='" + String(i) + "' selected>" + String(i) + "</option>";
+        } else {
+            html += "<option value='" + String(i) + "'>" + String(i) + "</option>";
+        }
     }
     html += "</select>";
     
-    html += "<label for='screen'>Screen Option:</label>";
+    html += "<label for='screen' id='labelScreen'>Screen Option:</label>";
     html += "<select name='screen' id='screen' onchange='updateScreenInfo()' required>";
     html += "<option value='128x64x1' selected>128x64x1</option>";
     html += "<option value='64x64x2'>64x64x2</option>";
@@ -254,13 +307,13 @@ String SetAP::generateHTML() {
     html += "PANEL_WIDTH: 128<br>PANEL_HEIGHT: 64<br>PANEL_CHAIN: 1";
     html += "</div>";
     
-    html += "<label for='language'>Language:</label>";
-    html += "<select name='language' id='language' required>";
+    html += "<label for='language' id='labelLanguage'>Language:</label>";
+    html += "<select name='language' id='language' onchange='updatePageLanguage()' required>";
     html += "<option value='zh'>中文</option>";
     html += "<option value='en'>English</option>";
     html += "</select>";
     
-    html += "<button type='submit'>Submit</button>";
+    html += "<button type='submit' id='submitBtn'>Submit</button>";
     html += "</form></body></html>";
     
     return html;
