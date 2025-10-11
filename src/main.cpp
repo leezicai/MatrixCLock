@@ -23,7 +23,6 @@
 
 
 
-#include <customFonts/FreeSans16pt7b.h> // 使用自定义字体
 
 
 // 用于双缓冲的变量 - 保持全局指针
