@@ -255,8 +255,6 @@ void BrightnessManager::incrementManBrightness() {
     // manBrightness + 1 must be <= 200
     if (manBrightness < 200) {
         manBrightness++;
-        Serial.print("Manual brightness increased to: ");
-        Serial.println(manBrightness);
     } else {
         Serial.println("Cannot increase manual brightness: already at maximum (200)");
     }
@@ -267,8 +265,6 @@ void BrightnessManager::decrementManBrightness() {
     // manBrightness - 1 must be >= 2
     if (manBrightness > 2) {
         manBrightness--;
-        Serial.print("Manual brightness decreased to: ");
-        Serial.println(manBrightness);
     } else {
         Serial.println("Cannot decrease manual brightness: already at minimum (1)");
     }

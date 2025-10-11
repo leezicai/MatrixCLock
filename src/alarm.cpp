@@ -395,18 +395,20 @@ const char* AlarmManager::getAlarmStr(int index){
                : matrixSettings.getCommonWord(WORD_OFF);
                
   case 9:
-    snprintf(buffer, sizeof(buffer), "%u", getHour());
+    snprintf(buffer, sizeof(buffer), "%02u", getHour());
     return buffer;
   
   case 10:
     return ":";
     
   case 11:
-    snprintf(buffer, sizeof(buffer), "%u", getMinute());
+    snprintf(buffer, sizeof(buffer), "%02u", getMinute());
     return buffer;
-   case 12:
+    
+  case 12:
     snprintf(buffer, sizeof(buffer), "%u", max98357Manager.getVolume());
     return buffer;
+    
   default:
     return "";
   }
