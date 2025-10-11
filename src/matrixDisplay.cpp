@@ -56,6 +56,7 @@ void Display::initializeTable() {
   }
 
   charType['-'] = 1;
+  charType['+'] = 1;
   charType['/'] = 1; // hyphen
   charType['.'] = 2;
   charType[','] = 2; // space
@@ -323,8 +324,8 @@ void Display::setupDisplayContext(
       x + (offsetPreFont + fontWidth) * offsetFontCountABC +
           (offsetPreFont + numberWidth) * offsetCountNum +
           (offsetPreFont + spaceWidth) * offsetCountSpace +
-          (offsetPreFont + hyphenWidth) * offsetCountHyphen - offsetSpaceX,
-      y - offsetSpaceY);
+          (offsetPreFont + hyphenWidth) * offsetCountHyphen + offsetSpaceX,
+      y + offsetSpaceY);
 }
 
 FontMetrics Display::getFontMetrics(const uint8_t *font,

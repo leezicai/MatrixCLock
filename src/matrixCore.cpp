@@ -4,6 +4,7 @@
 #include "matrixData.h"
 #include "brightnessManager.h"
 #include "matrixDma.h"
+#include "matrixColors.h"
 
 extern uint8_t g_panelType;
 
@@ -99,7 +100,8 @@ void MatrixCoreManager::initializeMatrixCores() {
                           MatrixCore(0.36f, 0.79f, 8, 1, 2, 0, 4, 12, 0),
                           MatrixCore(0.68f, 0.79f, 8, 1, 2, 0, 4, 13, 0)};
 
-      SecondaryPage secondaryPage2_1 = {MatrixCore(0.03f, 0.16f, 10, 40, 4, 0, 2, 1, 1),
+      // 特殊处理,使用已有变量
+      secondaryPage2_1 = {MatrixCore(0.03f, 0.16f, 10, 40, 4, 0, 2, 1, 1),
 
                           MatrixCore(0.03f, 0.47f, 10, 40, 4, 0, 2, 2, 1),
                           MatrixCore(0.52f, 0.47f, 10, 40, 2, 0, 3, 0, 1),
@@ -107,7 +109,8 @@ void MatrixCoreManager::initializeMatrixCores() {
                           MatrixCore(0.03f, 0.79f, 8, 1, 2, 0, 3, 2, 1),
                           MatrixCore(0.52f, 0.79f, 8, 1, 2, 0, 3, 3, 1)};
 
-      SecondaryPage secondaryPage2_1_ = {
+      // 特殊处理,使用已有变量
+      secondaryPage2_1_ = {
 
           MatrixCore(0.03f, 0.16f, 10, 40, 4, 0, 2, 1, 1),
 
@@ -123,11 +126,12 @@ void MatrixCoreManager::initializeMatrixCores() {
       };
 
        SecondaryPage secondaryPage2_3 = {
-          MatrixCore(0.03f, 0.16f, 10, 40, 2, 0, 5, 7, 0),
-          MatrixCore(0.5f, 0.16f, 10, 40, 2, 0, 5, 8, 0),
+          MatrixCore(0.03f, 0.16f, 10, 40, 0, 0, 5, 7, 0),
+          MatrixCore(0.36f, 0.16f, 10, 40, 1, 0, 5, 8, 0),
+          MatrixCore(0.68, 0.16f, 10, 40, 1, 0, 5, 12, 0),
 
-          MatrixCore(0.03f, 0.38f, 10, 40, 4, 0, 5, 1, 0),
-          MatrixCore(0.36f, 0.38f, 10, 40, 4, 0, 5, 2, 0),
+          MatrixCore(0.03f, 0.38f, 10, 40, 3, 0, 5, 1, 0),
+          MatrixCore(0.36f, 0.38f, 10, 40, 3, 0, 5, 2, 0),
           MatrixCore(0.68f, 0.38f, 10, 40, 4, 0, 5, 3, 0),
 
           MatrixCore(0.03f, 0.6f, 10, 40, 4, 0, 5, 4, 0),
@@ -136,9 +140,9 @@ void MatrixCoreManager::initializeMatrixCores() {
           MatrixCore(0.69f, 0.6f, 10, 40, 4, 0, 5, 0, 0),
 
           
-          MatrixCore(0.03f, 0.82f, 10, 40, 4, 0, 5, 9, 0),
-          MatrixCore(0.23f, 0.82f, 10, 40, 4, 0, 5, 10, 0),
-          MatrixCore(0.43f, 0.82f, 10, 40, 4, 0, 5, 11, 0),
+          MatrixCore(0.03f, 0.82f, 8, 1, 4, 0, 5, 9, 0),
+          MatrixCore(0.15f, 0.82f, 8, 1, 4, 0, 5, 10, 0),
+          MatrixCore(0.20f, 0.82f, 8, 1, 4, 0, 5, 11, 0),
           
       };
 

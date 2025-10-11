@@ -404,7 +404,9 @@ const char* AlarmManager::getAlarmStr(int index){
   case 11:
     snprintf(buffer, sizeof(buffer), "%u", getMinute());
     return buffer;
-  
+   case 12:
+    snprintf(buffer, sizeof(buffer), "%u", max98357Manager.getVolume());
+    return buffer;
   default:
     return "";
   }

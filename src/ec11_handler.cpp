@@ -145,32 +145,35 @@ void handleButtonPressedRotateCW(EC11* encoder) {
         alarmManager.setEnabled( !alarmManager.isEnabled());
         break;
       case 2:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(1), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(1)));
+        max98357Manager.addVolume();
         break;
       case 3:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(2), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(2)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(1), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(1)));
         break;
       case 4:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(3), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(3)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(2), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(2)));
         break;
       case 5:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(4), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(4)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(3), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(3)));
         break;
       case 6:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(5), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(5)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(4), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(4)));
         break;
       case 7:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(6), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(6)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(5), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(5)));
         break;
       case 8:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(0), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(0)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(6), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(6)));
         break;
       case 9:
-        alarmManager.incrementHour();
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(0), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(0)));
         break;
       case 10:
+        alarmManager.incrementHour();
         break;
       case 11:
+        break;
+      case 12:
         alarmManager.incrementMinute();
         break;
       default:
@@ -280,32 +283,35 @@ void handleButtonPressedRotateCCW(EC11* encoder) {
         alarmManager.setEnabled( !alarmManager.isEnabled());
         break;
       case 2:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(1), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(1)));
+        max98357Manager.subVolume();
         break;
       case 3:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(2), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(2)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(1), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(1)));
         break;
       case 4:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(3), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(3)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(2), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(2)));
         break;
       case 5:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(4), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(4)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(3), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(3)));
         break;
       case 6:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(5), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(5)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(4), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(4)));
         break;
       case 7:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(6), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(6)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(5), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(5)));
         break;
       case 8:
-        alarmManager.setDayEnabled(static_cast<DayOfWeek>(0), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(0)));
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(6), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(6)));
         break;
       case 9:
-        alarmManager.decrementHour();
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(0), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(0)));
         break;
       case 10:
+        alarmManager.decrementHour();
         break;
       case 11:
+        break;
+      case 12:
         alarmManager.decrementMinute();
         break;
       default:
