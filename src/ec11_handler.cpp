@@ -53,6 +53,8 @@ void handleButtonDoubleClick(EC11* encoder) {
 }
 
 void handleButtonLongPress(EC11* encoder) {
+  matrixCoreManager.setLineFlagTime(0);
+  matrixCoreManager.prevElementGroup();
   Serial.println("按钮被长按");
 }
 
@@ -189,9 +191,7 @@ void handleButtonPressedRotateCW(EC11* encoder) {
     break;
   }
   matrixCoreManager.setLineFlagTime(0);
-  int32_t pos = encoder->getPosition();
-  Serial.print("按住按钮并顺时针旋转，当前位置: ");
-  Serial.println(pos);
+  
 }
 
 void handleButtonPressedRotateCCW(EC11* encoder) {

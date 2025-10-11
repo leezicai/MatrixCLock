@@ -85,7 +85,7 @@ void setup() {
 
   // 配置按钮计时参数（可选）
   // 参数: 去抖时间(ms), 长按时间(ms), 双击时间间隔(ms)
-  encoder->setButtonTiming(30, 800, 300);
+  encoder->setButtonTiming(30, 800, 500);
 
   // 设置初始位置（可选）
   encoder->setPosition(50);

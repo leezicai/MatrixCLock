@@ -127,7 +127,7 @@ void MatrixCoreManager::initializeMatrixCores() {
        SecondaryPage secondaryPage2_3 = {
           MatrixCore(0.03f, 0.16f, 10, 40, 5, 0, 5, 7, 0),
           MatrixCore(0.36f, 0.16f, 10, 40, 5, 0, 5, 8, 0),
-          MatrixCore(0.68, 0.16f, 8, 1, 3, 0, 5, 12, 0),
+          MatrixCore(0.68, 0.16f, 10, 40, 3, 0, 5, 12, 0),
 
           MatrixCore(0.03f, 0.38f, 10, 40, 3, 0, 5, 1, 0),
           MatrixCore(0.36f, 0.38f, 10, 40, 3, 0, 5, 2, 0),
