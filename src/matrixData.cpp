@@ -47,6 +47,21 @@ int16_t MatrixDataManager::loadPanelType() {
      return  matrixNvsManager.loadInt(NVS_KEY_PANEL_TYPE, PANEL_TYPE);
 }
 
+
+void MatrixDataManager::saveVolume(int value) {
+  matrixNvsManager.saveInt(NVS_KEY_VOLUME, value);
+}
+int16_t MatrixDataManager::loadVolume() {
+  return matrixNvsManager.loadInt(NVS_KEY_VOLUME, DEFAULT_VOLUME);
+}
+
+void MatrixDataManager::saveAlarmIndex(int value) {
+  matrixNvsManager.saveInt(NVS_KEY_ALARM_INDEX, value);
+}
+int16_t MatrixDataManager::loadAlarmIndex() {
+  return matrixNvsManager.loadInt(NVS_KEY_ALARM_INDEX, 0);
+}
+
 void MatrixDataManager::setAutoMode(bool value) {
   matrixNvsManager.saveBool(NVS_KEY_AUTO_MODE, value);
   matrixNvsManager.commit();
@@ -159,6 +174,15 @@ void MatrixDataManager::setContrast(int value) {
 
 int MatrixDataManager::getContrast() {
     return matrixNvsManager.loadInt(NVS_KEY_CONTRAST, DEFAULT_CONTRAST);
+}
+
+void MatrixDataManager::saveAlarm(int index,  const AlarmConfig& alarmConfig) {
+  matrixNvsManager.saveAlarm(index, alarmConfig);
+  matrixNvsManager.commit();
+}
+
+AlarmConfig MatrixDataManager::loadAlarm(int index, const AlarmConfig& defaultConfig) {
+  return matrixNvsManager.loadAlarm(index, defaultConfig);
 }
 
 void MatrixDataManager::savePage(int row, int16_t pageIndex) {

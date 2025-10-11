@@ -13,6 +13,8 @@
 #include "ds3231.h"
 #include "brightnessManager.h"
 #include "matrixSetting.h"
+#include "alarm.h"
+#include "max98357.h"
 
 #include "animation.h"
 

@@ -180,3 +180,102 @@ void MatrixNvsManager::clearAll() {
 bool MatrixNvsManager::hasKey(const String& key) {
     return preferences.isKey(key.c_str());
 }
+
+// Helper method to serialize AlarmConfig to byte array
+std::vector<uint8_t> MatrixNvsManager::serializeAlarmConfig(const AlarmConfig& config) {
+    std::vector<uint8_t> data;
+    
+    // Calculate total size needed
+    // enabled (1 byte) + hour (1 byte) + minute (1 byte) + daysOfWeek (7 bytes)
+    const size_t totalSize = sizeof(bool) + sizeof(uint8_t) + sizeof(uint8_t) + 7 * sizeof(bool);
+    data.resize(totalSize);
+    
+    size_t offset = 0;
+    
+    // Copy enabled flag
+    memcpy(data.data() + offset, &config.enabled, sizeof(bool));
+    offset += sizeof(bool);
+    
+    // Copy hour
+    memcpy(data.data() + offset, &config.hour, sizeof(uint8_t));
+    offset += sizeof(uint8_t);
+    
+    // Copy minute
+    memcpy(data.data() + offset, &config.minute, sizeof(uint8_t));
+    offset += sizeof(uint8_t);
+    
+    // Copy daysOfWeek array
+    memcpy(data.data() + offset, config.daysOfWeek, 7 * sizeof(bool));
+    
+    return data;
+}
+
+// Helper method to deserialize byte array to AlarmConfig
+AlarmConfig MatrixNvsManager::deserializeAlarmConfig(const std::vector<uint8_t>& data) {
+    AlarmConfig config;
+    
+    // Expected size: 1 + 1 + 1 + 7 = 10 bytes
+    const size_t expectedSize = sizeof(bool) + sizeof(uint8_t) + sizeof(uint8_t) + 7 * sizeof(bool);
+    
+    if (data.size() != expectedSize) {
+        // Invalid data size, return default values
+        config.enabled = false;
+        config.hour = 0;
+        config.minute = 0;
+        for (int i = 0; i < 7; i++) {
+            config.daysOfWeek[i] = false;
+        }
+        return config;
+    }
+    
+    size_t offset = 0;
+    
+    // Read enabled flag
+    memcpy(&config.enabled, data.data() + offset, sizeof(bool));
+    offset += sizeof(bool);
+    
+    // Read hour
+    memcpy(&config.hour, data.data() + offset, sizeof(uint8_t));
+    offset += sizeof(uint8_t);
+    
+    // Read minute
+    memcpy(&config.minute, data.data() + offset, sizeof(uint8_t));
+    offset += sizeof(uint8_t);
+    
+    // Read daysOfWeek array
+    memcpy(config.daysOfWeek, data.data() + offset, 7 * sizeof(bool));
+    
+    return config;
+}
+
+// Save AlarmConfig to NVS
+void MatrixNvsManager::saveAlarm(int index, const AlarmConfig& config) {
+    char key[16];
+    snprintf(key, sizeof(key), "alarm_%d", index);
+    
+    std::vector<uint8_t> serializedData = serializeAlarmConfig(config);
+    preferences.putBytes(key, serializedData.data(), serializedData.size());
+}
+
+// Load AlarmConfig from NVS
+AlarmConfig MatrixNvsManager::loadAlarm(int index, const AlarmConfig& defaultConfig) {
+    char key[16];
+    snprintf(key, sizeof(key), "alarm_%d", index);
+    
+    size_t dataSize = preferences.getBytesLength(key);
+    
+    // If key doesn't exist or empty, return default AlarmConfig
+    if (dataSize == 0) {
+        return defaultConfig;
+    }
+    
+    std::vector<uint8_t> data(dataSize);
+    size_t actualSize = preferences.getBytes(key, data.data(), dataSize);
+    
+    // If read error, return default AlarmConfig
+    if (actualSize != dataSize) {
+        return defaultConfig;
+    }
+    
+    return deserializeAlarmConfig(data);
+}

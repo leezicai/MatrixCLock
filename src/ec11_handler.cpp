@@ -14,6 +14,7 @@ void handleClockwiseRotation(EC11* encoder) {
   matrixCore.colorIndex1 = matrixColorManager.nextIndex(matrixCore.colorIndex1);
   matrixCoreManager.modifyCurrentElement(matrixCore);
 
+  max98357Manager.stop();
   matrixCoreManager.setLineFlagTime(0);
   int32_t pos = encoder->getPosition();
   page.increaseSecondClassPage();
@@ -26,6 +27,7 @@ void handleCounterClockwiseRotation(EC11* encoder) {
   matrixCore.colorIndex1 = matrixColorManager.previousIndex(matrixCore.colorIndex1);
   matrixCoreManager.modifyCurrentElement( matrixCore);
 
+  max98357Manager.stop();
   matrixCoreManager.setLineFlagTime(0);
   int32_t pos = encoder->getPosition();
   page.decreaseSecondClassPage();
@@ -133,6 +135,49 @@ void handleButtonPressedRotateCW(EC11* encoder) {
             break;
        }
       break;
+    case 3:{
+      int i = matrixCoreManager.getCurrentElementGroupIndex();
+      switch (i) {
+      case 0:
+        alarmManager.nextAlarm();
+        break;
+      case 1:
+        alarmManager.setEnabled( !alarmManager.isEnabled());
+        break;
+      case 2:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(1), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(1)));
+        break;
+      case 3:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(2), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(2)));
+        break;
+      case 4:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(3), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(3)));
+        break;
+      case 5:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(4), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(4)));
+        break;
+      case 6:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(5), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(5)));
+        break;
+      case 7:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(6), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(6)));
+        break;
+      case 8:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(0), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(0)));
+        break;
+      case 9:
+        alarmManager.incrementHour();
+        break;
+      case 10:
+        break;
+      case 11:
+        alarmManager.incrementMinute();
+        break;
+      default:
+        break;
+      }
+      break;
+    }
     default:
       break;
     }
@@ -140,7 +185,6 @@ void handleButtonPressedRotateCW(EC11* encoder) {
   default:
     break;
   }
-
   matrixCoreManager.setLineFlagTime(0);
   int32_t pos = encoder->getPosition();
   Serial.print("按住按钮并顺时针旋转，当前位置: ");
@@ -226,6 +270,49 @@ void handleButtonPressedRotateCCW(EC11* encoder) {
             break;
        }
       break;
+    case 3:{
+      int i = matrixCoreManager.getCurrentElementGroupIndex();
+      switch (i) {
+      case 0:
+        alarmManager.prevAlarm();
+        break;
+      case 1:
+        alarmManager.setEnabled( !alarmManager.isEnabled());
+        break;
+      case 2:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(1), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(1)));
+        break;
+      case 3:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(2), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(2)));
+        break;
+      case 4:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(3), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(3)));
+        break;
+      case 5:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(4), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(4)));
+        break;
+      case 6:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(5), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(5)));
+        break;
+      case 7:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(6), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(6)));
+        break;
+      case 8:
+        alarmManager.setDayEnabled(static_cast<DayOfWeek>(0), !alarmManager.getDayEnabled(static_cast<DayOfWeek>(0)));
+        break;
+      case 9:
+        alarmManager.decrementHour();
+        break;
+      case 10:
+        break;
+      case 11:
+        alarmManager.decrementMinute();
+        break;
+      default:
+        break;
+      }
+      break;
+    }
     default:
       break;
     }
@@ -233,7 +320,6 @@ void handleButtonPressedRotateCCW(EC11* encoder) {
   default:
     break;
   }
-
   matrixCoreManager.setLineFlagTime(0);
   int32_t pos = encoder->getPosition();
   Serial.print("按住按钮并逆时针旋转，当前位置: ");

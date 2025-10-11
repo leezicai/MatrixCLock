@@ -5,7 +5,9 @@
 #include "matrixCore.h"
 #include "common_define.h"
 #include "matrixSetting.h"
+#include "alarm.h"
 
+struct AlarmConfig;
 // NVS Key Definitions - System Settings
 #define NVS_KEY_SSID "ssid"
 #define NVS_KEY_PASSWORD "pwd"
@@ -24,6 +26,13 @@
 #define NVS_KEY_PANEL_CHAIN "panel_chain"
 #define NVS_KEY_PANEL_TYPE "panel_type"
 
+#define NVS_KEY_VOLUME "volume"
+#define DEFAULT_VOLUME  75
+
+#define NVS_KEY_ALARM_INDEX  "alarm_index"
+
+
+// ------------------
 
 // NVS Key Definitions - Display Settings
 #define NVS_KEY_CONTRAST            "contrast"
@@ -53,7 +62,6 @@
 #define DEFAULT_MAX_BRIGHTNESS          200
 
 
-#define DEFAULT_VOLUME              50
 #define DEFAULT_DEVICE_NAME         "Matrix Display"
 #define DEFAULT_ANIMATION_SPEED     100
 #define DEFAULT_CONTRAST            75
@@ -85,6 +93,12 @@ public:
 
     void savePanelType(int value);
     int16_t loadPanelType();
+
+    void saveVolume(int value);
+    int16_t loadVolume();
+
+    void saveAlarmIndex(int value);
+    int16_t loadAlarmIndex();
 
     void setAutoMode(bool value);
     bool getAutoMode();
@@ -128,12 +142,9 @@ public:
     // Display Settings
     void setContrast(int value);
     int getContrast();
-    
-    
-    
- 
-    
-   
+
+    void saveAlarm(int index,  const AlarmConfig& alarmConfig);
+    AlarmConfig loadAlarm(int index, const AlarmConfig& defaultConfig);
     
 	void savePage(int row, int16_t pageIndex);
     int16_t loadPage(int row);

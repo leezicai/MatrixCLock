@@ -77,6 +77,11 @@
 #define B1_PIN 36
 #define R1_PIN 35
 
+
+#define DIN 8
+#define LRC 9
+#define BLCK 17
+
 #define PANEL_WIDTH 128
 #define PANEL_HEIGHT 64
 #define PANEL_CHAIN 1

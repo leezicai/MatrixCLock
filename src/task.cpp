@@ -4,11 +4,13 @@
 #include "sht30.h"  // 新增SHT30头文件
 #include "loading.h"
 #include "common_define.h"
+#include "alarm.h"
 
 // 任务句柄
 TaskHandle_t method1TaskHandle = NULL;
 TaskHandle_t method2TaskHandle = NULL;
 TaskHandle_t sensorTaskHandle = NULL;  // 新增传感器任务句柄
+TaskHandle_t alarmTaskHandle = NULL;
 
 // 初始化任务
 void initTasks() {
@@ -42,6 +44,14 @@ void initTasks() {
     &sensorTaskHandle  // 任务句柄
   );
   
+   xTaskCreate(
+    alarmTask,         // Task function
+    "Alarm_Task",      // Task name
+    4096,              // Stack size
+    NULL,              // Task parameter
+    3,                 // Priority (3, higher than sensor task)
+    &alarmTaskHandle   // Task handle
+  );
   Serial.println("所有任务已初始化");
 }
 
@@ -107,5 +117,29 @@ void sensorTask(void * parameter) {
     
     // 休眠10分钟 (10 * 60 * 1000 毫秒)
     vTaskDelay(10 * 60 * 1000 / portTICK_PERIOD_MS);
+  }
+}
+
+void alarmTask(void * parameter) {
+  // Initialize alarm manager
+  alarmManager.begin();
+  
+  uint32_t checkCounter = 0;
+  const uint32_t CHECKS_PER_HOUR = 360;  // 3600 seconds / 10 seconds = 360 checks
+  
+  for(;;) {
+    // Check if any alarm should trigger
+    alarmManager.checkAndTrigger();
+    
+    // Update task queue every hour (360 * 10 seconds = 3600 seconds = 1 hour)
+    checkCounter++;
+    if (checkCounter >= CHECKS_PER_HOUR) {
+      Serial.println("Hourly alarm queue update...");
+      alarmManager.updateTaskQueue();
+      checkCounter = 0;
+    }
+    
+    // Wait 10 seconds before next check
+    vTaskDelay(10 * 1000 / portTICK_PERIOD_MS);
   }
 }

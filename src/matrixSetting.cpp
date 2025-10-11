@@ -21,7 +21,8 @@ const char* MatrixSettings::commonWords_CN[WORD_COUNT] = {
     "同步时间网络错误",       // WORD_VOLUME
     "MatrixClock",       // WORD_VOLUME
     "",
-    "启动..."
+    "启动...",
+    "闹钟"
 };
 
 const char* MatrixSettings::commonWords_EN[WORD_COUNT] = {
@@ -39,7 +40,8 @@ const char* MatrixSettings::commonWords_EN[WORD_COUNT] = {
     "SyncTime Net Failed",       // WORD_VOLUME
     "MatrixClock",       // WORD_VOLUME
     "",       // WORD_VOLUME
-    "Start..."       // WORD_VOLUME
+    "Start...",
+    "Alarm"
 };
 // #define LOADING_ERR_MSG_FAIL_WIFI "WiFi Connect Failed"
 // #define LOADING_ERR_MSG_FAIL_NETWORK "Net SyncTime Failed"

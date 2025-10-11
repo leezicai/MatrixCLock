@@ -8,7 +8,7 @@ MatrixStatusManager::MatrixStatusManager(){}
 const char* MatrixStatusManager::getSysStatus(int index){
   switch (index) {
   case 0:
-    return brightnessManager.getAutoMode() ? matrixSettings.getCommonWord(WORD_BRIGHTNESS_ON) : matrixSettings.getCommonWord(WORD_BRIGHTNESS_OFF);
+    return brightnessManager.getAutoMode() ? matrixSettings.getCommonWord(WORD_ON) : matrixSettings.getCommonWord(WORD_OFF);
   case 1:
     itoa(brightnessManager.getManBrightness(), intBuffer, 10);
     return intBuffer;

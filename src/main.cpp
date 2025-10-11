@@ -17,6 +17,10 @@
 #include "matrixData.h"
 #include "matrixTimeData.h"
 #include <iostream>
+#include "max98357.h"
+#include "alarm_iphone.h"
+#include "alarm.h"
+
 
 
 #include <customFonts/FreeSans16pt7b.h> // 使用自定义字体
@@ -96,9 +100,14 @@ void setup() {
   if (matrixDataManager.getWifiConfig()) {
     initTasks();
   }
+  // Initialize MAX98357 I2S audio
+  if (!max98357Manager.begin()) {
+    Serial.println("Failed to initialize MAX98357!");
+    while (1)
+      delay(100);
+  }
 
-
-  
+  alarmManager.begin();
 
   // 初始化 u8g2
   u8g2_for_adafruit_gfx.begin(*dma_display);
@@ -142,7 +151,8 @@ void setup() {
 
 void loop() {
 
-  
+  max98357Manager.loop();
+
   now = time(nullptr);
   elapsed = millis() - lastMillisTime; 
   

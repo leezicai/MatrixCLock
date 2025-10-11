@@ -20,10 +20,17 @@ const char* MatrixTimeUtils::shortWeekdays_CN[7] = {
     "周日", "周一", "周二", "周三", "周四", "周五", "周六"
 };
 
+const char* MatrixTimeUtils::shortSWeekdays_CN[7] = {
+    "日", "一", "二", "三", "四", "五", "六"
+};
+
 const char* MatrixTimeUtils::shortWeekdays_EN[7] = {
     "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
 };
 
+const char* MatrixTimeUtils::shortSWeekdays_EN[7] = {
+    "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"
+};
 // Chinese numbers for date formatting
 const char* MatrixTimeUtils::chineseNumbers[10] = {
     "零", "一", "二", "三", "四", "五", "六", "七", "八", "九"
@@ -92,6 +99,9 @@ const char* MatrixTimeUtils::getLongWeekday(const TimeData& timeData) {
 const char* MatrixTimeUtils::getShortWeekday(const TimeData& timeData) {
     return getShortWeekday(matrixSettings.getCurrentLanguage(), timeData);
 }
+const char* MatrixTimeUtils::getShortShortWeekday(int index) {
+    return getShortSWeekday(matrixSettings.getCurrentLanguage(), index);
+}
 
 const char* MatrixTimeUtils::getDateString(const TimeData& timeData) {
     return getDateString(matrixSettings.getCurrentLanguage(), timeData);
@@ -123,6 +133,21 @@ const char* MatrixTimeUtils::getShortWeekday(Language lang, const TimeData& time
             return shortWeekdays_CN[timeData.mDay];
         case LANG_ENGLISH:
             return shortWeekdays_EN[timeData.mDay];
+        default:
+            return "";
+    }
+}
+
+const char* MatrixTimeUtils::getShortSWeekday(Language lang, int index) {
+    if (index < 0 || index > 6) {
+        return "";
+    }
+    
+    switch (lang) {
+        case LANG_CHINESE:
+            return shortSWeekdays_CN[index];
+        case LANG_ENGLISH:
+            return shortSWeekdays_EN[index];
         default:
             return "";
     }

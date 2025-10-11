@@ -1,8 +1,10 @@
 #ifndef MATRIX_TIME_UTILS_H
 #define MATRIX_TIME_UTILS_H
 
+#include "matrixLanguage.h"
 #include "matrixTimeData.h"
 #include "matrixSetting.h"
+
 
 class MatrixTimeUtils {
 public:
@@ -11,6 +13,8 @@ public:
     
     // Get short weekday name (Mon/周一)
     static const char* getShortWeekday(Language lang, const TimeData& timeData);
+    // Get short weekday name (Mon/周一)
+    static const char* getShortSWeekday(Language lang, int index);
     
     // Get formatted date string
     static const char* getDateString(Language lang, const TimeData& timeData);
@@ -30,6 +34,7 @@ public:
     // Instance methods using current language from matrixSettings
     const char* getLongWeekday(const TimeData& timeData);
     const char* getShortWeekday(const TimeData& timeData);
+    const char* getShortShortWeekday(int index);
     const char* getDateString(const TimeData& timeData);
     const char* getDateShortWeekday(const TimeData& timeData);
     const char* getMonthDate(const TimeData& timeData);
@@ -45,6 +50,10 @@ private:
     static const char* shortWeekdays_CN[7];
     static const char* shortWeekdays_EN[7];
     
+    // Short Short weekday names arrays
+    static const char* shortSWeekdays_CN[7];
+    static const char* shortSWeekdays_EN[7];
+
     // Chinese number conversion
     static const char* chineseNumbers[10];
     static const char* chineseTens[4];

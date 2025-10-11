@@ -834,6 +834,11 @@ void Display::displayString(unsigned long elapsed, TimeData timeNow,
     displayString(elapsed, nowStr, nowNextStr, true, matrixCore);
     if(isUnderLine){displayUnderline(true, nowStr, matrixCore);}
     break;
+  case 5:
+    nowStr = alarmManager.getAlarmStr(matrixCore.displayIndex);
+    displayString(elapsed, nowStr, nowStr, true, matrixCore);
+    if(isUnderLine){displayUnderline(true, nowStr, matrixCore);}
+    break;
   default:
     break;
   }

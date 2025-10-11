@@ -122,6 +122,26 @@ void MatrixCoreManager::initializeMatrixCores() {
           MatrixCore(0.03f, 0.47f, 10, 40, 2, 0, 3, 4, 1),
       };
 
+       SecondaryPage secondaryPage2_3 = {
+          MatrixCore(0.03f, 0.16f, 10, 40, 2, 0, 5, 7, 0),
+          MatrixCore(0.5f, 0.16f, 10, 40, 2, 0, 5, 8, 0),
+
+          MatrixCore(0.03f, 0.38f, 10, 40, 4, 0, 5, 1, 0),
+          MatrixCore(0.36f, 0.38f, 10, 40, 4, 0, 5, 2, 0),
+          MatrixCore(0.68f, 0.38f, 10, 40, 4, 0, 5, 3, 0),
+
+          MatrixCore(0.03f, 0.6f, 10, 40, 4, 0, 5, 4, 0),
+          MatrixCore(0.25f, 0.6f, 10, 40, 4, 0, 5, 5, 0),
+          MatrixCore(0.47f, 0.6f, 10, 40, 4, 0, 5, 6, 0),
+          MatrixCore(0.69f, 0.6f, 10, 40, 4, 0, 5, 0, 0),
+
+          
+          MatrixCore(0.03f, 0.82f, 10, 40, 4, 0, 5, 9, 0),
+          MatrixCore(0.23f, 0.82f, 10, 40, 4, 0, 5, 10, 0),
+          MatrixCore(0.43f, 0.82f, 10, 40, 4, 0, 5, 11, 0),
+          
+      };
+
       secondaryPage2_0 = matrixDataManager.loadPage(2, 0, secondaryPage2_0);
       primaryPage2.push_back(secondaryPage2_0);
       if (brightnessManager.getAutoMode()) {
@@ -130,6 +150,7 @@ void MatrixCoreManager::initializeMatrixCores() {
         primaryPage2.push_back(secondaryPage2_1_);
       }
       primaryPage2.push_back(secondaryPage2_2);
+      primaryPage2.push_back(secondaryPage2_3);
       interface.push_back(primaryPage2);
       break;
     }
