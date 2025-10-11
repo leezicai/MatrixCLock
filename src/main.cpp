@@ -188,8 +188,6 @@ void loop() {
         display.displayString(elapsed, timeDataNow, timeDataNowNextSec,
                               matrixCore, true);
       }
-      Serial.println(matrixCore.displayGroup);
-      Serial.println(matrixCore.displayIndex);
           //  display.displayString(elapsed, timeDataNow, timeDataNowNextSec,
           //                   matrixCore);
           //  display.displayTextRGB(255, 0, 0, 15+10*i, PANEL_HEIGHT * PANEL_CHAIN,

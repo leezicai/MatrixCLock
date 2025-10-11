@@ -43,8 +43,8 @@ void BrightnessManager::init() {
         updateDisplayBrightness();
     }
     
-    Serial.print("BrightnessManager initialized with brightness: ");
-    Serial.println(_currentBrightness);
+    // Serial.print("BrightnessManager initialized with brightness: ");
+    // Serial.println(_currentBrightness);
 }
 
 void BrightnessManager::handle() {
@@ -139,7 +139,7 @@ void BrightnessManager::updateDisplayBrightness() {
         dma_display->setBrightness8(brightness);
         _lastBrightness = brightness;
         
-        Serial.println(brightness);
+        // Serial.println(brightness);
     }
 }
 
@@ -158,8 +158,8 @@ void BrightnessManager::forceUpdate() {
         dma_display->setBrightness8(brightness);
         _lastBrightness = brightness;
         
-        Serial.print("Force updated DMA display brightness to: ");
-        Serial.println(brightness);
+        // Serial.print("Force updated DMA display brightness to: ");
+        // Serial.println(brightness);
     }
 }
 
@@ -187,8 +187,6 @@ void BrightnessManager::incrementMinBrightness() {
     // minBrightness + 1 must be less than maxBrightness
     if (minBrightness + 1 < maxBrightness) {
         minBrightness++;
-        Serial.print("Min brightness increased to: ");
-        Serial.println(minBrightness);
     } else {
         Serial.println("Cannot increase min brightness: would exceed or equal max brightness");
     }
@@ -199,8 +197,6 @@ void BrightnessManager::decrementMinBrightness() {
     // minBrightness - 1 must be >= 0
     if (minBrightness > 0) {
         minBrightness--;
-        Serial.print("Min brightness decreased to: ");
-        Serial.println(minBrightness);
     } else {
         Serial.println("Cannot decrease min brightness: already at minimum (0)");
     }
@@ -223,8 +219,6 @@ void BrightnessManager::incrementMaxBrightness() {
     // maxBrightness + 1 must be <= 200
     if (maxBrightness < 200) {
         maxBrightness++;
-        Serial.print("Max brightness increased to: ");
-        Serial.println(maxBrightness);
     } else {
         Serial.println("Cannot increase max brightness: already at maximum (200)");
     }
@@ -236,8 +230,6 @@ void BrightnessManager::decrementMaxBrightness() {
     int lowerLimit = max(minBrightness, 5);
     if (maxBrightness > lowerLimit) {
         maxBrightness--;
-        Serial.print("Max brightness decreased to: ");
-        Serial.println(maxBrightness);
     } else {
         Serial.print("Cannot decrease max brightness: would be less than limit (");
         Serial.print(lowerLimit);
