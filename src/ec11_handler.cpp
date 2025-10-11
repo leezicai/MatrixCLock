@@ -53,8 +53,6 @@ void handleButtonDoubleClick(EC11* encoder) {
 }
 
 void handleButtonLongPress(EC11* encoder) {
-  matrixCoreManager.setLineFlagTime(0);
-  matrixCoreManager.prevElementGroup();
   Serial.println("按钮被长按");
 }
 
