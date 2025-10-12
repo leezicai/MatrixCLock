@@ -117,6 +117,7 @@ public:
     // History related methods
     int16_t getHistoryForPage(int16_t primaryPageIdx) const;
     void setHistoryForPage(int16_t primaryPageIdx, int16_t secondaryPageIdx);
+    void printAllSecondaryPages() const ;
 };
 
 extern MatrixCoreManager matrixCoreManager;

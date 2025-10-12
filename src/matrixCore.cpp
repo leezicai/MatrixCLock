@@ -412,5 +412,40 @@ void MatrixCoreManager::setHistoryForPage(int16_t primaryPageIdx, int16_t second
     }
 }
 
+void MatrixCoreManager::printAllSecondaryPages() const {
+    // Iterate through all primary pages
+    for (size_t i = 0; i < interface.size(); i++) {
+        const PrimaryPage& primaryPage = interface[i];
+        
+        // Iterate through all secondary pages in current primary page
+        for (size_t j = 0; j < primaryPage.size(); j++) {
+            const SecondaryPage& secondaryPage = primaryPage[j];
+            
+            // Print variable name with indices
+            printf("secondaryPage%d_%d = {", 
+                   static_cast<int>(i), 
+                   static_cast<int>(j));
+            
+            // Print each MatrixCore element in the secondary page
+            for (size_t k = 0; k < secondaryPage.size(); k++) {
+                const MatrixCore& core = secondaryPage[k];
+                
+                printf("MatrixCore(%.3ff, %.3ff, %d, %d, %d, %d, %d, %d, %d)",
+                       core.x, core.y,
+                       core.fontGroupIndex, core.fontIndex,
+                       core.colorIndex1, core.colorIndex2,
+                       core.displayGroup, core.displayIndex,
+                       core.animationType);
+                
+                // Add comma if not the last element
+                if (k < secondaryPage.size() - 1) {
+                    printf(",\n                          ");
+                }
+            }
+            
+            printf("};\n\n");
+        }
+    }
+}
 // Global instance
 MatrixCoreManager matrixCoreManager;

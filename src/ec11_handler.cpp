@@ -45,7 +45,10 @@ void handleButtonDoubleClick(EC11 *encoder) {
   Serial.println("按钮被双击");
 }
 
-void handleButtonLongPress(EC11 *encoder) { Serial.println("按钮被长按"); }
+void handleButtonLongPress(EC11 *encoder) { 
+  matrixCoreManager.printAllSecondaryPages();
+  Serial.println("按钮被长按"); 
+}
 
 // 按下 顺时针旋转
 void handleButtonPressedRotateCW(EC11 *encoder) {
