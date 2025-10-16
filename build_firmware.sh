@@ -1,9 +1,7 @@
 #!/bin/bash
-
 # ESP32-S3 Firmware Build Script
 # This script merges bootloader, partitions, boot_app0, and firmware into a single binary
 # Execute this script in the project root directory
-
 set -e  # Exit on error
 
 # Color codes for output
@@ -14,7 +12,17 @@ NC='\033[0m' # No Color
 
 # Configuration
 PROJECT_NAME="MatrixClock"
-VERSION="1.0"
+
+# Get latest git tag as version
+if git rev-parse --git-dir > /dev/null 2>&1; then
+    VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0")
+    # Remove 'v' prefix if exists
+    VERSION=${VERSION#v}
+else
+    echo -e "${YELLOW}Warning: Not a git repository, using default version${NC}"
+    VERSION="1.0"
+fi
+
 BUILD_DIR=".pio/build/esp32-s3-devkitm-1"
 BOOT_APP0_PATH="$HOME/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin"
 OUTPUT_FILE="${PROJECT_NAME}_v${VERSION}.bin"
@@ -98,7 +106,6 @@ echo -e "\n${YELLOW}Merging firmware...${NC}"
 # 0x8000  - partition table
 # 0xe000  - boot_app0 (OTA data)
 # 0x10000 - application firmware
-
 esptool --chip esp32s3 merge-bin \
     -o "$OUTPUT_FILE" \
     --flash-mode dio \
@@ -112,15 +119,16 @@ esptool --chip esp32s3 merge-bin \
 if [ $? -eq 0 ]; then
     echo -e "\n${GREEN}✓ Successfully merged firmware!${NC}"
     echo -e "${GREEN}Output file: $OUTPUT_FILE${NC}"
-
+    
     # Show file size
     FILE_SIZE=$(du -h "$OUTPUT_FILE" | cut -f1)
     echo -e "File size: ${YELLOW}$FILE_SIZE${NC}"
-
+    
     echo -e "\n${YELLOW}To flash this merged firmware:${NC}"
-    echo "esptool --chip esp32s3 --port /dev/ttyUSB0 --baud 921600 write_flash 0x0 $OUTPUT_FILE"
+    echo "esptool --chip esp32s3 --port /dev/cu.usbmodem --baud 921600 write_flash 0x0 $OUTPUT_FILE"
+    
     echo -e "\n${YELLOW}Or use the flash script:${NC}"
-    echo "./flash_firmware.sh /dev/ttyUSB0"
+    echo "./flash_firmware.sh MatrixClock_v1.0.0.bin /dev/cu.usbmodem"
 else
     echo -e "${RED}Error: Failed to merge firmware${NC}"
     exit 1

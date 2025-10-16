@@ -26,7 +26,7 @@ if [ -z "$MERGED_FILE" ] || [ -z "$PORT" ]; then
     echo "  ./flash_merged.sh [FIRMWARE_FILE] [PORT] [BAUD_RATE]"
     echo ""
     echo -e "${YELLOW}Examples:${NC}"
-    echo "  ./flash_merged.sh MatrixClock_v1.0.bin /dev/ttyUSB0"
+    echo "  ./flash_merged.sh MatrixClock_v1.0.bin /dev/cu.usbmodem2101"
     echo "  ./flash_merged.sh MatrixClock_v1.0.bin /dev/cu.usbmodem2101 921600"
     echo "  ./flash_merged.sh firmware.bin COM3 460800"
     echo ""
@@ -34,7 +34,7 @@ if [ -z "$MERGED_FILE" ] || [ -z "$PORT" ]; then
     ls -lh *.bin 2>/dev/null || echo "  No .bin files found"
     echo ""
     echo -e "${YELLOW}Common ports:${NC}"
-    echo "  Linux:   /dev/ttyUSB0, /dev/ttyACM0"
+    echo "  Linux:   /dev/cu.usbmodem2101, /dev/ttyACM0"
     echo "  macOS:   /dev/cu.usbserial-*, /dev/cu.usbmodem*"
     echo "  Windows: COM3, COM4, COM5, ..."
     exit 1
