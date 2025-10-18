@@ -3,6 +3,7 @@
 
 #include "matrixSetting.h"
 #include "ds3231.h"
+#include "sht30.h"
 
 class MatrixStatusManager {
 	private:

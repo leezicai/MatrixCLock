@@ -19,11 +19,11 @@ MatrixCoreManager::MatrixCoreManager() {
     // initializeMatrixCores();
 }
 
-SecondaryPage MatrixCoreManager::getSecondaryPage2_1(){
-    return secondaryPage2_1;
+SecondaryPage MatrixCoreManager::getSecondaryPageSetting1(){
+    return secondaryPageSetting1;
 }
-SecondaryPage MatrixCoreManager::getSecondaryPage2_1_(){
-    return secondaryPage2_1_;
+SecondaryPage MatrixCoreManager::getSecondaryPageSetting2(){
+    return secondaryPageSetting2;
 }
 
 void MatrixCoreManager::initializeMatrixCores() {
@@ -32,67 +32,14 @@ void MatrixCoreManager::initializeMatrixCores() {
     PrimaryPage primaryPage0;
     PrimaryPage primaryPage1;
     PrimaryPage primaryPage2;
+    PrimaryPage primaryPage3;
 
     switch (g_panelType) {
         // 适配 128x64x1  64x64x2 屏幕
     case 0:
     case 1: {
-      // 24 getHour24_Minute_Second
-      SecondaryPage secondaryPage0_0 = {MatrixCore(0.495f, 0.45f, 1, 0, 0, 0, 0, 1, 1)};
-      // 24 getHour24_Minute
-      SecondaryPage secondaryPage0_1 = { MatrixCore(0.495f, 0.45f, 0, 0, 1, 0, 0, 4, 2) };
-      // 12 getHour12_MinuteAmpm
-      SecondaryPage secondaryPage0_2 = { MatrixCore(0.495f, 0.45f, 2, 0, 2, 0, 0, 6, 0) };
-      // 12 getHour12_Minute_Second
-      SecondaryPage secondaryPage0_3 = { MatrixCore(0.495f, 0.45f, 1, 0, 3, 0, 0, 2, 0) };
-      // 12 getHour12_Minute
-      SecondaryPage secondaryPage0_4 = { MatrixCore(0.495f, 0.43f, 0, 0, 4, 0, 0, 5, 0) };
 
-      secondaryPage0_0 = matrixDataManager.loadPage(0, 0, secondaryPage0_0);
-      secondaryPage0_1 = matrixDataManager.loadPage(0, 1, secondaryPage0_1);
-      secondaryPage0_2 = matrixDataManager.loadPage(0, 2, secondaryPage0_2);
-      secondaryPage0_3 = matrixDataManager.loadPage(0, 3, secondaryPage0_3);
-      secondaryPage0_4 = matrixDataManager.loadPage(0, 4, secondaryPage0_4);
-
-      primaryPage0.push_back(secondaryPage0_0);
-      primaryPage0.push_back(secondaryPage0_1);
-      primaryPage0.push_back(secondaryPage0_2);
-      primaryPage0.push_back(secondaryPage0_3);
-      primaryPage0.push_back(secondaryPage0_4);
-
-      interface.push_back(primaryPage0);
-
-      // Primary Page 1 - Secondary Page 0
-      SecondaryPage secondaryPage1_0 = {MatrixCore(0.5f, 0.25f, 10, 40, 1, 0, 1, 3, 0),
-                          MatrixCore(0.5f, 0.65f, 1, 0, 0, 0, 0, 1, 0)};
-      SecondaryPage secondaryPage1_1 = {MatrixCore(0.5f, 0.15f, 10, 40, 1, 0, 1, 3, 0),
-                          MatrixCore(0.495f, 0.55f, 0, 0, 1, 0, 0, 4, 2)};
-      SecondaryPage secondaryPage1_2 = {MatrixCore(0.5f, 0.25f, 10, 40, 1, 0, 1, 3, 0),
-                          MatrixCore(0.5f, 0.65f, 1, 0, 0, 0, 0, 2, 0)};
-      SecondaryPage secondaryPage1_3 = {MatrixCore(0.5f, 0.25f, 10, 40, 1, 0, 1, 3, 0),
-                          MatrixCore(0.5f, 0.65f, 2, 0, 0, 0, 0, 6, 0)};
-      SecondaryPage secondaryPage1_4 = {MatrixCore(0.5f, 0.15f, 10, 40, 1, 0, 1, 3, 0),
-                          MatrixCore(0.495f, 0.55f, 0, 0, 1, 0, 0, 5, 2)};
-      SecondaryPage secondaryPage1_5 = {MatrixCore(0.5f, 0.25f, 10, 40, 1, 0, 1, 3, 0),
-                          MatrixCore(0.5f, 0.65f, 1, 0, 0, 0, 0, 1, 0)};
-
-      secondaryPage1_0 = matrixDataManager.loadPage(1, 0, secondaryPage1_0);
-      secondaryPage1_1 = matrixDataManager.loadPage(1, 1, secondaryPage1_1);
-      secondaryPage1_2 = matrixDataManager.loadPage(1, 2, secondaryPage1_2);
-      secondaryPage1_3 = matrixDataManager.loadPage(1, 3, secondaryPage1_3);
-      secondaryPage1_4 = matrixDataManager.loadPage(1, 4, secondaryPage1_4);
-      secondaryPage1_5 = matrixDataManager.loadPage(1, 5, secondaryPage1_5);
-
-      primaryPage1.push_back(secondaryPage1_0);
-      primaryPage1.push_back(secondaryPage1_1);
-      primaryPage1.push_back(secondaryPage1_2);
-      primaryPage1.push_back(secondaryPage1_3);
-      primaryPage1.push_back(secondaryPage1_4);
-      primaryPage1.push_back(secondaryPage1_5);
-
-      interface.push_back(primaryPage1);
-
-      SecondaryPage secondaryPage2_0 = {
+      SecondaryPage secondaryPage0_0 = {
           MatrixCore(0.03f, 0.16f, 10, 40, 5, 0, 2, 0, 0),
           MatrixCore(0.50f, 0.16f, 10, 40, 5, 0, 3, 5, 0),
 
@@ -105,7 +52,7 @@ void MatrixCoreManager::initializeMatrixCores() {
           MatrixCore(0.68f, 0.79f, 8, 1, 3, 0, 4, 13, 0)};
 
       // 特殊处理,使用已有变量
-      secondaryPage2_1 = {MatrixCore(0.03f, 0.16f, 10, 40, 5, 0, 2, 1, 1),
+      secondaryPageSetting1 = {MatrixCore(0.03f, 0.16f, 10, 40, 5, 0, 2, 1, 1),
 
                           MatrixCore(0.03f, 0.47f, 10, 40, 5, 0, 2, 2, 1),
                           MatrixCore(0.52f, 0.47f, 10, 40, 3, 0, 3, 0, 1),
@@ -114,20 +61,20 @@ void MatrixCoreManager::initializeMatrixCores() {
                           MatrixCore(0.52f, 0.79f, 8, 1, 3, 0, 3, 3, 1)};
 
       // 特殊处理,使用已有变量
-      secondaryPage2_1_ = {MatrixCore(0.03f, 0.16f, 10, 40, 5, 0, 2, 1, 1),
+      secondaryPageSetting2 = {MatrixCore(0.03f, 0.16f, 10, 40, 5, 0, 2, 1, 1),
 
                            MatrixCore(0.03f, 0.47f, 10, 40, 3, 0, 2, 2, 1),
                            MatrixCore(0.52f, 0.47f, 10, 40, 3, 0, 3, 0, 1),
 
                            MatrixCore(0.52f, 0.79f, 8, 1, 3, 0, 3, 1, 1)};
 
-      SecondaryPage secondaryPage2_2 = {
+      SecondaryPage secondaryPage0_2 = {
           MatrixCore(0.03f, 0.16f, 10, 40, 5, 0, 2, 5, 1),
 
           MatrixCore(0.03f, 0.47f, 10, 40, 3, 0, 3, 4, 1),
       };
 
-       SecondaryPage secondaryPage2_3 = {
+       SecondaryPage secondaryPage0_3 = {
           MatrixCore(0.03f, 0.16f, 10, 40, 5, 0, 5, 7, 0),
           MatrixCore(0.40f, 0.16f, 10, 40, 0, 0, 5, 8, 0),
           MatrixCore(0.68, 0.16f, 10, 40, 5, 0, 5, 12, 0),
@@ -147,16 +94,75 @@ void MatrixCoreManager::initializeMatrixCores() {
           
       };
 
+       secondaryPage0_0 = matrixDataManager.loadPage(2, 0, secondaryPage0_0);
+       primaryPage0.push_back(secondaryPage0_0);
+       if (brightnessManager.getAutoMode()) {
+         primaryPage0.push_back(secondaryPageSetting1);
+       } else {
+         primaryPage0.push_back(secondaryPageSetting2);
+       }
+      primaryPage0.push_back(secondaryPage0_2);
+      primaryPage0.push_back(secondaryPage0_3);
+      interface.push_back(primaryPage0);
+
+      // 24 getHour24_Minute_Second
+      SecondaryPage secondaryPage1_0 = {MatrixCore(0.495f, 0.45f, 1, 0, 0, 0, 0, 1, 1)};
+      // 24 getHour24_Minute
+      SecondaryPage secondaryPage1_1 = { MatrixCore(0.495f, 0.45f, 0, 0, 1, 0, 0, 4, 2) };
+      // 12 getHour12_MinuteAmpm
+      SecondaryPage secondaryPage1_2 = { MatrixCore(0.495f, 0.45f, 2, 0, 2, 0, 0, 6, 0) };
+      // 12 getHour12_Minute_Second
+      SecondaryPage secondaryPage1_3 = { MatrixCore(0.495f, 0.45f, 1, 0, 3, 0, 0, 2, 0) };
+      // 12 getHour12_Minute
+      SecondaryPage secondaryPage1_4 = { MatrixCore(0.495f, 0.43f, 0, 0, 4, 0, 0, 5, 0) };
+
+      secondaryPage1_0 = matrixDataManager.loadPage(1, 0, secondaryPage1_0);
+      secondaryPage1_1 = matrixDataManager.loadPage(1, 1, secondaryPage1_1);
+      secondaryPage1_2 = matrixDataManager.loadPage(1, 2, secondaryPage1_2);
+      secondaryPage1_3 = matrixDataManager.loadPage(1, 3, secondaryPage1_3);
+      secondaryPage1_4 = matrixDataManager.loadPage(1, 4, secondaryPage1_4);
+
+      primaryPage1.push_back(secondaryPage1_0);
+      primaryPage1.push_back(secondaryPage1_1);
+      primaryPage1.push_back(secondaryPage1_2);
+      primaryPage1.push_back(secondaryPage1_3);
+      primaryPage1.push_back(secondaryPage1_4);
+
+      interface.push_back(primaryPage1);
+
+      // Primary Page 1 - Secondary Page 0
+      SecondaryPage secondaryPage2_0 = {MatrixCore(0.5f, 0.25f, 9, 0, 1, 0, 1, 3, 0),
+                          MatrixCore(0.5f, 0.65f, 1, 0, 0, 0, 0, 1, 0)};
+      SecondaryPage secondaryPage2_1 = {MatrixCore(0.5f, 0.15f, 10, 40, 1, 0, 1, 3, 0),
+                          MatrixCore(0.495f, 0.55f, 0, 0, 1, 0, 0, 4, 2)};
+      SecondaryPage secondaryPage2_2 = {MatrixCore(0.5f, 0.25f, 10, 40, 1, 0, 1, 3, 0),
+                          MatrixCore(0.5f, 0.65f, 1, 0, 0, 0, 0, 2, 0)};
+      SecondaryPage secondaryPage2_3 = {MatrixCore(0.5f, 0.25f, 10, 40, 1, 0, 1, 3, 0),
+                          MatrixCore(0.5f, 0.65f, 2, 0, 0, 0, 0, 6, 0)};
+      SecondaryPage secondaryPage2_4 = {MatrixCore(0.5f, 0.15f, 10, 40, 1, 0, 1, 3, 0),
+                          MatrixCore(0.495f, 0.55f, 0, 0, 1, 0, 0, 5, 2)};
+      SecondaryPage secondaryPage2_5 = {MatrixCore(0.5f, 0.25f, 10, 40, 1, 0, 1, 3, 0),
+                          MatrixCore(0.5f, 0.65f, 1, 0, 0, 0, 0, 1, 0)};
+
       secondaryPage2_0 = matrixDataManager.loadPage(2, 0, secondaryPage2_0);
+      secondaryPage2_1 = matrixDataManager.loadPage(2, 1, secondaryPage2_1);
+      secondaryPage2_2 = matrixDataManager.loadPage(2, 2, secondaryPage2_2);
+      secondaryPage2_3 = matrixDataManager.loadPage(2, 3, secondaryPage2_3);
+      secondaryPage2_4 = matrixDataManager.loadPage(2, 4, secondaryPage2_4);
+      secondaryPage2_5 = matrixDataManager.loadPage(2, 5, secondaryPage2_5);
+
       primaryPage2.push_back(secondaryPage2_0);
-      if (brightnessManager.getAutoMode()) {
-        primaryPage2.push_back(secondaryPage2_1);
-      } else {
-        primaryPage2.push_back(secondaryPage2_1_);
-      }
+      primaryPage2.push_back(secondaryPage2_1);
       primaryPage2.push_back(secondaryPage2_2);
       primaryPage2.push_back(secondaryPage2_3);
+      primaryPage2.push_back(secondaryPage2_4);
+      primaryPage2.push_back(secondaryPage2_5);
+
       interface.push_back(primaryPage2);
+
+      
+
+   
       break;
     }
     case 2: {

@@ -31,6 +31,7 @@ const char* MatrixTimeUtils::shortWeekdays_EN[7] = {
 const char* MatrixTimeUtils::shortSWeekdays_EN[7] = {
     "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"
 };
+
 // Chinese numbers for date formatting
 const char* MatrixTimeUtils::chineseNumbers[10] = {
     "零", "一", "二", "三", "四", "五", "六", "七", "八", "九"
@@ -56,8 +57,9 @@ char MatrixTimeUtils::dateBuffer[64];
 char MatrixTimeUtils::dateWeekdayBuffer[64];
 char MatrixTimeUtils::monthDateBuffer[64];
 char MatrixTimeUtils::monthDateWeekdayBuffer[64];
+char MatrixTimeUtils::shortShortDateWeekdayBuffer[64];
 
-// Helper function to convert Chinese day number
+// Helper function to convert Chinese day number with 廿 and 卅
 static void formatChineseDay(int day, char* dayStr, size_t size) {
     const char* chineseNumbers[10] = {
         "零", "一", "二", "三", "四", "五", "六", "七", "八", "九"
@@ -69,10 +71,20 @@ static void formatChineseDay(int day, char* dayStr, size_t size) {
         snprintf(dayStr, size, "十");
     } else if (day < 20) {
         snprintf(dayStr, size, "十%s", chineseNumbers[day % 10]);
-    } else if (day % 10 == 0) {
-        snprintf(dayStr, size, "%s十", chineseNumbers[day / 10]);
+    } else if (day < 30) {
+        // Use 廿 for 20-29
+        if (day == 20) {
+            snprintf(dayStr, size, "廿");
+        } else {
+            snprintf(dayStr, size, "廿%s", chineseNumbers[day % 10]);
+        }
     } else {
-        snprintf(dayStr, size, "%s十%s", chineseNumbers[day / 10], chineseNumbers[day % 10]);
+        // Use 卅 for 30-31
+        if (day == 30) {
+            snprintf(dayStr, size, "卅");
+        } else {
+            snprintf(dayStr, size, "卅%s", chineseNumbers[day % 10]);
+        }
     }
 }
 
@@ -99,6 +111,7 @@ const char* MatrixTimeUtils::getLongWeekday(const TimeData& timeData) {
 const char* MatrixTimeUtils::getShortWeekday(const TimeData& timeData) {
     return getShortWeekday(matrixSettings.getCurrentLanguage(), timeData);
 }
+
 const char* MatrixTimeUtils::getShortShortWeekday(int index) {
     return getShortSWeekday(matrixSettings.getCurrentLanguage(), index);
 }
@@ -117,6 +130,10 @@ const char* MatrixTimeUtils::getMonthDate(const TimeData& timeData) {
 
 const char* MatrixTimeUtils::getMonthDateWeekday(const TimeData& timeData) {
     return getMonthDateWeekday(matrixSettings.getCurrentLanguage(), timeData);
+}
+
+const char* MatrixTimeUtils::getShortShortDateWeekday(const TimeData& timeData) {
+    return getShortShortDateWeekday(matrixSettings.getCurrentLanguage(), timeData);
 }
 
 const char* MatrixTimeUtils::getStr(const TimeData& timeData, int16_t index) {
@@ -157,7 +174,7 @@ const char* MatrixTimeUtils::getDateString(Language lang, const TimeData& timeDa
     memset(dateBuffer, 0, sizeof(dateBuffer));
     
     if (lang == LANG_CHINESE) {
-        // Chinese format: 二零二五年二月二十日
+        // Chinese format: 二零二五年二月廿日
         char yearStr[32] = "";
         char dayStr[16] = "";
         
@@ -174,7 +191,7 @@ const char* MatrixTimeUtils::getDateString(Language lang, const TimeData& timeDa
                 chineseNumbers[tens],
                 chineseNumbers[ones]);
         
-        // Convert day to Chinese
+        // Convert day to Chinese with 廿 and 卅
         formatChineseDay(timeData.day, dayStr, sizeof(dayStr));
         
         snprintf(dateBuffer, sizeof(dateBuffer), "%s%s%s日", 
@@ -195,7 +212,7 @@ const char* MatrixTimeUtils::getDateShortWeekday(Language lang, const TimeData& 
     memset(dateWeekdayBuffer, 0, sizeof(dateWeekdayBuffer));
     
     if (lang == LANG_CHINESE) {
-        // Chinese format: 10月20日 周一
+        // Chinese format: 10月廿日 周一
         char dayStr[16] = "";
         formatChineseDay(timeData.day, dayStr, sizeof(dayStr));
         
@@ -205,11 +222,11 @@ const char* MatrixTimeUtils::getDateShortWeekday(Language lang, const TimeData& 
                 shortWeekdays_CN[timeData.mDay]);
         
     } else if (lang == LANG_ENGLISH) {
-        // English format: Oct 20 Mon
-        snprintf(dateWeekdayBuffer, sizeof(dateWeekdayBuffer), "%s, %d %s", 
+        // English format: Mon, Oct 20 (Changed from Oct 20 Mon)
+        snprintf(dateWeekdayBuffer, sizeof(dateWeekdayBuffer), "%s, %s %d", 
+                shortWeekdays_EN[timeData.mDay],
                 englishMonthsShort[timeData.month - 1], 
-                timeData.day,
-                shortWeekdays_EN[timeData.mDay]);
+                timeData.day);
     }
     
     return dateWeekdayBuffer;
@@ -219,7 +236,7 @@ const char* MatrixTimeUtils::getMonthDate(Language lang, const TimeData& timeDat
     memset(monthDateBuffer, 0, sizeof(monthDateBuffer));
     
     if (lang == LANG_CHINESE) {
-        // Chinese format: 10月20日
+        // Chinese format: 10月廿日
         char dayStr[16] = "";
         formatChineseDay(timeData.day, dayStr, sizeof(dayStr));
         
@@ -240,7 +257,7 @@ const char* MatrixTimeUtils::getMonthDateWeekday(Language lang, const TimeData& 
     memset(monthDateWeekdayBuffer, 0, sizeof(monthDateWeekdayBuffer));
     
     if (lang == LANG_CHINESE) {
-        // Chinese format: 10月20日 星期一
+        // Chinese format: 10月廿日 星期一
         char dayStr[16] = "";
         formatChineseDay(timeData.day, dayStr, sizeof(dayStr));
         
@@ -250,14 +267,38 @@ const char* MatrixTimeUtils::getMonthDateWeekday(Language lang, const TimeData& 
                 longWeekdays_CN[timeData.mDay]);
         
     } else if (lang == LANG_ENGLISH) {
-        // English format: Oct 20 Monday
-        snprintf(monthDateWeekdayBuffer, sizeof(monthDateWeekdayBuffer), "%s %d %s", 
+        // English format: Monday, Oct 20 (Changed from Oct 20 Monday)
+        snprintf(monthDateWeekdayBuffer, sizeof(monthDateWeekdayBuffer), "%s, %s %d", 
+                longWeekdays_EN[timeData.mDay],
                 englishMonthsShort[timeData.month - 1], 
-                timeData.day,
-                longWeekdays_EN[timeData.mDay]);
+                timeData.day);
     }
     
     return monthDateWeekdayBuffer;
+}
+
+const char* MatrixTimeUtils::getShortShortDateWeekday(Language lang, const TimeData& timeData) {
+    memset(shortShortDateWeekdayBuffer, 0, sizeof(shortShortDateWeekdayBuffer));
+    
+    if (lang == LANG_CHINESE) {
+        // Chinese format: 十月一 一 (Oct 1, Monday)
+        char dayStr[16] = "";
+        formatChineseDay(timeData.day, dayStr, sizeof(dayStr));
+        
+        snprintf(shortShortDateWeekdayBuffer, sizeof(shortShortDateWeekdayBuffer), "%s%s %s", 
+                chineseMonths[timeData.month - 1], 
+                dayStr,
+                shortSWeekdays_CN[timeData.mDay]);
+        
+    } else if (lang == LANG_ENGLISH) {
+        // English format: Mo, Oct 1 (Monday, Oct 1)
+        snprintf(shortShortDateWeekdayBuffer, sizeof(shortShortDateWeekdayBuffer), "%s, %s %d", 
+                shortSWeekdays_EN[timeData.mDay],
+                englishMonthsShort[timeData.month - 1], 
+                timeData.day);
+    }
+    
+    return shortShortDateWeekdayBuffer;
 }
 
 const char* MatrixTimeUtils::getStr(Language lang, const TimeData& timeData, int16_t index) {
@@ -274,6 +315,8 @@ const char* MatrixTimeUtils::getStr(Language lang, const TimeData& timeData, int
             return getMonthDate(lang, timeData);
         case STR_MONTH_DATE_WEEKDAY:
             return getMonthDateWeekday(lang, timeData);
+        case STR_SHORT_SHORT_DATE_WEEKDAY:
+            return getShortShortDateWeekday(lang, timeData);
         default:
             return "";
     }

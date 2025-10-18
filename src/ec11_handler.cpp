@@ -52,19 +52,10 @@ void handleButtonLongPress(EC11 *encoder) {
 
 // 按下 顺时针旋转
 void handleButtonPressedRotateCW(EC11 *encoder) {
-  
 
-
-    MatrixCore matrixCore;
+  MatrixCore matrixCore;
   switch (matrixCoreManager.getCurrentPageIndex()) {
   case 0:
-  case 1:
-    matrixCore = matrixCoreManager.getCurrentMatrixCore();
-    matrixCore.fontIndex = matrixFontManager.switchToNextFontIndex(
-        matrixCore.fontGroupIndex, matrixCore.fontIndex);
-    matrixCoreManager.modifyCurrentElement(matrixCore);
-    break;
-  case 2:
     switch (matrixCoreManager.getCurrentSecondaryIndex()) {
     case 0:
       switch (matrixCoreManager.getCurrentElementGroupIndex()) {
@@ -104,10 +95,10 @@ void handleButtonPressedRotateCW(EC11 *encoder) {
         brightnessManager.setAutoMode(!brightnessManager.getAutoMode());
         if (brightnessManager.getAutoMode()) {
           matrixCoreManager.swapSecondaryPage(
-              2, 1, matrixCoreManager.getSecondaryPage2_1());
+              2, 1, matrixCoreManager.getSecondaryPageSetting1());
         } else {
           matrixCoreManager.swapSecondaryPage(
-              2, 1, matrixCoreManager.getSecondaryPage2_1_());
+              2, 1, matrixCoreManager.getSecondaryPageSetting2());
         }
         break;
       case 3:
@@ -201,6 +192,13 @@ void handleButtonPressedRotateCW(EC11 *encoder) {
       break;
     }
     break;
+  case 1:
+  case 2:
+    matrixCore = matrixCoreManager.getCurrentMatrixCore();
+    matrixCore.fontIndex = matrixFontManager.switchToNextFontIndex(
+        matrixCore.fontGroupIndex, matrixCore.fontIndex);
+    matrixCoreManager.modifyCurrentElement(matrixCore);
+    break;
   default:
     break;
   }
@@ -223,13 +221,6 @@ void handleButtonPressedRotateCCW(EC11 *encoder) {
 
   switch (matrixCoreManager.getCurrentPageIndex()) {
   case 0:
-  case 1:
-    matrixCore = matrixCoreManager.getCurrentMatrixCore();
-    matrixCore.fontIndex = matrixFontManager.switchToPreFontIndex(
-        matrixCore.fontGroupIndex, matrixCore.fontIndex);
-    matrixCoreManager.modifyCurrentElement(matrixCore);
-    break;
-  case 2:
     switch (matrixCoreManager.getCurrentSecondaryIndex()) {
     case 0:
       switch (matrixCoreManager.getCurrentElementGroupIndex()) {
@@ -268,11 +259,9 @@ void handleButtonPressedRotateCCW(EC11 *encoder) {
       case 2:
         brightnessManager.setAutoMode(!brightnessManager.getAutoMode());
         if (brightnessManager.getAutoMode()) {
-          matrixCoreManager.swapSecondaryPage(
-              2, 1, matrixCoreManager.getSecondaryPage2_1());
+          matrixCoreManager.swapSecondaryPage( 0, 1, matrixCoreManager.getSecondaryPageSetting1());
         } else {
-          matrixCoreManager.swapSecondaryPage(
-              2, 1, matrixCoreManager.getSecondaryPage2_1_());
+          matrixCoreManager.swapSecondaryPage( 0, 1, matrixCoreManager.getSecondaryPageSetting2());
         }
         break;
       case 3:
@@ -365,6 +354,13 @@ void handleButtonPressedRotateCCW(EC11 *encoder) {
     default:
       break;
     }
+    break;
+  case 1:
+  case 2:
+    matrixCore = matrixCoreManager.getCurrentMatrixCore();
+    matrixCore.fontIndex = matrixFontManager.switchToPreFontIndex(
+        matrixCore.fontGroupIndex, matrixCore.fontIndex);
+    matrixCoreManager.modifyCurrentElement(matrixCore);
     break;
   default:
     break;

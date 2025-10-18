@@ -75,7 +75,7 @@ void MatrixDataManager::savePrimaryPage(int value) {
     matrixNvsManager.commit();
 }
 int MatrixDataManager::loadPrimaryPage() {
-    return matrixNvsManager.loadInt(NVS_KEY_PAGE_INDEX, 0);
+    return matrixNvsManager.loadInt(NVS_KEY_PAGE_INDEX, 1);
 }
 
 

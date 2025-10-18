@@ -29,8 +29,8 @@ typedef std::vector<PrimaryPage> Interface;           // Layer 1: Multiple prima
 class MatrixCoreManager {
 private:
 
-  SecondaryPage secondaryPage2_1;
-  SecondaryPage secondaryPage2_1_;
+  SecondaryPage secondaryPageSetting1;
+  SecondaryPage secondaryPageSetting2;
 
   Interface interface; // The complete 3-layer structure
 
@@ -59,8 +59,8 @@ public:
 
     void initializeMatrixCores();
 
-    SecondaryPage getSecondaryPage2_1();
-    SecondaryPage getSecondaryPage2_1_();
+    SecondaryPage getSecondaryPageSetting1();
+    SecondaryPage getSecondaryPageSetting2();
     
     // Navigation methods for primary pages
     void nextPrimaryPage();

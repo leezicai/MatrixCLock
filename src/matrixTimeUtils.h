@@ -1,10 +1,8 @@
 #ifndef MATRIX_TIME_UTILS_H
 #define MATRIX_TIME_UTILS_H
-
 #include "matrixLanguage.h"
 #include "matrixTimeData.h"
 #include "matrixSetting.h"
-
 
 class MatrixTimeUtils {
 public:
@@ -13,20 +11,24 @@ public:
     
     // Get short weekday name (Mon/周一)
     static const char* getShortWeekday(Language lang, const TimeData& timeData);
-    // Get short weekday name (Mon/周一)
+    
+    // Get short short weekday name (Mo/一)
     static const char* getShortSWeekday(Language lang, int index);
     
     // Get formatted date string
     static const char* getDateString(Language lang, const TimeData& timeData);
     
-    // Get date + short weekday string (Oct 20 Mon / 10月20日 周一)
+    // Get date + short weekday string (Mon, Oct 20 / 10月廿日 周一)
     static const char* getDateShortWeekday(Language lang, const TimeData& timeData);
     
-    // Get month + date string (Oct 20 / 10月20日)
+    // Get month + date string (Oct 20 / 10月廿日)
     static const char* getMonthDate(Language lang, const TimeData& timeData);
     
-    // Get month + date + weekday string (Oct 20 Monday / 10月20日 星期一)
+    // Get month + date + weekday string (Monday, Oct 20 / 10月廿日 星期一)
     static const char* getMonthDateWeekday(Language lang, const TimeData& timeData);
+    
+    // Get short short format: (Mo, Oct 1 / 十月一 一)
+    static const char* getShortShortDateWeekday(Language lang, const TimeData& timeData);
     
     // Universal string getter method for time-related strings
     static const char* getStr(Language lang, const TimeData& timeData, int16_t index);
@@ -39,8 +41,9 @@ public:
     const char* getDateShortWeekday(const TimeData& timeData);
     const char* getMonthDate(const TimeData& timeData);
     const char* getMonthDateWeekday(const TimeData& timeData);
+    const char* getShortShortDateWeekday(const TimeData& timeData);
     const char* getStr(const TimeData& timeData, int16_t index);
-
+    
 private:
     // Long weekday names arrays
     static const char* longWeekdays_CN[7];
@@ -53,7 +56,7 @@ private:
     // Short Short weekday names arrays
     static const char* shortSWeekdays_CN[7];
     static const char* shortSWeekdays_EN[7];
-
+    
     // Chinese number conversion
     static const char* chineseNumbers[10];
     static const char* chineseTens[4];
@@ -67,6 +70,7 @@ private:
     static char dateWeekdayBuffer[64];
     static char monthDateBuffer[64];
     static char monthDateWeekdayBuffer[64];
+    static char shortShortDateWeekdayBuffer[64];
 };
 
 // String type indices for time-related strings
@@ -76,7 +80,8 @@ typedef enum {
     STR_DATE_STRING = 2,
     STR_DATE_SHORT_WEEKDAY = 3,
     STR_MONTH_DATE = 4,
-    STR_MONTH_DATE_WEEKDAY = 5
+    STR_MONTH_DATE_WEEKDAY = 5,
+    STR_SHORT_SHORT_DATE_WEEKDAY = 6
 } TimeStringTypeIndex;
 
 // Global extern object for external access
