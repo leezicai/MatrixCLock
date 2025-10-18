@@ -20,6 +20,13 @@ const char* MatrixStatusManager::getSysStatus(int index){
     return intBuffer;
   case 4:
     return matrixSettings.getCommonWord(WORD_CURRENT_LANGUGE);
+  case 5:
+    {
+      int timezone = rtc.getTimezone();
+      // Format timezone with sign and 2 digits (e.g., "+08", "-12")
+      sprintf(intBuffer, "%s:%+03d", matrixSettings.getCommonWord(WORD_TIMEZONE), timezone);
+      return intBuffer;
+    }
   default:
     return "-";
   }

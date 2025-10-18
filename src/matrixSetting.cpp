@@ -8,11 +8,11 @@ MatrixSettings matrixSettings;
 // Common words
 const char* MatrixSettings::commonWords_CN[WORD_COUNT] = {
     "设置-时间",  // WORD_SETTING
-    "设置-亮度",      // WORD_BRIGHTNESS
+    "亮度",      // WORD_BRIGHTNESS
     "自动",      // WORD_TIME
     "开",      // WORD_TEMPERATURE
     "关",      // WORD_HUMIDITY
-    "设置-语言",      // WORD_WEATHER
+    "语言",      // WORD_WEATHER
     "中文",      // WORD_ALARM
     "连接WiFi并访问",    // WORD_TIMER
     "MatrixClock",      // WORD_BRIGHTNESS
@@ -22,16 +22,17 @@ const char* MatrixSettings::commonWords_CN[WORD_COUNT] = {
     "MatrixClock",       // WORD_VOLUME
     "",
     "启动...",
-    "闹钟"
+    "闹钟",
+    "时区"
 };
 
 const char* MatrixSettings::commonWords_EN[WORD_COUNT] = {
     "Set-Time",  // WORD_SETTING
-    "Set-Bright",     // 亮度
+    "Bright",     // 亮度
     "Auto",          // WORD_TIME
     "On",   // WORD_TEMPERATURE
     "Off",      // WORD_HUMIDITY
-    "Set-Languge",       // WORD_WEATHER
+    "Languge",       // WORD_WEATHER
     "En",         // WORD_ALARM
     "ConnWiFi&Access",         // WORD_TIMER
     "MatrixClock",    // WORD_BRIGHTNESS
@@ -41,7 +42,8 @@ const char* MatrixSettings::commonWords_EN[WORD_COUNT] = {
     "MatrixClock",       // WORD_VOLUME
     "",       // WORD_VOLUME
     "Start...",
-    "Alarm"
+    "Alarm",
+    "TZ"
 };
 // #define LOADING_ERR_MSG_FAIL_WIFI "WiFi Connect Failed"
 // #define LOADING_ERR_MSG_FAIL_NETWORK "Net SyncTime Failed"

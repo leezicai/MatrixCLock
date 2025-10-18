@@ -1,5 +1,6 @@
 #ifndef DS3231_H
 #define DS3231_H
+
 #include <Arduino.h>
 #include <Wire.h>
 #include "time.h"
@@ -31,6 +32,7 @@ class DS3231 {
 private:
     TwoWire *wire;
     bool _isConnected;
+    int timezone; // Local timezone offset in hours
     
     // Utility functions
     uint8_t bcdToDec(uint8_t val);
@@ -85,6 +87,13 @@ public:
     // Second adjustment methods
     bool addSecond();
     bool subtractSecond();
+    
+    // Timezone adjustment methods
+    bool addTimezone();
+    bool subtractTimezone();
+    
+    // Getter for timezone
+    int getTimezone() const;
 };
 
 extern DS3231 rtc;

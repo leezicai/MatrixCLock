@@ -33,7 +33,8 @@ typedef enum {
     WORD_BLANK = 13,
     WORD_SETUP_WIFI_STARTING = 14,
     WORD_ALARM = 15,
-    WORD_COUNT = 16
+    WORD_TIMEZONE = 16,
+    WORD_COUNT = 17
 } CommonWordIndex;
 
 class MatrixSettings {

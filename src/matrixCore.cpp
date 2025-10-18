@@ -34,17 +34,19 @@ void MatrixCoreManager::initializeMatrixCores() {
     PrimaryPage primaryPage2;
 
     switch (g_panelType) {
-    case 0: {
+        // 适配 128x64x1  64x64x2 屏幕
+    case 0:
+    case 1: {
       // 24 getHour24_Minute_Second
-      SecondaryPage secondaryPage0_0 = {MatrixCore(0.495f, 0.45f, 1, 0, 1, 0, 0, 1, 1)};
+      SecondaryPage secondaryPage0_0 = {MatrixCore(0.495f, 0.45f, 1, 0, 0, 0, 0, 1, 1)};
       // 24 getHour24_Minute
       SecondaryPage secondaryPage0_1 = { MatrixCore(0.495f, 0.45f, 0, 0, 1, 0, 0, 4, 2) };
       // 12 getHour12_MinuteAmpm
-      SecondaryPage secondaryPage0_2 = { MatrixCore(0.495f, 0.45f, 2, 0, 0, 0, 0, 6, 0) };
+      SecondaryPage secondaryPage0_2 = { MatrixCore(0.495f, 0.45f, 2, 0, 2, 0, 0, 6, 0) };
       // 12 getHour12_Minute_Second
-      SecondaryPage secondaryPage0_3 = { MatrixCore(0.495f, 0.45f, 1, 0, 0, 0, 0, 2, 0) };
+      SecondaryPage secondaryPage0_3 = { MatrixCore(0.495f, 0.45f, 1, 0, 3, 0, 0, 2, 0) };
       // 12 getHour12_Minute
-      SecondaryPage secondaryPage0_4 = { MatrixCore(0.495f, 0.43f, 0, 0, 0, 0, 0, 5, 0) };
+      SecondaryPage secondaryPage0_4 = { MatrixCore(0.495f, 0.43f, 0, 0, 4, 0, 0, 5, 0) };
 
       secondaryPage0_0 = matrixDataManager.loadPage(0, 0, secondaryPage0_0);
       secondaryPage0_1 = matrixDataManager.loadPage(0, 1, secondaryPage0_1);
@@ -92,6 +94,7 @@ void MatrixCoreManager::initializeMatrixCores() {
 
       SecondaryPage secondaryPage2_0 = {
           MatrixCore(0.03f, 0.16f, 10, 40, 5, 0, 2, 0, 0),
+          MatrixCore(0.50f, 0.16f, 10, 40, 5, 0, 3, 5, 0),
 
           MatrixCore(0.03f, 0.47f, 8, 1, 3, 0, 4, 8, 0),
           MatrixCore(0.36f, 0.47f, 8, 1, 3, 0, 4, 9, 0),
@@ -155,10 +158,6 @@ void MatrixCoreManager::initializeMatrixCores() {
       primaryPage2.push_back(secondaryPage2_3);
       interface.push_back(primaryPage2);
       break;
-    }
-    case 1: {
-      break;
-
     }
     case 2: {
 

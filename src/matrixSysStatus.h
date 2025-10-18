@@ -2,6 +2,7 @@
 #define MATRIXSYSSTATUS_H
 
 #include "matrixSetting.h"
+#include "ds3231.h"
 
 class MatrixStatusManager {
 	private:

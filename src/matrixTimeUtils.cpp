@@ -42,7 +42,7 @@ const char* MatrixTimeUtils::chineseMonths[12] = {
 };
 
 const char* MatrixTimeUtils::chineseTens[4] = {
-    "十", "二十", "三十"
+    "十", "廿", "卅"
 };
 
 // English month abbreviations

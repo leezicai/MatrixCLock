@@ -71,21 +71,24 @@ void handleButtonPressedRotateCW(EC11 *encoder) {
       case 0:
         break;
       case 1:
-        rtc.addYear();
+        rtc.addTimezone();
         break;
       case 2:
-        rtc.addMonth();
+        rtc.addYear();
         break;
       case 3:
-        rtc.addDay();
+        rtc.addMonth();
         break;
       case 4:
-        rtc.addHour();
+        rtc.addDay();
         break;
       case 5:
-        rtc.addMinute();
+        rtc.addHour();
         break;
       case 6:
+        rtc.addMinute();
+        break;
+      case 7:
         rtc.addSecond();
         break;
       default:
@@ -233,21 +236,24 @@ void handleButtonPressedRotateCCW(EC11 *encoder) {
       case 0:
         break;
       case 1:
-        rtc.subtractYear();
+        rtc.subtractTimezone();
         break;
       case 2:
-        rtc.subtractMonth();
+        rtc.subtractYear();
         break;
       case 3:
-        rtc.subtractDay();
+        rtc.subtractMonth();
         break;
       case 4:
-        rtc.subtractHour();
+        rtc.subtractDay();
         break;
       case 5:
-        rtc.subtractMinute();
+        rtc.subtractHour();
         break;
       case 6:
+        rtc.subtractMinute();
+        break;
+      case 7:
         rtc.subtractSecond();
         break;
       default:
