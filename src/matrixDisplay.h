@@ -1,0 +1,301 @@
+#pragma once
+
+#include <U8g2_for_Adafruit_GFX.h>
+#include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
+#include <string>
+#include <iomanip>
+#include <sstream>
+#include "page.h"
+#include "matrixCore.h"
+#include "matrixFonts.h"
+#include "matrixColors.h"
+#include "matrixTimeData.h"
+#include "common_define.h"
+#include "animation.h"
+#include "matrixTimeUtils.h"
+#include "matrixSetting.h"
+#include "matrixSysStatus.h"
+#include "matrixDma.h"
+#include "alarm.h"
+#include "glyphBitmap.h"
+
+extern MatrixPanel_I2S_DMA *dma_display;
+extern U8G2_FOR_ADAFRUIT_GFX u8g2_for_adafruit_gfx;
+
+struct TimeData;
+
+struct CharCount{
+    int16_t countNum;
+    int16_t countSpace;
+    int16_t countABC;
+    int16_t countHyphen;
+
+     // Constructor - initialize all members to zero
+    CharCount();
+    
+    // Parameterized constructor
+    CharCount(int16_t num, int16_t space, int16_t abc, int16_t hyphen);
+    
+    // Reset method to clear all counts
+    void reset();
+    
+    // Initialize with specific values
+    void initialize(int16_t num, int16_t space, int16_t abc, int16_t hyphen);
+};
+// 定义一个结构体，保存所有需要的字符串
+struct TimeStrings {
+    int16_t year;        // 2025
+    int16_t year_1;      // 2 (first digit)
+    int16_t year_2;      // 0 (second digit) 
+    int16_t year_3;      // 2 (third digit)
+    int16_t year_4;      // 5 (fourth digit)
+    int16_t month;       // 9
+    int16_t month_1;     // 0 (first digit)
+    int16_t month_2;     // 9 (second digit)
+    int16_t day;         // 14
+    int16_t day_1;       // 1 (first digit)
+    int16_t day_2;       // 4 (second digit)
+    int16_t mday;
+    int16_t hour24;      // 23
+    int16_t hour24_1;    // 2 (first digit)
+    int16_t hour24_2;    // 3 (second digit)
+    int16_t minute;      // 59
+    int16_t minute_1;    // 5 (first digit)
+    int16_t minute_2;    // 9 (second digit)
+    int16_t second;      // 58
+    int16_t second_1;    // 5 (first digit)
+    int16_t second_2;    // 8 (second digit)
+    int16_t hour12;      // 11
+    int16_t hour12_1;    // 1 (first digit)
+    int16_t hour12_2;    // 1 (second digit)
+    std::string ampm;        // 0 for AM, 1 for PM
+    std::string ampm_1;        // 0 for AM, 1 for PM
+    std::string ampm_2;        // 0 for AM, 1 for PM
+    
+    // Method: return "YYYY-MM-DD"
+    std::string getDateString() const {
+        std::ostringstream oss;
+        oss << std::setw(4) << std::setfill('0') << year << "-"
+            << std::setw(2) << std::setfill('0') << month << "-"
+            << std::setw(2) << std::setfill('0') << day;
+        return oss.str();
+    }
+    
+    // Method: return "HH:MM:SS"
+    std::string getTimeString24() const {
+        std::ostringstream oss;
+        oss << std::setw(2) << std::setfill('0') << hour24 << ":"
+            << std::setw(2) << std::setfill('0') << minute << ":"
+            << std::setw(2) << std::setfill('0') << second;
+        return oss.str();
+    }
+    
+    // Method: return "HH:MM:SS AM/PM"
+    std::string getTimeString12() const {
+        std::ostringstream oss;
+        oss << std::setw(2) << std::setfill('0') << hour12 << ":"
+            << std::setw(2) << std::setfill('0') << minute << ":"
+            << std::setw(2) << std::setfill('0') << second << " " 
+            << ampm;
+        return oss.str();
+    }
+};
+
+struct DiffTimeStrings {
+    int16_t year;        // 2025
+    int16_t year_1;      // 2 (first digit)
+    int16_t year_2;      // 0 (second digit) 
+    int16_t year_3;      // 2 (third digit)
+    int16_t year_4;      // 5 (fourth digit)
+    int16_t month;       // 9
+    int16_t month_1;     // 0 (first digit)
+    int16_t month_2;     // 9 (second digit)
+    int16_t day;         // 14
+    int16_t day_1;       // 1 (first digit)
+    int16_t day_2;       // 4 (second digit)
+    int16_t mday;
+    int16_t hour24;      // 23
+    int16_t hour24_1;    // 2 (first digit)
+    int16_t hour24_2;    // 3 (second digit)
+    int16_t minute;      // 59
+    int16_t minute_1;    // 5 (first digit)
+    int16_t minute_2;    // 9 (second digit)
+    int16_t second;      // 58
+    int16_t second_1;    // 5 (first digit)
+    int16_t second_2;    // 8 (second digit)
+    int16_t hour12;      // 11
+    int16_t hour12_1;    // 1 (first digit)
+    int16_t hour12_2;    // 1 (second digit)
+    int16_t ampm;        // 0 for AM, 1 for PM
+    int16_t ampm_1;        // 0 for AM, 1 for PM
+    int16_t ampm_2;        // 0 for AM, 1 for PM
+};
+
+struct FontMetrics {
+  int height;
+  int ascent;
+  int descent;
+  int charWidth;
+  
+};
+
+class Display {
+    private:
+      float animationSpeed;
+      int16_t lineFlagTime = 0;
+      static int charType[256];
+      static bool tableInitialized;
+      static void initializeTable();
+      CharCount charCountForCalWidth;
+      CharCount charCountForString;
+
+      // Off-screen glyph buffers for the per-pixel animations. Two instances
+      // so the outgoing and incoming glyph can both stay cached between frames.
+      // 逐像素特效用的离屏字形缓存，两份避免新旧字形互相冲掉缓存。
+      GlyphBitmap glyphOld;
+      GlyphBitmap glyphNew;
+
+      // Per-pixel effect renderers. Called only from drawPixelAnimChar(),
+      // which has already rasterised glyphOld / glyphNew and clamped t.
+      // topY is the panel row that holds glyph row 0.
+      void drawScanChar(float t, uint16_t colorRGB565, int16_t charX,
+                        int16_t topY);
+      void drawDissolveChar(float t, uint16_t colorRGB565, int16_t charX,
+                            int16_t topY);
+      void drawParticleChar(float t, uint16_t colorRGB565, int16_t charX,
+                            int16_t topY);
+
+    public:
+      Display();
+
+      // Function declarations
+      uint16_t scaleColorRGB565Custom(uint16_t colorRGB565,
+                                      float animationSpeed,
+                                      bool colorFlag = true,
+                                      float minBrightness = 0.2f);
+      uint16_t scaleColorRGB565Forward(uint16_t colorRGB565,
+                                       float animationSpeed,
+                                       bool colorFlag = true,
+                                       float minBrightness = 0.8f);
+      // RGB to RGB565
+      uint16_t rgbToRgb565(uint8_t red, uint8_t green, uint8_t blue);
+
+      // 显示文字（RGB565）
+      void displayText(uint16_t colorRGB565, int x, int y,
+                       const uint8_t *fontName, const char *text);
+      void displayText(uint16_t colorRGB565, int x, int y,
+                       const uint8_t *fontName, int16_t intP);
+      // 显示文字（RGB888）
+      void displayTextRGB(uint8_t red, uint8_t green, uint8_t blue, int x,
+                          int y, const uint8_t *fontName, const char *text);
+                          void displayTextRGB(uint8_t red, uint8_t green, uint8_t blue, int x,
+                          int y, const uint8_t *fontName, int16_t pageInfo);
+                          
+      // 时间字符串结构体
+      TimeStrings getTimeStrings(time_t now);
+      DiffTimeStrings compareTimeStrings(const TimeStrings &ts1,
+                                         const TimeStrings &ts2);
+      void flipDMABuffer();
+      void clearScreen();
+      // Static display methods
+      void setupDisplayContext(uint16_t colorRGB565, int x, int y,
+                               int fontWidth, int fontHeight,
+                               int separatorWidth, int offSetNumFont,
+                               int offSetNumSep, int offSetFont, int offSetSepX,int offSetSepY,
+                               const uint8_t *fontName);
+      void setupDisplayContext(uint16_t colorRGB565, int x, int y,
+                                        int fontWidth, int fontHeight,
+                                        int separatorWidth, int offSetNumFont,
+                                        int offSetNumSep, int offSetFont,
+                                        float offSetSepX, float offSetSepY,
+                                        const uint8_t *fontName);
+      
+      template <typename T>
+      void displayStaticOneTemplate(T one, uint16_t colorRGB565, int x, int y,
+                                    int fontWidth, int fontHeight,
+                                    int separatorWidth, int offSetNumFont,
+                                    int offSetNumSep, int offSetFont,
+                                    int offSetSepX, int offSetSepY,
+                                    const uint8_t *fontName) {
+        setupDisplayContext(colorRGB565, x, y, fontWidth, fontHeight,
+                            separatorWidth, offSetNumFont, offSetNumSep,
+                            offSetFont, offSetSepX, offSetSepY, fontName);
+        u8g2_for_adafruit_gfx.print(one);
+      }
+
+      void setupDisplayContext(uint16_t colorRGB565, int16_t x, int16_t y,
+                               int16_t fontWidth, int16_t fontHeight,
+                               int16_t numberWidth, int16_t spaceWidth,
+                               int16_t hyphenWidth, int16_t offsetFontCountABC,
+                               int16_t offsetCountNum, int16_t offsetCountSpace,
+                               int16_t offsetCountHyphen, int16_t offsetPreFont,
+                               int16_t offsetSpaceX, int16_t offsetSpaceY,
+                               const uint8_t *fontName);
+      template <typename T>
+      void displayStaticOneTemplate(
+          T one, uint16_t colorRGB565, int16_t x, int16_t y, int16_t fontABCWidth,
+          int16_t fontHeight, int16_t numberWidth, int16_t spaceWidth,
+          int16_t hyphenWidth, int16_t offsetFontCountABC,
+          int16_t offsetCountNum, int16_t offsetCountSpace,
+          int16_t offsetCountHyphen, int16_t offsetPreFont,
+          int16_t offsetSpaceX, int16_t offsetSpaceY, const uint8_t *fontName) {
+        setupDisplayContext(colorRGB565, x, y, fontABCWidth, fontHeight,
+                            numberWidth, spaceWidth, hyphenWidth,
+                            offsetFontCountABC, offsetCountNum,
+                            offsetCountSpace, offsetCountHyphen, offsetPreFont,
+                            offsetSpaceX, offsetSpaceY, fontName);
+        u8g2_for_adafruit_gfx.print(one);
+      }
+
+      FontMetrics getFontMetrics(const uint8_t *font, const char *character);
+
+      int16_t getStrWidth(int16_t fontWidth, int16_t sepWidth, const char *str);
+      CharCount analyzeCharInStr(const char *str) ;
+      std::vector<int8_t> compare_with_vector(const char* str1, const char* str2);
+      void display(unsigned long elapsed, const char *nowStr,
+                   const char *nextStr, std::vector<int8_t> results,
+                   MatrixCore matrixCore);
+      void displayString(unsigned long elapsed, TimeData timeNow,
+                                   TimeData timeNowNextSec,MatrixCore matrixCore, boolean isUnderLine);
+      void displayUnderline(boolean isStartLeft,const char* nowStr,MatrixCore matrixCore);
+
+      void showPageInfo();
+
+      // ---- Per-pixel transitions (ANIMATION_3 / 4 / 5) 逐像素特效 ----
+
+      // Draws one character mid-transition. t is the progress in [0, 1].
+      // t <= 0, t >= 1 or an unchanged character take the cheap static path,
+      // so only the digits that actually move cost per-pixel work.
+      void drawPixelAnimChar(int16_t animationType, char chNow, char chNext,
+                             float t, uint16_t colorRGB565, int16_t charX,
+                             int16_t baselineY, const uint8_t *fontName);
+
+      // Progress inside the current second for the given animation type,
+      // clamped to [0, 1]. Each type has its own window (see animation.h).
+      static float pixelAnimProgress(int16_t animationType,
+                                     unsigned long elapsed);
+      static float animProgress(unsigned long elapsed, uint16_t startMs,
+                                uint16_t endMs);
+
+      // Blend a colour toward white - used for the scan beam and the
+      // dissolve front, which both need to read brighter than the base.
+      static uint16_t mixWhiteRGB565(uint16_t colorRGB565, float f);
+
+      // True when the string is pure ASCII. Multi-byte UTF-8 cannot be walked
+      // one byte at a time, so those strings fall back to a static draw.
+      static bool isAsciiString(const char *str);
+
+      // Draws the gain / loss bar for displayGroup 8. matrixCore.x is the
+      // horizontal margin as a fraction of the panel width, matrixCore.y the
+      // vertical centre of the bar.
+      void drawStockBar(MatrixCore matrixCore);
+
+      void displayString(const char* text, MatrixCore matrixCore);
+      void displayString(unsigned long elapsed, const char* nowStr, const char* nowNextStr, int whereStart, MatrixCore matrixCore);
+      bool compareStringsFast(const char* nowStr, const char* nowNextStr);
+      int16_t getPageFlagTime();
+      void setPageFlagTime(int16_t pageFlagTime);
+};
+
+// 全局实例声明
+extern Display display;
