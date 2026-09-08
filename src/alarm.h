@@ -24,6 +24,15 @@
 // (2023-11-14). Alarms must never fire on a bogus wall clock.
 #define ALARM_MIN_VALID_EPOCH 1700000000
 
+// getAlarmStr() index map:
+//   0..6   weekday toggle, short label  ("Mo+") - 128x64 layouts
+//   7..12  title / on-off / hour / ":" / minute / volume
+//   13..19 weekday toggle, mini label   ("M+")  - 64x64 layout
+// The mini variant is a pure addition: 0..6 keep their previous output.
+// getAlarmStr() 索引映射：13..19 是新增的极简星期（单字形 + 正负号），
+// 0..6 的旧行为完全不变。
+#define ALARM_STR_MINI_WEEK_BASE 13
+
 // Days of week enum
 enum DayOfWeek {
   SUNDAY = 0,

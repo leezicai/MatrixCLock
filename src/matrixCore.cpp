@@ -5,6 +5,7 @@
 #include "brightnessManager.h"
 #include "matrixDma.h"
 #include "matrixColors.h"
+#include "alarm.h"   // ALARM_STR_MINI_WEEK_BASE + DayOfWeek, used by the alarm page
 
 extern uint8_t g_panelType;
 
@@ -326,24 +327,35 @@ void MatrixCoreManager::initializeMatrixCores() {
           MatrixCore(0.03f, 0.55f, 10, 40, 3, 0, 3, 4, 1)}; // "En" / current
 
       // ---- Alarm setting page ----
-      // 64px wide fits only 3 weekday toggles per row (CJK toggle = 20px),
-      // so the 13 elements are spread over 5 rows. Element order is kept
-      // identical to the 128x64 layout so encoder navigation is unchanged.
+      // 64px wide fits only 3 weekday toggles per row, so the 13 elements are
+      // spread over 5 rows. Element order is kept identical to the 128x64
+      // layout so encoder navigation is unchanged.
+      // The weekday toggles use the mini labels (ALARM_STR_MINI_WEEK_BASE +
+      // day): a two-letter label plus "+" / "-" overflowed the 20px cell, a
+      // single glyph plus the sign fits.
+      // 星期用极简索引（单字形 + 正负号），两字母时 +/- 会被挤掉。
       SecondaryPage secondaryPage0_3 = {
           MatrixCore(0.03f, 0.10f, 10, 40, 5, 0, 5, 7, 0),  // "Alarm0"
 
           MatrixCore(0.03f, 0.29f, 10, 40, 0, 0, 5, 8, 0),  // On / Off
           MatrixCore(0.60f, 0.29f, 10, 40, 5, 0, 5, 12, 0), // volume
 
-          MatrixCore(0.02f, 0.48f, 10, 40, 3, 0, 5, 1, 0),  // Mon
-          MatrixCore(0.34f, 0.48f, 10, 40, 3, 0, 5, 2, 0),  // Tue
-          MatrixCore(0.66f, 0.48f, 10, 40, 3, 0, 5, 3, 0),  // Wed
+          MatrixCore(0.02f, 0.48f, 10, 40, 3, 0, 5,
+                     ALARM_STR_MINI_WEEK_BASE + MONDAY, 0),     // Mon
+          MatrixCore(0.34f, 0.48f, 10, 40, 3, 0, 5,
+                     ALARM_STR_MINI_WEEK_BASE + TUESDAY, 0),    // Tue
+          MatrixCore(0.66f, 0.48f, 10, 40, 3, 0, 5,
+                     ALARM_STR_MINI_WEEK_BASE + WEDNESDAY, 0),  // Wed
 
-          MatrixCore(0.02f, 0.66f, 10, 40, 3, 0, 5, 4, 0),  // Thu
-          MatrixCore(0.34f, 0.66f, 10, 40, 3, 0, 5, 5, 0),  // Fri
-          MatrixCore(0.66f, 0.66f, 10, 40, 3, 0, 5, 6, 0),  // Sat
+          MatrixCore(0.02f, 0.66f, 10, 40, 3, 0, 5,
+                     ALARM_STR_MINI_WEEK_BASE + THURSDAY, 0),   // Thu
+          MatrixCore(0.34f, 0.66f, 10, 40, 3, 0, 5,
+                     ALARM_STR_MINI_WEEK_BASE + FRIDAY, 0),     // Fri
+          MatrixCore(0.66f, 0.66f, 10, 40, 3, 0, 5,
+                     ALARM_STR_MINI_WEEK_BASE + SATURDAY, 0),   // Sat
 
-          MatrixCore(0.02f, 0.84f, 10, 40, 3, 0, 5, 0, 0),  // Sun
+          MatrixCore(0.02f, 0.84f, 10, 40, 3, 0, 5,
+                     ALARM_STR_MINI_WEEK_BASE + SUNDAY, 0),     // Sun
           MatrixCore(0.38f, 0.84f, 10, 0, 3, 0, 5, 9, 0),   // hour
           MatrixCore(0.57f, 0.84f, 10, 0, 3, 0, 5, 10, 0),  // ":"
           MatrixCore(0.68f, 0.84f, 10, 0, 3, 0, 5, 11, 0)}; // minute

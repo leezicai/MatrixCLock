@@ -6,6 +6,16 @@
 // Global instance
 AlarmManager alarmManager;
 
+// Mini weekday labels - exactly one glyph per day, so the "+" / "-" suffix
+// still fits inside a 20px cell on the 64x64 panel. The English initials
+// repeat (S/T/S): the cell position identifies the day, not the letter.
+// 极简星期：每天只输出一个字形，留出位置给 +/- 符号。英文首字母会重复，
+// 靠位置区分星期，不影响使用。
+static const char *const kMiniWeekday_CN[7] = {"日", "一", "二", "三",
+                                               "四", "五", "六"};
+static const char *const kMiniWeekday_EN[7] = {"S", "M", "T", "W",
+                                               "T", "F", "S"};
+
 // Constructor
 AlarmManager::AlarmManager()
     : currentIndex(0), lastCheckTime(0), lastTriggeredTime(0) {}
@@ -441,7 +451,25 @@ const char* AlarmManager::getAlarmStr(int index){
   case 12:
     snprintf(buffer, sizeof(buffer), "%u", max98357Manager.getVolume());
     return buffer;
-    
+
+  // Mini weekday toggles - same data as 0..6, single-glyph label.
+  case ALARM_STR_MINI_WEEK_BASE + 0:
+  case ALARM_STR_MINI_WEEK_BASE + 1:
+  case ALARM_STR_MINI_WEEK_BASE + 2:
+  case ALARM_STR_MINI_WEEK_BASE + 3:
+  case ALARM_STR_MINI_WEEK_BASE + 4:
+  case ALARM_STR_MINI_WEEK_BASE + 5:
+  case ALARM_STR_MINI_WEEK_BASE + 6: {
+    const int day = index - ALARM_STR_MINI_WEEK_BASE;
+    const char *const *table =
+        (matrixSettings.getCurrentLanguage() == LANG_CHINESE)
+            ? kMiniWeekday_CN
+            : kMiniWeekday_EN;
+    snprintf(buffer, sizeof(buffer), "%s%s", table[day],
+             getDayEnabled(static_cast<DayOfWeek>(day)) ? "+" : "-");
+    return buffer;
+  }
+
   default:
     return "";
   }
